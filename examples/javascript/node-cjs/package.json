@@ -1,0 +1,19 @@
+{
+  "name": "@yosina-lib/example-node",
+  "version": "0.1.0",
+  "description": "",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "Yosina Project",
+  "license": "MIT",
+  "dependencies": {
+    "@yosina-lib/yosina": "file:../../../javascript"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "typescript": "5.8.3"
+  }
+}

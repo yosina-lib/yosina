@@ -1,0 +1,43 @@
+[project]
+name = "yosina-examples"
+version = "0.1.0"
+description = "Example applications demonstrating Yosina Python library usage"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "yosina",
+]
+
+authors = [
+    {name = "Yosina Project"}
+]
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.1.0",
+    "pyright>=1.1.0",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "S", "B", "A", "C4", "ICN", "PIE", "T20", "Q"]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pyright]
+python-version = "3.10"
+include = ["src"]
+strict = ["src"]
+reportMissingImports = true
+reportMissingTypeStubs = false
+
+[tool.uv.sources]
+yosina = { path = "../../python" }

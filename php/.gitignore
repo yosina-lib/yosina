@@ -1,0 +1,5 @@
+build/
+vendor/
+docs/
+.php-cs-fixer.cache
+.phpunit.result.cache
