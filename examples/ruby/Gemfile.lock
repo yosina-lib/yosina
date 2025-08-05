@@ -1,0 +1,18 @@
+PATH
+  remote: ../../ruby
+  specs:
+    yosina (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+
+PLATFORMS
+  ruby
+  x86_64-darwin-23
+
+DEPENDENCIES
+  yosina!
+
+BUNDLED WITH
+   2.5.11

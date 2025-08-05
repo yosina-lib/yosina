@@ -1,0 +1,231 @@
+import '../char.dart';
+import '../transliterator.dart';
+
+/// Prolonged sound marks transliterator.
+///
+/// This transliterator handles the replacement of hyphen-like characters with
+/// appropriate prolonged sound marks (ー or ｰ) when they appear after Japanese
+/// characters that can be prolonged.
+class ProlongedSoundMarksTransliterator implements Transliterator {
+  ProlongedSoundMarksTransliterator({
+    this.skipAlreadyTransliteratedChars = false,
+    this.allowProlongedHatsuon = false,
+    this.allowProlongedSokuon = false,
+    this.replaceProlongedMarksFollowingAlnums = false,
+  }) {
+    // Build prolongable character types
+    prolongables = _vowelEnded | _prolongedSoundMark;
+    if (allowProlongedHatsuon) {
+      prolongables |= _hatsuon;
+    }
+    if (allowProlongedSokuon) {
+      prolongables |= _sokuon;
+    }
+  }
+  // Character type classification flags
+  static const _other = 0x00;
+  static const _hiragana = 0x20;
+  static const _katakana = 0x40;
+  static const _alphabet = 0x60;
+  static const _digit = 0x80;
+  static const _either = 0xA0;
+
+  // Additional flags
+  static const _halfwidth = 1 << 0;
+  static const _vowelEnded = 1 << 1;
+  static const _hatsuon = 1 << 2;
+  static const _sokuon = 1 << 3;
+  static const _prolongedSoundMark = 1 << 4;
+
+  // Combined types
+  static const _halfwidthDigit = _digit | _halfwidth;
+  static const _fullwidthDigit = _digit;
+  static const _halfwidthAlphabet = _alphabet | _halfwidth;
+  static const _fullwidthAlphabet = _alphabet;
+  static const _ordinaryHiragana = _hiragana | _vowelEnded;
+  static const _ordinaryKatakana = _katakana | _vowelEnded;
+  static const _ordinaryHalfwidthKatakana =
+      _katakana | _vowelEnded | _halfwidth;
+
+  /// Special character mappings
+  static const _specials = <int, int>{
+    0xFF70: _katakana | _prolongedSoundMark | _halfwidth, // ｰ
+    0x30FC: _either | _prolongedSoundMark, // ー
+    0x3063: _hiragana | _sokuon, // っ
+    0x3093: _hiragana | _hatsuon, // ん
+    0x30C3: _katakana | _sokuon, // ッ
+    0x30F3: _katakana | _hatsuon, // ン
+    0xFF6F: _katakana | _sokuon | _halfwidth, // ｯ
+    0xFF9D: _katakana | _hatsuon | _halfwidth, // ﾝ
+  };
+
+  /// Hyphen-like characters that could be prolonged sound marks
+  static const _hyphenLikeChars = <String, bool>{
+    '\u{002d}': true, // -
+    '\u{2010}': true, // ‐
+    '\u{2014}': true, // —
+    '\u{2015}': true, // ―
+    '\u{2212}': true, // −
+    '\u{ff0d}': true, // －
+    '\u{ff70}': true, // ｰ
+    '\u{30fc}': true, // ー
+  };
+
+  final bool skipAlreadyTransliteratedChars;
+  final bool allowProlongedHatsuon;
+  final bool allowProlongedSokuon;
+  final bool replaceProlongedMarksFollowingAlnums;
+  late final int prolongables;
+
+  /// Get the character type for a given Unicode codepoint.
+  int _getCharType(int codepoint) {
+    // Halfwidth digits
+    if (codepoint >= 0x30 && codepoint <= 0x39) {
+      return _halfwidthDigit;
+    }
+
+    // Fullwidth digits
+    if (codepoint >= 0xFF10 && codepoint <= 0xFF19) {
+      return _fullwidthDigit;
+    }
+
+    // Halfwidth alphabets
+    if ((codepoint >= 0x41 && codepoint <= 0x5A) ||
+        (codepoint >= 0x61 && codepoint <= 0x7A)) {
+      return _halfwidthAlphabet;
+    }
+
+    // Fullwidth alphabets
+    if ((codepoint >= 0xFF21 && codepoint <= 0xFF3A) ||
+        (codepoint >= 0xFF41 && codepoint <= 0xFF5A)) {
+      return _fullwidthAlphabet;
+    }
+
+    // Special characters
+    final special = _specials[codepoint];
+    if (special != null) {
+      return special;
+    }
+
+    // Hiragana
+    if ((codepoint >= 0x3041 && codepoint <= 0x309C) || codepoint == 0x309F) {
+      return _ordinaryHiragana;
+    }
+
+    // Katakana
+    if ((codepoint >= 0x30A1 && codepoint <= 0x30FA) ||
+        (codepoint >= 0x30FD && codepoint <= 0x30FF)) {
+      return _ordinaryKatakana;
+    }
+
+    // Halfwidth katakana
+    if ((codepoint >= 0xFF66 && codepoint <= 0xFF6F) ||
+        (codepoint >= 0xFF71 && codepoint <= 0xFF9F)) {
+      return _ordinaryHalfwidthKatakana;
+    }
+
+    return _other;
+  }
+
+  /// Check if character type is alphanumeric.
+  bool _isAlnum(int charType) {
+    final masked = charType & 0xE0;
+    return masked == _alphabet || masked == _digit;
+  }
+
+  /// Check if character type is halfwidth.
+  bool _isHalfwidth(int charType) {
+    return (charType & _halfwidth) != 0;
+  }
+
+  /// Check if character is hyphen-like.
+  bool _isHyphenLike(String char) {
+    return _hyphenLikeChars.containsKey(char);
+  }
+
+  @override
+  Iterable<Char> call(Iterable<Char> inputChars) sync* {
+    var offset = 0;
+    var processedCharsInLookahead = false;
+    final lookaheadBuf = <Char>[];
+    List<dynamic>? lastNonProlongedChar;
+
+    for (final char in inputChars) {
+      if (lookaheadBuf.isNotEmpty) {
+        if (_isHyphenLike(char.c)) {
+          if (char.source != null) {
+            processedCharsInLookahead = true;
+          }
+          lookaheadBuf.add(char);
+          continue;
+        }
+
+        // Process buffered characters
+        final prevNonProlongedChar = lastNonProlongedChar;
+        final firstChar = char.c.isNotEmpty ? char.c.substring(0, 1) : '';
+        final codepoint = firstChar.isNotEmpty ? firstChar.codeUnitAt(0) : -1;
+        lastNonProlongedChar = [char, _getCharType(codepoint)];
+
+        // Check if we should replace with hyphens for alphanumerics
+        if ((prevNonProlongedChar == null ||
+                _isAlnum(prevNonProlongedChar[1] as int)) &&
+            (!skipAlreadyTransliteratedChars || !processedCharsInLookahead)) {
+          final replacement = (prevNonProlongedChar == null
+                  ? _isHalfwidth(lastNonProlongedChar[1] as int)
+                  : _isHalfwidth(prevNonProlongedChar[1] as int))
+              ? '\u{002d}'
+              : '\u{ff0d}';
+
+          for (final bufferedChar in lookaheadBuf) {
+            yield Char(replacement, offset, bufferedChar);
+            offset += replacement.length;
+          }
+        } else {
+          // Just pass through the buffered characters
+          for (final bufferedChar in lookaheadBuf) {
+            yield bufferedChar.withOffset(offset);
+            offset += bufferedChar.c.length;
+          }
+        }
+
+        lookaheadBuf.clear();
+        yield char.withOffset(offset);
+        offset += char.c.length;
+        processedCharsInLookahead = false;
+        continue;
+      }
+
+      // Check if this is a hyphen-like character that might be a prolonged sound mark
+      if (_isHyphenLike(char.c)) {
+        final shouldProcess =
+            !skipAlreadyTransliteratedChars || !char.isTransliterated;
+        if (shouldProcess && lastNonProlongedChar != null) {
+          if ((prolongables & (lastNonProlongedChar[1] as int)) != 0) {
+            final replacement = _isHalfwidth(lastNonProlongedChar[1] as int)
+                ? '\u{ff70}'
+                : '\u{30fc}';
+            yield Char(replacement, offset, char);
+            offset += replacement.length;
+            continue;
+          } else {
+            // Check if we should buffer for alphanumeric replacement
+            if (replaceProlongedMarksFollowingAlnums &&
+                _isAlnum(lastNonProlongedChar[1] as int)) {
+              lookaheadBuf.add(char);
+              continue;
+            }
+          }
+        }
+      } else {
+        // Update last non-prolonged character ONLY for non-hyphen characters
+        final firstChar = char.c.isNotEmpty ? char.c.substring(0, 1) : '';
+        final codepoint = firstChar.isNotEmpty ? firstChar.codeUnitAt(0) : -1;
+        lastNonProlongedChar = [char, _getCharType(codepoint)];
+      }
+
+      // Default: pass through the character
+      yield char.withOffset(offset);
+      offset += char.c.length;
+    }
+  }
+}

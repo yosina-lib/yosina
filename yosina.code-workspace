@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "javascript"
+		},
+		{
+			"path": "data"
+		}
+	],
+	"settings": {
+		"javascript.format.enable": true
+	}
+}

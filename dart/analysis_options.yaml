@@ -1,0 +1,11 @@
+include: package:lints/recommended.yaml
+
+linter:
+  rules:
+    - prefer_single_quotes
+    - unawaited_futures
+    - cascade_invocations
+    - prefer_final_locals
+    - prefer_final_in_for_each
+    - sort_constructors_first
+    - directives_ordering

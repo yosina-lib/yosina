@@ -1,0 +1,36 @@
+plugins:
+#  - rubocop-rake
+  - rubocop-minitest
+AllCops:
+  Include:
+    - lib/**/*.rb
+    - codegen/**/*.rb
+    - Gemfile
+    - "*.gemspec"
+  Exclude:
+    - lib/yosina/transliterators/hyphens_data.rb
+    - lib/yosina/transliterators/ivs_svs_base_data.rb
+    - lib/yosina/transliterators/combined_data.rb
+    - lib/yosina/transliterators/circled_or_squared_data.rb
+    - vendor/**/*
+Naming/VariableNumber:
+  Exclude:
+    - codegen/**/*.rb
+Metrics/ModuleLength:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/ClassLength:
+  Max: 200
+Metrics/AbcSize:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
+Metrics/BlockNesting:
+  Enabled: false
+Style/WordArray:
+  Enabled: false

@@ -1,0 +1,3 @@
+rootProject.name = 'yosina-java'
+
+include 'codegen'
