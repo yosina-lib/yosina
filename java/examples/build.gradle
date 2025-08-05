@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+}
+
+group = 'io.yosina'
+version = '0.1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation project(':')
+}
+
+// Create tasks for running each example
+task runBasicUsage(type: JavaExec) {
+    description = 'Run the basic usage example'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'examples.BasicUsage'
+}
+
+task runAdvancedUsage(type: JavaExec) {
+    description = 'Run the advanced usage example'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'examples.AdvancedUsage'
+}
+
+task runConfigBasedUsage(type: JavaExec) {
+    description = 'Run the configuration-based usage example'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'examples.ConfigBasedUsage'
+}
+
+// Task to run all examples
+task runAllExamples {
+    group = 'application'
+    description = 'Run all examples in sequence'
+    dependsOn runBasicUsage, runAdvancedUsage, runConfigBasedUsage
+}

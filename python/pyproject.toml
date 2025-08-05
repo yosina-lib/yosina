@@ -1,0 +1,86 @@
+[project]
+name = "yosina"
+version = "0.1.0"
+description = "Japanese text transliteration library"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.10"
+dependencies = []
+
+authors = [
+    {name = "Moriyoshi Koizumi", email = "mozo@mozo.jp"}
+]
+license = {text = "MIT"}
+keywords = ["japanese", "transliteration", "text-processing", "normalization"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Text Processing :: Linguistic",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/yosina-lib/yosina"
+Repository = "https://github.com/yosina-lib/yosina"
+Issues = "https://github.com/yosina-lib/yosina/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/yosina"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "myst-parser>=4.0.1",
+    "pyright>=1.1.0",
+    "pytest-cov>=4.0.0",
+    "pytest>=7.0.0",
+    "ruff>=0.1.0",
+    "sphinx-press-theme>=0.9.1",
+    "sphinx>=8.1.3",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 121
+exclude = [
+  "src/yosina/transliterators/circled_or_squared.py",
+  "src/yosina/transliterators/composed.py",
+  "src/yosina/transliterators/hyphens_data.py",
+  "src/yosina/transliterators/ideographic_annotations.py",
+  "src/yosina/transliterators/ivs_svs_base_data.py",
+  "src/yosina/transliterators/kanji_old_new.py",
+  "src/yosina/transliterators/mathematical_alphanumerics.py",
+  "src/yosina/transliterators/radicals.py",
+  "src/yosina/transliterators/spaces.py",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "S", "B", "A", "C4", "ICN", "PIE", "T20", "Q"]
+ignore = ["S101"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"codegen/**/*.py" = ["T201"]
+"docs/source/conf.py" = ["A001"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pyright]
+python-version = "3.10"
+strict = ["**"]
+reportMissingImports = true
+reportMissingTypeStubs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

@@ -1,0 +1,74 @@
+{
+  "name": "@yosina-lib/yosina",
+  "version": "0.1.0",
+  "description": "Japanese text transliteration library for JavaScript/TypeScript",
+  "keywords": ["japanese", "transliteration", "text-processing", "normalization", "typescript"],
+  "homepage": "https://github.com/yosina-lib/yosina",
+  "bugs": {
+    "url": "https://github.com/yosina-lib/yosina/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yosina-lib/yosina.git"
+  },
+  "license": "MIT",
+  "author": "Moriyoshi Koizumi <mozo@mozo.jp>",
+  "files": [
+    "dist"
+  ],
+  "types": "./index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./dist/esm/index.js",
+        "types": "./dist/esm/index.d.ts"
+      },
+      "require": {
+        "default": "./dist/cjs/index.js",
+        "types": "./dist/cjs/index.d.ts"
+      }
+    },
+    "./*": {
+      "import": {
+        "default": "./dist/esm/*",
+        "types": "./dist/esm/*"
+      },
+      "require": {
+        "default": "./dist/cjs/*",
+        "types": "./dist/cjs/*"
+      }
+    }
+  },
+  "scripts": {
+    "format": "biome format --write src/ codegen/",
+    "lint": "biome lint src/ codegen/",
+    "check": "biome check src/ codegen/",
+    "test": "jest src/",
+    "build": "tsc && tsc -p tsconfig.cjs.json && echo '{\"type\":\"module\"}' > ./dist/esm/package.json",
+    "bundle": "rollup -c",
+    "codegen": "tsx codegen/index.ts",
+    "docs:build": "typedoc"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.1.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "12.1.4",
+    "@types/jest": "30.0.0",
+    "@types/node": "^22.16.3",
+    "glob": "11.0.3",
+    "jest": "30.0.4",
+    "rollup": "4.45.0",
+    "ts-jest": "29.4.0",
+    "tslib": "2.8.1",
+    "tsx": "4.20.3",
+    "typedoc": "0.28.7",
+    "typedoc-plugin-localization": "3.0.6",
+    "typescript": "5.8.3",
+    "zod": "4.0.5"
+  },
+  "volta": {
+    "node": "22.17.0"
+  }
+}

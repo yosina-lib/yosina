@@ -1,0 +1,100 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'com.diffplug.spotless' version '6.25.0'
+}
+
+group = 'io.yosina'
+version = '0.1.0'
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    annotationProcessor project('codegen')
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.4'
+}
+
+spotless {
+    java {
+        target 'src/**/*.java', 'codegen/src/**/*.java'
+        googleJavaFormat('1.22.0').aosp().reflowLongStrings()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+        formatAnnotations()
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Yosina'
+                artifactId = 'yosina'
+                description = 'Java implementation of the Yosina Japanese text transliteration library'
+                url = 'https://github.com/yosina-lib/yosina'
+                
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                
+                developers {
+                    developer {
+                        id = 'moriyoshi'
+                        name = 'Moriyoshi Koizumi'
+                        email = 'mozo@mozo.jp'
+                    }
+                }
+                
+                scm {
+                    connection = 'scm:git:git://github.com/yosina-lib/yosina.git'
+                    developerConnection = 'scm:git:ssh://github.com/yosina-lib/yosina.git'
+                    url = 'https://github.com/yosina-lib/yosina'
+                }
+            }
+        }
+    }
+    
+    repositories {
+        maven {
+            name = 'MavenCentral'
+            url = 'https://central.sonatype.com/api/v1/publisher/upload'
+            credentials {
+                username = project.findProperty("mavenCentralUsername") ?: ""
+                password = project.findProperty("mavenCentralPassword") ?: ""
+            }
+        }
+    }
+}
+
+signing {
+    def signingKey = project.findProperty("signingKey")
+    def signingPassword = project.findProperty("signingPassword")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.maven
+}

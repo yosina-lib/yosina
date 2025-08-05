@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "moduleResolution": "classic",
+    "outDir": "./dist/cjs"
+  },
+  "exclude": [
+    "./codegen/**/*.ts",
+    "./src/**/__tests__/*.ts"
+  ]
+}

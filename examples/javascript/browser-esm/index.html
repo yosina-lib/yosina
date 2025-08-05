@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style typE="text/css">
+    @import url('https://fonts.googleapis.com/css2?family=Kosugi&family=Noto+Sans+JP:wght@400&display=swap');
+
+    .font-noto-sans-jp {
+      font-family: "Noto Sans JP", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .side-by-side {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+    }
+
+    .side-by-side>* {
+      flex: 1;
+    }
+
+    .recipe-json {
+      border: 1px solid #ccc;
+      padding: 8px;
+      white-space: pre;
+      font-family: monospace;
+      box-sizing: border-box;
+    }
+
+    .font-kosugi {
+      font-family: "Kosugi", serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .form .stacked label {
+      display: block;
+    }
+
+    .form textarea {
+      width: 100%;
+      height: 10em;
+      font-size: 30px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    .form #out-text {
+      height: 10em;
+      border: 1px solid #ccc;
+      font-size: 30px;
+      box-sizing: border-box;
+    }
+
+    .option {
+      margin-left: 1em;
+    }
+  </style>
+</head>
+
+<body>
+  <form class="form" name="form">
+    <div class="stacked">
+      <div class="side-by-side">
+        <div class="in">
+          <label for="in-text">Input:</label>
+          <select name="in-font-family">
+            <option value="noto-sans-jp">Noto Sans JP</option>
+            <option value="kosugi">Kosugi</option>
+          </select>
+          <textarea id="in-text" name="text" placeholder="Type text..."></textarea>
+        </div>
+        <div class="out">
+          <label for="out-text">Output:</label>
+          <select name="out-font-family">
+            <option value="noto-sans-jp">Noto Sans JP</option>
+            <option value="kosugi">Kosugi</option>
+          </select>
+          <div id="out-text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="side-by-side">
+      <fieldset>
+        <legend>Recipe</legend>
+        <div>
+          <label><input type="checkbox" name="recipe" value="toHalfwidth">Full-width to half-width (全角を半角へ)</label>
+          <div class="option">
+            <label><input type="checkbox" name="recipe" value="toHalfwidth-hankaku-kana">Also replace halfwidth
+              katakanas (半角カタカナも対象に含める)</label>
+          </div>
+        </div>
+        <div>
+          <div>
+            <label>
+              <input type="checkbox" name="recipe" value="toFullwidth">
+              Half-width to full-width (半角を全角へ)
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="checkbox" name="recipe" value="toFullwidth-u005c-as-yen-sign">
+              Also replace U+005C (backslashes) to full-width yen signs (U+005C (バックスラッシュ) を全角の円記号に置き換える)
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="combineDecomposedHiraganasAndKatakanas">
+            Combine decomposed hiraganas and katakanas into single equivalents (句読点が分離して記述されているひらがなまたはカタカナを1文字に変換)
+          </label>
+        </div>
+        <div>
+          <div>
+            <label>
+              <input type="checkbox" name="recipe" value="removeIVSSVS">
+              Replace CJK ideographs followed by IVSes
+              and SVSes with those without selectors based on Adobe-Japan1 character mappings
+              (Adobe-Japan1 文字マップに基づきIVSまたはSVSを伴う日本語のCJK統合漢字をセレクタがないものに置換)
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="checkbox" name="recipe" value="removeIVSSVS-drop-all-selectors">
+              Finally remove selectors altogether (最終的にすべての異体字セレクタを削除する)
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="replaceHyphens">
+            Replace various dash or hyphen symbols with those common in Japanese writing
+            (さまざまなダッシュやハイフン記号を日本語の記述でよく使われるものに置換)
+          </label>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="replaceIdeographicAnnotations">
+            Replace ideographic annotations (漢文訓読で用いられる返り点の文字を通常の漢字に変更)
+          </label>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="replaceRadicals">
+            Replace CJK radicals
+            (漢字の部首を表す文字を通常の漢字に変換)
+          </label>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="replaceMathematicalAlphanumerics">
+            Replace various mathematical alphanumeric symbols with their plain counterparts (数学で用いられる英数字記号を通常の英数字に置き換える)
+          </label>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="replaceSpaces">
+            Replace various spaces with U+0020s or remove them (スペース類をU~0020または削除)
+          </label>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="replaceSuspiciousHyphensToProlongedSoundMarks">
+            Replace suspicious hyphens with prolonged sound marks, and vice versa (怪しいハイフンを長音記号に変換、またはその逆)
+          </label>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="kanjiOldNew">
+            Replace codepoints that correspond to old-style kanji glyphs with their modern equivalents (旧字体を新字体に変更)
+          </label>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="replaceCombinedCharacters">
+            Replace combined characters with their corresponding characters (複合文字を対応する文字に置換)
+          </label>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="recipe" value="replaceJapaneseIterationMarks">
+            Expand Japanese iteration marks (踊り字を展開)
+          </label>
+        </div>
+        <div>
+          <div>
+            <label>
+              <input type="checkbox" name="recipe" value="hiraKata">
+              Hiragana/Katakana conversion (ひらがな・カタカナ変換)
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="radio" name="hiraKataMode" value="hira-to-kata" checked>
+              Hiragana to Katakana (ひらがな → カタカナ)
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="radio" name="hiraKataMode" value="kata-to-hira">
+              Katakana to Hiragana (カタカナ → ひらがな)
+            </label>
+          </div>
+        </div>
+        <div>
+          <div>
+            <label>
+              <input type="checkbox" name="recipe" value="replaceCircledOrSquaredCharacters">
+              Replace circled or squared characters with their corresponding templates (丸付きまたは角付きの文字をテンプレートに置換)
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="checkbox" name="recipe" value="replaceCircledOrSquaredCharacters-exclude-emojis">
+              Exclude emoji characters from replacement (絵文字文字を置換対象から除外)
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div class="recipe-json">
+      </div>
+    </div>
+  </form>
+  <script type="module">
+    import { makeTransliterator } from './yosina/index.js';
+    const unescapeUnicodes = (v) => v.replace(
+      /\\u([0-9a-fA-F]{4}|\{[0-9a-fA-f]{1,6}\})/,
+      (_, m) => m[0] === '{' ?
+        String.fromCodePoint(parseInt(m.slice(1, -1), 16)) :
+        String.fromCharCode(parseInt(m, 16))
+    );
+    const steps = {
+      'toHalfwidth': {
+        exclusiveWith: ['toFullwidth'],
+        options: {
+          'toHalfwidth-hankaku-kana': (nv, ov) => nv && ov ? 'hankaku-kana' : nv,
+        }
+      },
+      'toFullwidth': {
+        exclusiveWith: ['toHalfwidth'],
+        options: {
+          'toFullwidth-u005c-as-yen-sign': (nv, ov) => nv && ov ? 'u005c-as-yen-sign' : nv
+        }
+      },
+      'combineDecomposedHiraganasAndKatakanas': {},
+      'removeIVSSVS': {
+        options: {
+          'removeIVSSVS-drop-all-selectors': (nv, ov) => nv && ov ? 'drop-all-selectors' : nv
+        }
+      },
+      'replaceHyphens': {},
+      'replaceIdeographicAnnotations': {},
+      'replaceRadicals': {},
+      'replaceMathematicalAlphanumerics': {},
+      'replaceSpaces': {},
+      'replaceSuspiciousHyphensToProlongedSoundMarks': {},
+      'kanjiOldNew': {},
+      'replaceCombinedCharacters': {},
+      'replaceJapaneseIterationMarks': {},
+      'hiraKata': {},
+      'replaceCircledOrSquaredCharacters': {
+        options: {
+          'replaceCircledOrSquaredCharacters-exclude-emojis': (nv, ov) => nv && ov ? 'exclude-emojis' : nv
+        }
+      },
+    };
+    const stepsOptions = {
+      'toHalfwidth': {
+      },
+    };
+    ((form) => {
+      let tl = (text) => text;
+
+      const { setFontFamilyForOut, setOut } = ((el) => ({
+        setFontFamilyForOut: (family) => {
+          const classes = el.classList;
+          classes.remove(...classes.values().filter((v) => v !== 'out'));
+          classes.add(`font-${family}`);
+        },
+        setOut: (text) => {
+          el.innerText = text;
+        }
+      }))(form.querySelector('#out-text'));
+
+      const { doApplyFontFamilyForOut } = ((el) => {
+        const doApplyFontFamilyForOut = () => void (setFontFamilyForOut(el.value));
+        el.addEventListener('change', () => doApplyFontFamilyForOut());
+        doApplyFontFamilyForOut();
+        return { doApplyFontFamilyForOut };
+      })(form.elements['out-font-family']);
+
+      const { setFontFamilyForIn } = ((el) => ({
+        setFontFamilyForIn: (family) => {
+          const classes = el.classList;
+          classes.remove(...classes.values());
+          classes.add(`font-${family}`);
+        },
+      }))(form.elements['text']);
+
+      const { doApplyFontFamilyForIn } = ((el) => {
+        const doApplyFontFamilyForIn = () => void (setFontFamilyForIn(el.value));
+        el.addEventListener('change', () => doApplyFontFamilyForIn());
+        doApplyFontFamilyForIn();
+        return { doApplyFontFamilyForIn };
+      })(form.elements['in-font-family']);
+
+      const { doConvert } = ((el) => {
+        const getIn = () => el.value;
+        const doConvert = () => {
+          setOut(tl(unescapeUnicodes(getIn())));
+        };
+        el.addEventListener('input', () => doConvert());
+        return { doConvert };
+      })(form.elements['text']);
+
+      ((els, elRecipeJson) => {
+        const checkboxes = (() => {
+          const retval = {};
+          for (const el of els) {
+            retval[el.value] = el;
+          }
+          return retval;
+        })();
+        let recipe = {};
+        const setRecipe = async () => {
+          const newRecipe = {};
+          const resetSteps = [];
+          for (const [step, props] of Object.entries(steps)) {
+            let newValue = checkboxes[step].checked;
+            if (Boolean(recipe[step]) !== newValue && newValue) {
+              resetSteps.push(...(props.exclusiveWith ?? []));
+            }
+            if (props.options !== undefined) {
+              for (const [option, modifier] of Object.entries(props.options)) {
+                checkboxes[option].disabled = !newValue;
+                newValue = modifier(newValue, checkboxes[option].checked);
+              }
+            }
+            // Special handling for hiraKata to get the mode from radio buttons
+            if (step === 'hiraKata') {
+              const hiraKataMode = form.elements['hiraKataMode'];
+              for (const radio of hiraKataMode) {
+                radio.disabled = !newValue;
+              }
+              newValue = newValue && hiraKataMode.value;
+            }
+            if (newValue) {
+              newRecipe[step] = newValue;
+            }
+          }
+          for (const step of resetSteps) {
+            delete newRecipe[step];
+            checkboxes[step].checked = false;
+            const props = steps[step];
+            if (props.options !== undefined) {
+              for (const option of Object.keys(props.options)) {
+                checkboxes[option].disabled = true;
+              }
+            }
+          }
+          recipe = newRecipe;
+          elRecipeJson.innerText = JSON.stringify(recipe, null, 2);
+          try {
+            tl = await makeTransliterator(recipe);
+          } catch (e) {
+            tl = (v) => v;
+          }
+          doConvert();
+        };
+        for (const el of els) {
+          el.addEventListener('change', () => setRecipe());
+        }
+        setRecipe();
+      })(form.elements['recipe'], form.getElementsByClassName('recipe-json')[0]);
+    })(
+      document.forms['form'],
+    );
+  </script>
+</body>
+</html>

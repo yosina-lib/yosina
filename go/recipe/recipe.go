@@ -1,0 +1,455 @@
+package recipe
+
+import (
+	"errors"
+	"strings"
+
+	"github.com/yosina-lib/yosina/go/transliterators/hira_kata_composition"
+	"github.com/yosina-lib/yosina/go/transliterators/hyphens"
+	"github.com/yosina-lib/yosina/go/transliterators/ivs_svs_base"
+	"github.com/yosina-lib/yosina/go/transliterators/jisx0201_and_alike"
+	"github.com/yosina-lib/yosina/go/transliterators/prolonged_sound_marks"
+)
+
+// TransliteratorConfig represents a configuration for a transliterator
+type TransliteratorConfig struct {
+	Name    string
+	Options interface{} // Will hold specific option structs for each transliterator
+}
+
+// TransliterationRecipeOptionValue is an enum for transliterator recipe options
+type TransliterationRecipeOptionValue int
+
+const (
+	No TransliterationRecipeOptionValue = iota
+	Yes
+	U005cAsYenSign
+	HankakuKana
+	DropAllSelectors
+	ExcludeEmojis
+)
+
+// ReplaceHyphensOption represents hyphen replacement options
+type ReplaceHyphensOption struct {
+	Enabled    bool
+	Precedence []string
+}
+
+// NewReplaceHyphensOption creates a ReplaceHyphensOption with default precedence
+func NewReplaceHyphensOption(enabled bool) ReplaceHyphensOption {
+	if !enabled {
+		return ReplaceHyphensOption{Enabled: false}
+	}
+	return ReplaceHyphensOption{
+		Enabled:    true,
+		Precedence: []string{"jisx0208_90_windows", "jisx0201"},
+	}
+}
+
+// TransliterationRecipe provides a high-level interface for configuring transliterators
+type TransliterationRecipe struct {
+	// KanjiOldNew replaces old-style kanji glyphs (旧字体) with modern equivalents (新字体)
+	// Example:
+	//   Input:  "舊字體の變換"
+	//   Output: "旧字体の変換"
+	KanjiOldNew bool
+
+	// HiraKata converts between hiragana and katakana scripts
+	// Values: "hira-to-kata", "kata-to-hira", or empty string (disabled)
+	// Example:
+	//   Input:  "ひらがな" (with "hira-to-kata")
+	//   Output: "ヒラガナ"
+	//   Input:  "カタカナ" (with "kata-to-hira")
+	//   Output: "かたかな"
+	HiraKata string
+
+	// ReplaceJapaneseIterationMarks replaces Japanese iteration marks with the characters they represent
+	// Example:
+	//   Input:  "時々"
+	//   Output: "時時"
+	//   Input:  "いすゞ"
+	//   Output: "いすず"
+	ReplaceJapaneseIterationMarks bool
+
+	// ReplaceSuspiciousHyphensToProlongedSoundMarks replaces "suspicious" hyphens with prolonged sound marks
+	// Example:
+	//   Input:  "スーパ-" (with hyphen-minus)
+	//   Output: "スーパー" (becomes prolonged sound mark)
+	ReplaceSuspiciousHyphensToProlongedSoundMarks bool
+
+	// ReplaceCombinedCharacters replaces combined characters with their corresponding characters
+	// Example:
+	//   Input:  "㍻" (single character for Heisei era)
+	//   Output: "平成"
+	//   Input:  "㈱"
+	//   Output: "(株)"
+	ReplaceCombinedCharacters bool
+
+	// ReplaceCircledOrSquaredCharacters replaces circled or squared characters with templates
+	// Example:
+	//   Input:  "①②③"
+	//   Output: "(1)(2)(3)"
+	//   Input:  "㊙㊗"
+	//   Output: "(秘)(祝)"
+	ReplaceCircledOrSquaredCharacters TransliterationRecipeOptionValue
+
+	// ReplaceIdeographicAnnotations replaces ideographic annotations used in traditional Chinese-to-Japanese translation
+	// Example:
+	//   Input:  "㆖㆘" (ideographic annotations)
+	//   Output: "上下"
+	ReplaceIdeographicAnnotations bool
+
+	// ReplaceRadicals replaces Kangxi radicals with CJK ideograph counterparts
+	// Example:
+	//   Input:  "⾔⾨⾷" (Kangxi radicals)
+	//   Output: "言門食" (CJK ideographs)
+	ReplaceRadicals bool
+
+	// ReplaceSpaces replaces various space characters with plain whitespaces
+	// Example:
+	//   Input:  "A　B" (ideographic space U+3000)
+	//   Output: "A B" (half-width space)
+	//   Input:  "A B" (non-breaking space U+00A0)
+	//   Output: "A B" (regular space)
+	ReplaceSpaces bool
+
+	// ReplaceHyphens replaces various dash or hyphen symbols
+	// Example:
+	//   Input:  "2019—2020" (em dash)
+	//   Output: "2019-2020" (hyphen-minus)
+	//   Input:  "A–B" (en dash)
+	//   Output: "A-B"
+	ReplaceHyphens ReplaceHyphensOption
+
+	// ReplaceMathematicalAlphanumerics replaces mathematical alphanumerics with ASCII equivalents
+	// Example:
+	//   Input:  "𝐀𝐁𝐂" (mathematical bold)
+	//   Output: "ABC"
+	//   Input:  "𝟏𝟐𝟑" (mathematical bold digits)
+	//   Output: "123"
+	ReplaceMathematicalAlphanumerics bool
+
+	// CombineDecomposedHiraganasAndKatakanas combines decomposed hiraganas and katakanas
+	// Example:
+	//   Input:  "が" (か + ゙)
+	//   Output: "が" (single character)
+	//   Input:  "ヘ゜" (ヘ + ゜)
+	//   Output: "ペ" (single character)
+	CombineDecomposedHiraganasAndKatakanas bool
+
+	// ToFullwidth replaces half-width characters with fullwidth equivalents
+	// Can be bool or "u005c-as-yen-sign"
+	// Example:
+	//   Input:  "ABC123"
+	//   Output: "ＡＢＣ１２３"
+	//   Input:  "ｶﾀｶﾅ"
+	//   Output: "カタカナ"
+	ToFullwidth TransliterationRecipeOptionValue
+
+	// ToHalfwidth replaces full-width characters with half-width equivalents
+	// Can be bool or "hankaku-kana"
+	// Example:
+	//   Input:  "ＡＢＣ１２３"
+	//   Output: "ABC123"
+	//   Input:  "カタカナ" (with hankaku-kana)
+	//   Output: "ｶﾀｶﾅ"
+	ToHalfwidth TransliterationRecipeOptionValue
+
+	// RemoveIVSSVS replaces CJK ideographs with IVS/SVS with those without selectors
+	// Can be bool or "drop-all-selectors"
+	// Example:
+	//   Input:  "葛󠄀" (葛 + IVS U+E0100)
+	//   Output: "葛" (without selector)
+	//   Input:  "辻󠄀" (辻 + IVS)
+	//   Output: "辻"
+	RemoveIVSSVS TransliterationRecipeOptionValue
+
+	// Charset for IVS/SVS transliteration (default: "unijis_2004")
+	Charset string
+}
+
+// NewTransliterationRecipe creates a new TransliterationRecipe with default values
+func NewTransliterationRecipe() *TransliterationRecipe {
+	return &TransliterationRecipe{
+		Charset: "unijis_2004",
+	}
+}
+
+// transliteratorConfigListBuilder helps build the transliterator configuration list
+type transliteratorConfigListBuilder struct {
+	head []TransliteratorConfig
+	tail []TransliteratorConfig
+}
+
+// insertHead inserts a config at the head of the chain
+func (b *transliteratorConfigListBuilder) insertHead(config TransliteratorConfig, forceReplace bool) {
+	for i, c := range b.head {
+		if c.Name == config.Name {
+			if forceReplace {
+				b.head[i] = config
+			}
+			return
+		}
+	}
+	b.head = append([]TransliteratorConfig{config}, b.head...)
+}
+
+// insertMiddle inserts a config in the middle (tail list, at beginning)
+func (b *transliteratorConfigListBuilder) insertMiddle(config TransliteratorConfig, forceReplace bool) {
+	for i, c := range b.tail {
+		if c.Name == config.Name {
+			if forceReplace {
+				b.tail[i] = config
+			}
+			return
+		}
+	}
+	b.tail = append([]TransliteratorConfig{config}, b.tail...)
+}
+
+// insertTail inserts a config at the tail of the chain
+func (b *transliteratorConfigListBuilder) insertTail(config TransliteratorConfig, forceReplace bool) {
+	for i, c := range b.tail {
+		if c.Name == config.Name {
+			if forceReplace {
+				b.tail[i] = config
+			}
+			return
+		}
+	}
+	b.tail = append(b.tail, config)
+}
+
+// build returns the final configuration list
+func (b *transliteratorConfigListBuilder) build() []TransliteratorConfig {
+	result := make([]TransliteratorConfig, 0, len(b.head)+len(b.tail))
+	result = append(result, b.head...)
+	result = append(result, b.tail...)
+	return result
+}
+
+// removeIVSSVSHelper adds IVS/SVS removal configurations
+func (r *TransliterationRecipe) removeIVSSVSHelper(ctx *transliteratorConfigListBuilder, dropAllSelectors bool) {
+	// Parse charset
+	var charset ivs_svs_base.Charset
+	switch r.Charset {
+	case "unijis_90":
+		charset = ivs_svs_base.CharsetUnijis90
+	default:
+		charset = ivs_svs_base.CharsetUnijis2004
+	}
+
+	// First insert IVS-or-SVS mode at head
+	ctx.insertHead(TransliteratorConfig{
+		Name: "ivs-svs-base",
+		Options: &ivs_svs_base.Options{
+			Mode:    ivs_svs_base.ModeIvsOrSvs,
+			Charset: charset,
+		},
+	}, true)
+
+	// Then insert base mode at tail
+	ctx.insertTail(TransliteratorConfig{
+		Name: "ivs-svs-base",
+		Options: &ivs_svs_base.Options{
+			Mode:                    ivs_svs_base.ModeBase,
+			DropSelectorsAltogether: dropAllSelectors,
+			Charset:                 charset,
+		},
+	}, true)
+}
+
+// BuildTransliteratorConfigs builds transliterator configurations from this recipe
+func (r *TransliterationRecipe) BuildTransliteratorConfigs() ([]TransliteratorConfig, error) {
+	// Check for mutually exclusive options
+	var errorList []string
+	if (r.ToFullwidth == Yes || r.ToFullwidth == U005cAsYenSign) &&
+		(r.ToHalfwidth == Yes || r.ToHalfwidth == HankakuKana) {
+		errorList = append(errorList, "toFullwidth and toHalfwidth are mutually exclusive")
+	}
+
+	if len(errorList) > 0 {
+		return nil, errors.New(strings.Join(errorList, "; "))
+	}
+
+	ctx := &transliteratorConfigListBuilder{}
+
+	// Apply transformations in the specified order
+	r.applyKanjiOldNew(ctx)
+	r.applyReplaceSuspiciousHyphensToProlongedSoundMarks(ctx)
+	r.applyReplaceCircledOrSquaredCharacters(ctx)
+	r.applyReplaceCombinedCharacters(ctx)
+	r.applyReplaceIdeographicAnnotations(ctx)
+	r.applyReplaceRadicals(ctx)
+	r.applyReplaceSpaces(ctx)
+	r.applyReplaceHyphens(ctx)
+	r.applyReplaceMathematicalAlphanumerics(ctx)
+	r.applyCombineDecomposedHiraganasAndKatakanas(ctx)
+	r.applyToFullwidth(ctx)
+	r.applyHiraKata(ctx)
+	r.applyReplaceJapaneseIterationMarks(ctx)
+	r.applyToHalfwidth(ctx)
+	r.applyRemoveIVSSVS(ctx)
+
+	return ctx.build(), nil
+}
+
+func (r *TransliterationRecipe) applyKanjiOldNew(ctx *transliteratorConfigListBuilder) {
+	if r.KanjiOldNew {
+		r.removeIVSSVSHelper(ctx, false)
+		ctx.insertMiddle(TransliteratorConfig{Name: "kanji-old-new"}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyHiraKata(ctx *transliteratorConfigListBuilder) {
+	if r.HiraKata != "" {
+		ctx.insertMiddle(TransliteratorConfig{
+			Name: "hira-kata",
+			Options: map[string]interface{}{
+				"mode": r.HiraKata,
+			},
+		}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceJapaneseIterationMarks(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceJapaneseIterationMarks {
+		// Insert HiraKataComposition at head to ensure composed forms
+		ctx.insertHead(TransliteratorConfig{
+			Name: "hira-kata-composition",
+			Options: &hira_kata_composition.Options{
+				ComposeNonCombiningMarks: true,
+			},
+		}, false)
+		// Then insert the japanese-iteration-marks in the middle
+		ctx.insertMiddle(TransliteratorConfig{Name: "japanese-iteration-marks"}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceSuspiciousHyphensToProlongedSoundMarks(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceSuspiciousHyphensToProlongedSoundMarks {
+		ctx.insertMiddle(TransliteratorConfig{
+			Name: "prolonged-sound-marks",
+			Options: &prolonged_sound_marks.Options{
+				ReplaceProlongedMarksFollowingAlnums: true,
+			},
+		}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceCombinedCharacters(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceCombinedCharacters {
+		ctx.insertMiddle(TransliteratorConfig{Name: "combined"}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceCircledOrSquaredCharacters(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceCircledOrSquaredCharacters == Yes || r.ReplaceCircledOrSquaredCharacters == ExcludeEmojis {
+		includeEmojis := r.ReplaceCircledOrSquaredCharacters != ExcludeEmojis
+		ctx.insertMiddle(TransliteratorConfig{
+			Name: "circled-or-squared",
+			Options: map[string]interface{}{
+				"includeEmojis": includeEmojis,
+			},
+		}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceIdeographicAnnotations(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceIdeographicAnnotations {
+		ctx.insertMiddle(TransliteratorConfig{Name: "ideographic-annotations"}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceRadicals(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceRadicals {
+		ctx.insertMiddle(TransliteratorConfig{Name: "radicals"}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceSpaces(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceSpaces {
+		ctx.insertMiddle(TransliteratorConfig{Name: "spaces"}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceHyphens(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceHyphens.Enabled {
+		// Convert string precedence to Mapping enum values
+		var precedence []hyphens.Mapping
+		for _, p := range r.ReplaceHyphens.Precedence {
+			switch p {
+			case "ascii":
+				precedence = append(precedence, hyphens.ASCII)
+			case "jisx0201":
+				precedence = append(precedence, hyphens.Jisx0201)
+			case "jisx0208_90":
+				precedence = append(precedence, hyphens.Jisx0208_90)
+			case "jisx0208_90_windows":
+				precedence = append(precedence, hyphens.Jisx0208_90_Windows)
+			case "jisx0208_verbatim":
+				precedence = append(precedence, hyphens.Jisx0208_Verbatim)
+			}
+		}
+
+		ctx.insertMiddle(TransliteratorConfig{
+			Name: "hyphens",
+			Options: &hyphens.Options{
+				Precedence: precedence,
+			},
+		}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceMathematicalAlphanumerics(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceMathematicalAlphanumerics {
+		ctx.insertMiddle(TransliteratorConfig{Name: "mathematical-alphanumerics"}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyCombineDecomposedHiraganasAndKatakanas(ctx *transliteratorConfigListBuilder) {
+	if r.CombineDecomposedHiraganasAndKatakanas {
+		ctx.insertHead(TransliteratorConfig{
+			Name: "hira-kata-composition",
+			Options: &hira_kata_composition.Options{
+				ComposeNonCombiningMarks: true,
+			},
+		}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyToFullwidth(ctx *transliteratorConfigListBuilder) {
+	if r.ToFullwidth == Yes || r.ToFullwidth == U005cAsYenSign {
+		u005cAsYenSign := r.ToFullwidth == U005cAsYenSign
+		ctx.insertTail(TransliteratorConfig{
+			Name: "jisx0201-and-alike",
+			Options: &jisx0201_and_alike.Options{
+				FullwidthToHalfwidth: false,
+				ConvertGL:            true,
+				ConvertGR:            true,
+				U005cAsYenSign:       jisx0201_and_alike.TernaryOf(u005cAsYenSign),
+			},
+		}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyToHalfwidth(ctx *transliteratorConfigListBuilder) {
+	if r.ToHalfwidth == Yes || r.ToHalfwidth == HankakuKana {
+		convertGR := r.ToHalfwidth == HankakuKana
+		ctx.insertTail(TransliteratorConfig{
+			Name: "jisx0201-and-alike",
+			Options: &jisx0201_and_alike.Options{
+				FullwidthToHalfwidth: true,
+				ConvertGL:            true,
+				ConvertGR:            convertGR,
+			},
+		}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyRemoveIVSSVS(ctx *transliteratorConfigListBuilder) {
+	if r.RemoveIVSSVS == Yes || r.RemoveIVSSVS == DropAllSelectors {
+		dropAllSelectors := r.RemoveIVSSVS == DropAllSelectors
+		r.removeIVSSVSHelper(ctx, dropAllSelectors)
+	}
+}

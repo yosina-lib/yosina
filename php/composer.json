@@ -1,0 +1,46 @@
+{
+    "name": "yosina-lib/yosina",
+    "description": "Japanese text transliteration library for PHP",
+    "version": "0.1.0",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Moriyoshi Koizumi",
+            "email": "mozo@mozo.jp"
+        }
+    ],
+    "homepage": "https://yosina.io/",
+    "require": {
+        "php": ">=8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "phpstan/phpstan": "^1.10",
+        "friendsofphp/php-cs-fixer": "^3.13",
+        "phpdocumentor/phpdocumentor": "^3.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yosina\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Yosina\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse src tests --level=max --memory-limit=1024m",
+        "cs-fix": "php-cs-fixer fix",
+        "cs-check": "php-cs-fixer fix --dry-run --diff",
+        "docs": "phpdoc -d src -t docs"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    }
+}

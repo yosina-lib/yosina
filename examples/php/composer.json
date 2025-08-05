@@ -1,0 +1,42 @@
+{
+    "name": "yosina-lib/examples",
+    "description": "Example applications for the Yosina PHP library",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Moriyoshi Koizumi",
+            "email": "mozo@mozo.jp"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "yosina-lib/yosina": "dev-main"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../php"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "YosinaExamples\\": "src/"
+        }
+    },
+    "scripts": {
+        "example:basic": "php src/basic_usage.php",
+        "example:config": "php src/config_based_usage.php",
+        "example:advanced": "php src/advanced_usage.php",
+        "examples": [
+            "@example:basic",
+            "@example:config",
+            "@example:advanced"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

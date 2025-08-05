@@ -1,0 +1,5 @@
+rootProject.name = 'yosina-java'
+
+include 'codegen'
+include ':examples'
+project(':examples').projectDir = new File(settingsDir, 'examples')

@@ -1,0 +1,21 @@
+[package]
+name = "yosina-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.yosina]
+path = ".."
+
+[[bin]]
+name = "fuzz-char"
+path = "fuzz_targets/char.rs"
+test = false
+doc = false
+bench = false

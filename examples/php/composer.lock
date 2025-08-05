@@ -1,0 +1,78 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "9c959aec84eac2f57b59a736ca4a50bd",
+    "packages": [
+        {
+            "name": "yosina/yosina",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../../php",
+                "reference": "16f4e43baa160f5c8efea6967a302d782fcf6711"
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.13",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^10.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Yosina\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Yosina\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ],
+                "analyse": [
+                    "phpstan analyse src tests --level=max --memory-limit=1024m"
+                ],
+                "cs-fix": [
+                    "php-cs-fixer fix"
+                ],
+                "cs-check": [
+                    "php-cs-fixer fix --dry-run --diff"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Moriyoshi Koizumi",
+                    "email": "mozo@mozo.jp"
+                }
+            ],
+            "description": "Japanese text transliteration library for PHP",
+            "transport-options": {
+                "relative": true
+            }
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "yosina/yosina": 20
+    },
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.1"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
