@@ -12,7 +12,7 @@ Yosinaは以下のパッケージリポジトリから入手できます：
 | Java | [Maven Central](https://central.sonatype.com/artifact/io.yosina/yosina-java) | [クイックスタート](#java)を参照 |
 | Ruby | [RubyGems](https://rubygems.org/gems/yosina) | `gem install yosina` |
 | Go | [Go Packages](https://pkg.go.dev/github.com/yosina-lib/yosina/go) | `go get github.com/yosina-lib/yosina/go` |
-| PHP | [Packagist](https://packagist.org/packages/yosina/yosina) | `composer require yosina-lib/yosina` |
+| PHP | [Packagist](https://packagist.org/packages/yosina-lib/yosina) | `composer require yosina-lib/yosina` |
 | C# (.NET) | [NuGet](https://www.nuget.org/packages/Yosina) | `dotnet add package Yosina` |
 | Dart | [pub.dev](https://pub.dev/packages/yosina) | `dart pub add yosina` |
 | Swift | Swift Package Manager | [クイックスタート](#swift)を参照 |
