@@ -55,14 +55,14 @@ publishing {
                 artifactId = 'yosina'
                 description = 'Java implementation of the Yosina Japanese text transliteration library'
                 url = 'https://github.com/yosina-lib/yosina'
-                
+
                 licenses {
                     license {
                         name = 'MIT License'
                         url = 'https://opensource.org/licenses/MIT'
                     }
                 }
-                
+
                 developers {
                     developer {
                         id = 'moriyoshi'
@@ -70,7 +70,7 @@ publishing {
                         email = 'mozo@mozo.jp'
                     }
                 }
-                
+
                 scm {
                     connection = 'scm:git:git://github.com/yosina-lib/yosina.git'
                     developerConnection = 'scm:git:ssh://github.com/yosina-lib/yosina.git'
@@ -79,7 +79,7 @@ publishing {
             }
         }
     }
-    
+
     repositories {
         maven {
             name = 'MavenCentral'
@@ -93,8 +93,6 @@ publishing {
 }
 
 signing {
-    def signingKey = project.findProperty("signingKey")
-    def signingPassword = project.findProperty("signingPassword")
-    useInMemoryPgpKeys(signingKey, signingPassword)
+    useGpgCmd()
     sign publishing.publications.maven
 }
