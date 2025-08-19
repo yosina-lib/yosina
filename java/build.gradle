@@ -1,6 +1,9 @@
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
+
 plugins {
     id 'java-library'
-    id 'maven-publish'
+    id "com.vanniktech.maven.publish" version "0.34.0"
     id 'signing'
     id 'com.diffplug.spotless' version '6.25.0'
 }
@@ -45,49 +48,37 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
 
-            pom {
-                name = 'Yosina'
-                artifactId = 'yosina'
-                description = 'Java implementation of the Yosina Japanese text transliteration library'
-                url = 'https://github.com/yosina-lib/yosina'
+    coordinates("io.yosina", "yosina", "0.1.0")
+    configure(new JavaLibrary(new JavadocJar.None(), true))
 
-                licenses {
-                    license {
-                        name = 'MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
-                    }
-                }
+    pom {
+        name = 'Yosina'
+        description = 'Java implementation of the Yosina Japanese text transliteration library'
+        url = 'https://github.com/yosina-lib/yosina'
 
-                developers {
-                    developer {
-                        id = 'moriyoshi'
-                        name = 'Moriyoshi Koizumi'
-                        email = 'mozo@mozo.jp'
-                    }
-                }
-
-                scm {
-                    connection = 'scm:git:git://github.com/yosina-lib/yosina.git'
-                    developerConnection = 'scm:git:ssh://github.com/yosina-lib/yosina.git'
-                    url = 'https://github.com/yosina-lib/yosina'
-                }
+        licenses {
+            license {
+                name = 'MIT License'
+                url = 'https://opensource.org/licenses/MIT'
             }
         }
-    }
 
-    repositories {
-        maven {
-            name = 'MavenCentral'
-            url = 'https://central.sonatype.com/api/v1/publisher/upload'
-            credentials {
-                username = project.findProperty("mavenCentralUsername") ?: ""
-                password = project.findProperty("mavenCentralPassword") ?: ""
+        developers {
+            developer {
+                id = 'moriyoshi'
+                name = 'Moriyoshi Koizumi'
+                email = 'mozo@mozo.jp'
             }
+        }
+
+        scm {
+            connection = 'scm:git:git://github.com/yosina-lib/yosina.git'
+            developerConnection = 'scm:git:ssh://github.com/yosina-lib/yosina.git'
+            url = 'https://github.com/yosina-lib/yosina'
         }
     }
 }
