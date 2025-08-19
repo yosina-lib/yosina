@@ -14,3 +14,4 @@ vendor/
 
 # Bundler lockfile
 Gemfile.lock
+*.gem
