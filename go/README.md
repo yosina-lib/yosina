@@ -238,7 +238,7 @@ Normalizes various Unicode space characters to standard ASCII space.
 Some transliterators are generated from data files:
 
 ```bash
-go run cmd/codegen/main.go
+go run internal/codegen/main.go
 ```
 
 This generates transliterators from the JSON data files in the `../data` directory.

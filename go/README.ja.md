@@ -238,7 +238,7 @@ CJK部首文字を対応する表意文字に変換します。
 一部のトランスリテレータはデータファイルから生成されます：
 
 ```bash
-go run cmd/codegen/main.go
+go run internal/codegen/main.go
 ```
 
 これにより、`../data`ディレクトリのJSONデータファイルからトランスリテレータが生成されます。
