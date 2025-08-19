@@ -9,7 +9,7 @@ Yosinaは以下のパッケージリポジトリから入手できます：
 | JavaScript/TypeScript | [npm](https://www.npmjs.com/package/@yosina-lib/yosina) | `npm install @yosina-lib/yosina` |
 | Python | [PyPI](https://pypi.org/project/yosina/) | `pip install yosina` |
 | Rust | [crates.io](https://crates.io/crates/yosina) | `cargo add yosina` |
-| Java | [Maven Central](https://central.sonatype.com/artifact/io.yosina/yosina-java) | [クイックスタート](#java)を参照 |
+| Java | [Maven Central](https://central.sonatype.com/artifact/io.yosina/yosina) | [クイックスタート](#java)を参照 |
 | Ruby | [RubyGems](https://rubygems.org/gems/yosina) | `gem install yosina` |
 | Go | [Go Packages](https://pkg.go.dev/github.com/yosina-lib/yosina/go) | `go get github.com/yosina-lib/yosina/go` |
 | PHP | [Packagist](https://packagist.org/packages/yosina-lib/yosina) | `composer require yosina-lib/yosina` |
