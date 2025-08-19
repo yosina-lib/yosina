@@ -1,5 +1,22 @@
 # Yosinaプロジェクト
 
+## パッケージリポジトリ
+
+Yosinaは以下のパッケージリポジトリから入手できます：
+
+| 言語 | パッケージリポジトリ | インストールコマンド |
+|-----|-------------------|------------------|
+| JavaScript/TypeScript | [npm](https://www.npmjs.com/package/@yosina-lib/yosina) | `npm install @yosina-lib/yosina` |
+| Python | [PyPI](https://pypi.org/project/yosina/) | `pip install yosina` |
+| Rust | [crates.io](https://crates.io/crates/yosina) | `cargo add yosina` |
+| Java | [Maven Central](https://central.sonatype.com/artifact/io.yosina/yosina-java) | [クイックスタート](#java)を参照 |
+| Ruby | [RubyGems](https://rubygems.org/gems/yosina) | `gem install yosina` |
+| Go | [Go Packages](https://pkg.go.dev/github.com/yosina-lib/yosina/go) | `go get github.com/yosina-lib/yosina/go` |
+| PHP | [Packagist](https://packagist.org/packages/yosina/yosina) | `composer require yosina-lib/yosina` |
+| C# (.NET) | [NuGet](https://www.nuget.org/packages/Yosina) | `dotnet add package Yosina` |
+| Dart | [pub.dev](https://pub.dev/packages/yosina) | `dart pub add yosina` |
+| Swift | Swift Package Manager | [クイックスタート](#swift)を参照 |
+
 ## はじめに
 
 Yosinaは、日本語文字に使用される文字や記号を専門的に扱う翻字ライブラリです。日本語は、中国語や英語の文字だけでなく、ドイツ語やフランス語などの様々な文字体系の影響を受けた独特の文字体系を持つ長い歴史があります。また、日本の文字コード体系の標準には非常に複雑な問題があり、Unicodeが広く普及した後でも不確実性を引き起こし続けています。
@@ -42,6 +59,8 @@ Yosinaは複数のプログラミング言語で利用可能です：
 - **[Go](go/)** - エラーハンドリングとパフォーマンスに重点を置いたGo実装 (Go 1.21+)
 - **[PHP](php/)** - モダンなPHP機能をサポートするPHP実装 (PHP 8.2+)
 - **[C#](csharp/)** - .NETサポートとコード生成機能を持つC#実装 (.NET 9.0+)
+- **[Swift](swift/)** - Swift Package ManagerをサポートするSwift実装 (Swift 5.0+)
+- **[Dart](dart/)** - FlutterおよびDartアプリケーション向けのDart実装 (Dart 3.0+)
 
 ## クイックスタート
 
@@ -102,7 +121,7 @@ yosina = "0.1.0"
 
 ```gradle
 dependencies {
-    implementation 'io.yosina:yosina-java:0.1.0'
+    implementation 'io.yosina:yosina:0.1.0'
 }
 ```
 
@@ -220,6 +239,52 @@ var recipe = new TransliterationRecipe
 var transliterator = Yosina.MakeTransliterator(recipe);
 var result = transliterator("日本語のテキスト");
 Console.WriteLine(result);
+```
+
+### Swift
+
+`Package.swift`に追加：
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "0.1.0")
+]
+```
+
+```swift
+import Yosina
+
+// レシピを使用(推奨)
+let recipe = TransliterationRecipe(
+    kanjiOldNew: true,
+    toHalfwidth: true,
+    replaceSpaces: true
+)
+
+let transliterator = try recipe.makeTransliterator()
+let result = transliterator.transliterate("日本語のテキスト")
+print(result)
+```
+
+### Dart
+
+```bash
+dart pub add yosina
+```
+
+```dart
+import 'package:yosina/yosina.dart';
+
+// レシピを使用(推奨)
+final recipe = TransliterationRecipe(
+  kanjiOldNew: true,
+  toHalfwidth: true,
+  replaceSpaces: true,
+);
+
+final transliterator = makeTransliterator(recipe);
+final result = transliterator('日本語のテキスト');
+print(result);
 ```
 
 ## プロジェクトの範囲と制限

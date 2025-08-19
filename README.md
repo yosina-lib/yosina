@@ -2,6 +2,23 @@
 
 - [日本語](./README.ja.md)
 
+## Package Repositories
+
+Yosina is available through the following package repositories:
+
+| Language | Package Repository | Install Command |
+|----------|-------------------|-----------------|
+| JavaScript/TypeScript | [npm](https://www.npmjs.com/package/@yosina-lib/yosina) | `npm install @yosina-lib/yosina` |
+| Python | [PyPI](https://pypi.org/project/yosina/) | `pip install yosina` |
+| Rust | [crates.io](https://crates.io/crates/yosina) | `cargo add yosina` |
+| Java | [Maven Central](https://central.sonatype.com/artifact/io.yosina/yosina-java) | See [Quick Start](#java) |
+| Ruby | [RubyGems](https://rubygems.org/gems/yosina) | `gem install yosina` |
+| Go | [Go Packages](https://pkg.go.dev/github.com/yosina-lib/yosina/go) | `go get github.com/yosina-lib/yosina/go` |
+| PHP | [Packagist](https://packagist.org/packages/yosina/yosina) | `composer require yosina-lib/yosina` |
+| C# (.NET) | [NuGet](https://www.nuget.org/packages/Yosina) | `dotnet add package Yosina` |
+| Dart | [pub.dev](https://pub.dev/packages/yosina) | `dart pub add yosina` |
+| Swift | Swift Package Manager | See [Quick Start](#swift) |
+
 ## Introduction
 
 Yosina is a transliteration library that specifically deals with the letters and symbols used in Japanese writing. Japanese has a long history with its unique writing system which not only incorporates different kinds of characters, such as those from Chinese and English, but is also influenced by various writing systems, including German and French. There also lie quite complicated consequences in the Japanese standards of coded character sets, which is still causing uncertainties even after the Unicode standard was deployed widely.
@@ -44,6 +61,8 @@ Yosina is available in multiple programming languages:
 - **[Go](go/)** - Go implementation with error handling and performance focus (Go 1.21+)
 - **[PHP](php/)** - PHP implementation supporting modern PHP features (PHP 8.2+)
 - **[C#](csharp/)** - C# implementation with .NET support and code generation (.NET 9.0+)
+- **[Swift](swift/)** - Swift implementation with Swift Package Manager support (Swift 5.0+)
+- **[Dart](dart/)** - Dart implementation for Flutter and Dart applications (Dart 3.0+)
 
 ## Quick Start
 
@@ -104,7 +123,7 @@ Add to your `build.gradle`:
 
 ```gradle
 dependencies {
-    implementation 'io.yosina:yosina-java:0.1.0'
+    implementation 'io.yosina:yosina:0.1.0'
 }
 ```
 
@@ -222,6 +241,52 @@ var recipe = new TransliterationRecipe
 var transliterator = Yosina.MakeTransliterator(recipe);
 var result = transliterator("some japanese text");
 Console.WriteLine(result);
+```
+
+### Swift
+
+Add to your `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "0.1.0")
+]
+```
+
+```swift
+import Yosina
+
+// Using recipes (recommended)
+let recipe = TransliterationRecipe(
+    kanjiOldNew: true,
+    toHalfwidth: true,
+    replaceSpaces: true
+)
+
+let transliterator = try recipe.makeTransliterator()
+let result = transliterator.transliterate("some japanese text")
+print(result)
+```
+
+### Dart
+
+```bash
+dart pub add yosina
+```
+
+```dart
+import 'package:yosina/yosina.dart';
+
+// Using recipes (recommended)
+final recipe = TransliterationRecipe(
+  kanjiOldNew: true,
+  toHalfwidth: true,
+  replaceSpaces: true,
+);
+
+final transliterator = makeTransliterator(recipe);
+final result = transliterator('some japanese text');
+print(result);
 ```
 
 ## Project Scope and Limitations
