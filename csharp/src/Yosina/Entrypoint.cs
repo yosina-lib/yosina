@@ -1,5 +1,7 @@
 // Copyright (c) Yosina. All rights reserved.
 
+[assembly:CLSCompliant(true)]
+
 namespace Yosina;
 
 public static class Entrypoint
