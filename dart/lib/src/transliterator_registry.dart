@@ -62,7 +62,8 @@ class TransliteratorRegistry {
                 templates: options['templates'] as Map<String, String>?,
                 includeEmojis: options['includeEmojis'] as bool? ?? false,
               ))
-      ..register('hiraKata', (options) => hiraKata(mode: options['mode']))
+      ..register('hiraKata',
+          (options) => HiraKataTransliterator(mode: options['mode']))
       ..register(
           'hiraKataComposition',
           (options) => HiraKataCompositionTransliterator(

@@ -102,12 +102,3 @@ class HiraKataTransliterator implements Transliterator {
     return mapping;
   }
 }
-
-/// Factory function for creating HiraKata transliterators
-Transliterator hiraKata({
-  String? mode,
-}) {
-  return HiraKataTransliterator(
-    mode: mode ?? 'hira-to-kata',
-  );
-}
