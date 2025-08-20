@@ -1,6 +1,6 @@
 // Copyright (c) Yosina. All rights reserved.
 
-[assembly:CLSCompliant(true)]
+[assembly: CLSCompliant(true)]
 
 namespace Yosina;
 
