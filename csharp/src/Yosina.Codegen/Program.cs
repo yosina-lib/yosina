@@ -1,11 +1,11 @@
 // Copyright (c) Yosina. All rights reserved.
 
 using System.Text.Json;
-using Yosina.CodeGen.Generators;
+using Yosina.Codegen.Generators;
 
 using CodePointTuple = (int First, int Second);
 
-namespace Yosina.CodeGen;
+namespace Yosina.Codegen;
 
 internal static class Program
 {
@@ -94,7 +94,9 @@ internal static class Program
         var current = new DirectoryInfo(startPath);
         while (current != null)
         {
-            if (File.Exists(Path.Combine(current.FullName, "yosina.code-workspace")))
+            // Look for .git directory or data directory as project root markers
+            if (Directory.Exists(Path.Combine(current.FullName, ".git")) ||
+                Directory.Exists(Path.Combine(current.FullName, "data")))
             {
                 return current.FullName;
             }
@@ -102,7 +104,7 @@ internal static class Program
             current = current.Parent;
         }
 
-        throw new InvalidOperationException("Could not find project root (yosina.code-workspace not found)");
+        throw new InvalidOperationException("Could not find project root (.git or data directory not found)");
     }
 
     private static void GenerateSimpleTransliterator(string dataRoot, string destRoot, string name, string filename, string description)

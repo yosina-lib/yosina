@@ -1,6 +1,6 @@
 // Copyright (c) Yosina. All rights reserved.
 
-namespace Yosina.CodeGen.Generators;
+namespace Yosina.Codegen.Generators;
 
 /// <summary>
 /// Generates source code for the CombinedTransliterator that replaces single characters with arrays of characters.

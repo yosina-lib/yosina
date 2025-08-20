@@ -1,6 +1,6 @@
 // Copyright (c) Yosina. All rights reserved.
 
-namespace Yosina.CodeGen.Generators;
+namespace Yosina.Codegen.Generators;
 
 /// <summary>
 /// Generates binary data for IVS/SVS base transliterator mappings.

@@ -1,6 +1,6 @@
 // Copyright (c) Yosina. All rights reserved.
 
-namespace Yosina.CodeGen.Generators;
+namespace Yosina.Codegen.Generators;
 
 /// <summary>
 /// Generates source code for the CircledOrSquaredTransliterator that replaces circled or squared characters with templated forms.

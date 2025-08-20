@@ -9,7 +9,7 @@ namespace Yosina.Transliterators;
 [RegisteredTransliterator("hyphens")]
 public class HyphensTransliterator : ITransliterator
 {
-    public static readonly Mapping[] DefaultPrecedence = { Mapping.JISX0208_90 };
+    public static readonly List<Mapping> DefaultPrecedence = new() { Mapping.JISX0208_90 };
 
     private static readonly Dictionary<Mapping, Dictionary<int, int[]>> Mappings = new()
     {

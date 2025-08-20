@@ -2,6 +2,7 @@
 
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Yosina.JsonConverters;
 using CodePointTuple = (int First, int Second);
 
 namespace Yosina.Transliterators;
@@ -24,21 +25,21 @@ public class IvsSvsBaseTransliterator : ITransliterator
         this.options = options ?? throw new ArgumentNullException(nameof(options));
     }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonEnumValueConverter<Mode>))]
     public enum Mode
     {
-        [JsonStringEnumMemberName("ivs-svs")]
+        [JsonEnumValue("ivs-svs")]
         IvsSvs,
-        [JsonStringEnumMemberName("base")]
+        [JsonEnumValue("base")]
         Base,
     }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonEnumValueConverter<Charset>))]
     public enum Charset
     {
-        [JsonStringEnumMemberName("unijis-90")]
+        [JsonEnumValue("unijis-90")]
         UniJis90,
-        [JsonStringEnumMemberName("unijis-2004")]
+        [JsonEnumValue("unijis-2004")]
         UniJis2004,
     }
 

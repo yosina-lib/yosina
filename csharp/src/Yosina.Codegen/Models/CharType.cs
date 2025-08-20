@@ -2,23 +2,23 @@
 
 using System.Text.Json.Serialization;
 
-namespace Yosina.CodeGen;
+namespace Yosina.Codegen;
 
 /// <summary>
 /// Specifies the type of character enclosure.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonEnumValueConverter<CharType>))]
 public enum CharType
 {
     /// <summary>
     /// Circled character.
     /// </summary>
-    [JsonStringEnumMemberName("circle")]
+    [JsonEnumValue("circle")]
     Circle,
 
     /// <summary>
     /// Squared character.
     /// </summary>
-    [JsonStringEnumMemberName("square")]
+    [JsonEnumValue("square")]
     Square,
 }

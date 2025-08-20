@@ -2,6 +2,7 @@
 
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
+using Yosina.JsonConverters;
 
 namespace Yosina.Transliterators;
 
@@ -14,19 +15,19 @@ public class HiraKataTransliterator : ITransliterator
     /// <summary>
     /// Conversion mode.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonEnumValueConverter<Mode>))]
     public enum Mode
     {
         /// <summary>
         /// Convert Hiragana to Katakana.
         /// </summary>
-        [JsonStringEnumMemberName("hira-to-kata")]
+        [JsonEnumValue("hira-to-kata")]
         HiraToKata,
 
         /// <summary>
         /// Convert Katakana to Hiragana.
         /// </summary>
-        [JsonStringEnumMemberName("kata-to-hira")]
+        [JsonEnumValue("kata-to-hira")]
         KataToHira,
     }
 

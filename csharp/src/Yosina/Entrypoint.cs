@@ -37,5 +37,3 @@ public static class Entrypoint
         return MakeTransliterator(configs.ToArray());
     }
 }
-
-public record TransliteratorConfig(string Name, object? Options = null);

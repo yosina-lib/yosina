@@ -2,7 +2,7 @@
 
 using System.Globalization;
 
-namespace Yosina.CodeGen;
+namespace Yosina.Codegen;
 
 /// <summary>
 /// Provides utility methods for Unicode code point operations.

@@ -1,7 +1,7 @@
 // Copyright (c) Yosina. All rights reserved.
 
 using System.Reflection;
-using System.Text.Json.Serialization;
+using Yosina.JsonConverters;
 
 namespace Yosina;
 
@@ -54,9 +54,9 @@ public static class TransliteratorFactory
             {
                 foreach (var field in targetType.GetFields(BindingFlags.Public | BindingFlags.Static))
                 {
-                    if (field.GetCustomAttribute<JsonStringEnumMemberNameAttribute>() is JsonStringEnumMemberNameAttribute enumAttr)
+                    if (field.GetCustomAttribute<JsonEnumValueAttribute>() is JsonEnumValueAttribute enumAttr)
                     {
-                        if (enumAttr.Name.Equals(stringValue, StringComparison.Ordinal))
+                        if (enumAttr.Value.Equals(stringValue, StringComparison.Ordinal))
                         {
                             result = field.GetRawConstantValue();
                             return true;

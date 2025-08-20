@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace Yosina.CodeGen;
+namespace Yosina.Codegen;
 
 /// <summary>
 /// Represents a record for circled or squared character data.
