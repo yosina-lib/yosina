@@ -1,20 +1,18 @@
 # Yosinaプロジェクト
 
-## パッケージリポジトリ
-
-Yosinaは以下のパッケージリポジトリから入手できます：
+- [English](./README.md)
 
 | 言語 | パッケージリポジトリ | インストールコマンド |
-|-----|-------------------|------------------|
-| JavaScript/TypeScript | [npm](https://www.npmjs.com/package/@yosina-lib/yosina) | `npm install @yosina-lib/yosina` |
-| Python | [PyPI](https://pypi.org/project/yosina/) | `pip install yosina` |
-| Rust | [crates.io](https://crates.io/crates/yosina) | `cargo add yosina` |
-| Java | [Maven Central](https://central.sonatype.com/artifact/io.yosina/yosina) | [クイックスタート](#java)を参照 |
-| Ruby | [RubyGems](https://rubygems.org/gems/yosina) | `gem install yosina` |
-| Go | [Go Packages](https://pkg.go.dev/github.com/yosina-lib/yosina/go) | `go get github.com/yosina-lib/yosina/go` |
-| PHP | [Packagist](https://packagist.org/packages/yosina-lib/yosina) | `composer require yosina-lib/yosina` |
-| C# (.NET) | [NuGet](https://www.nuget.org/packages/Yosina) | `dotnet add package Yosina` |
-| Dart | [pub.dev](https://pub.dev/packages/yosina) | `dart pub add yosina` |
+|----------|-------------------|-----------------|
+| JavaScript/TypeScript | [npm ![@yosina-lib/yosina](https://img.shields.io/npm/v/@yosina-lib/yosina) ](https://www.npmjs.com/package/@yosina-lib/yosina) | `npm install @yosina-lib/yosina` |
+| Python | [PyPI ![yosina](https://img.shields.io/pypi/v/yosina)](https://pypi.org/project/yosina/) | `pip install yosina` |
+| Rust | [crates.io ![yosina](https://img.shields.io/crates/v/yosina)](https://crates.io/crates/yosina) | `cargo add yosina` |
+| Java | [Maven Central ![yosina.io/yosina](https://img.shields.io/maven-central/v/yosina.io/yosina)](https://central.sonatype.com/artifact/io.yosina/yosina) | [クイックスタート](#java)を参照 |
+| Ruby | [RubyGems ![yosina](https://img.shields.io/gem/v/yosina)](https://rubygems.org/gems/yosina) | `gem install yosina` |
+| Go | [Go Packages ![yosina](https://img.shields.io/badge/pkg.go.dev-reference-007d9c)](https://pkg.go.dev/github.com/yosina-lib/yosina/go) | `go get github.com/yosina-lib/yosina/go` ![github.com/yosina-lib/yosina/go](https://img.shields.io/badge/go.dev-reference-007d9c) |
+| PHP | [Packagist ![yosina-lib/yosina](https://img.shields.io/packagist/v/yosina-lib/yosina)](https://packagist.org/packages/yosina-lib/yosina) | `composer require yosina-lib/yosina` |
+| C# (.NET) | [NuGet Gallery ![Yosina](https://img.shields.io/nuget/v/Yosina)](https://www.nuget.org/packages/Yosina) | `dotnet add package Yosina` |
+| Dart | [pub.dev ![yosina](https://img.shields.io/pub/v/yosina.svg)](https://pub.dev/packages/yosina) | `dart pub add yosina` |
 | Swift | Swift Package Manager | [クイックスタート](#swift)を参照 |
 
 ## はじめに
@@ -29,19 +27,19 @@ Yosinaは、次のような様々な日本語テキスト変換を処理でき�
 
 - **半角・全角変換**：半角カタカナや記号を全角に変換し、その逆も可能です。
 
-    ![変換例](common/assets/conversion-example1.svg)
+    ![変換例](./common/assets/conversion-example1.svg)
 
-    ![変換例](common/assets/conversion-example2.svg)
+    ![変換例](./common/assets/conversion-example2.svg)
 
 - **視覚的に曖昧な文字の処理**：カタカナ・ひらがなの間のハイフンマイナスを長音記号に文脈的に置き換え、その逆も可能です。
 
-    ![変換例](common/assets/conversion-example3.svg)
+    ![変換例](./common/assets/conversion-example3.svg)
 
-    ![変換例](common/assets/conversion-example4.svg)
+    ![変換例](./common/assets/conversion-example4.svg)
 
 - **旧字体から新字体への漢字変換**：旧字体の字形を現代の新字体に変換します。
 
-    ![変換例](common/assets/conversion-example5.svg)
+    ![変換例](./common/assets/conversion-example5.svg)
 
 - **ひらがな・カタカナ変換**：ひらがなとカタカナの間で双方向に変換し、濁音・半濁音文字を正しく処理します。
 
@@ -200,7 +198,7 @@ func main() {
 ### PHP
 
 ```bash
-composer require yosina/yosina
+composer require yosina-lib/yosina
 ```
 
 ```php

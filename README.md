@@ -2,21 +2,17 @@
 
 - [日本語](./README.ja.md)
 
-## Package Repositories
-
-Yosina is available through the following package repositories:
-
 | Language | Package Repository | Install Command |
 |----------|-------------------|-----------------|
-| JavaScript/TypeScript | [npm](https://www.npmjs.com/package/@yosina-lib/yosina) | `npm install @yosina-lib/yosina` |
-| Python | [PyPI](https://pypi.org/project/yosina/) | `pip install yosina` |
-| Rust | [crates.io](https://crates.io/crates/yosina) | `cargo add yosina` |
-| Java | [Maven Central](https://central.sonatype.com/artifact/io.yosina/yosina) | See [Quick Start](#java) |
-| Ruby | [RubyGems](https://rubygems.org/gems/yosina) | `gem install yosina` |
-| Go | [Go Packages](https://pkg.go.dev/github.com/yosina-lib/yosina/go) | `go get github.com/yosina-lib/yosina/go` |
-| PHP | [Packagist](https://packagist.org/packages/yosina-lib/yosina) | `composer require yosina-lib/yosina` |
-| C# (.NET) | [NuGet](https://www.nuget.org/packages/Yosina) | `dotnet add package Yosina` |
-| Dart | [pub.dev](https://pub.dev/packages/yosina) | `dart pub add yosina` |
+| JavaScript/TypeScript | [npm ![@yosina-lib/yosina](https://img.shields.io/npm/v/@yosina-lib/yosina) ](https://www.npmjs.com/package/@yosina-lib/yosina) | `npm install @yosina-lib/yosina` |
+| Python | [PyPI ![yosina](https://img.shields.io/pypi/v/yosina)](https://pypi.org/project/yosina/) | `pip install yosina` |
+| Rust | [crates.io ![yosina](https://img.shields.io/crates/v/yosina)](https://crates.io/crates/yosina) | `cargo add yosina` |
+| Java | [Maven Central ![yosina.io/yosina](https://img.shields.io/maven-central/v/yosina.io/yosina)](https://central.sonatype.com/artifact/io.yosina/yosina) | See [Quick Start](#java) |
+| Ruby | [RubyGems ![yosina](https://img.shields.io/gem/v/yosina)](https://rubygems.org/gems/yosina) | `gem install yosina` |
+| Go | [Go Packages ![yosina](https://img.shields.io/badge/pkg.go.dev-reference-007d9c)](https://pkg.go.dev/github.com/yosina-lib/yosina/go) | `go get github.com/yosina-lib/yosina/go` ![github.com/yosina-lib/yosina/go](https://img.shields.io/badge/go.dev-reference-007d9c) |
+| PHP | [Packagist ![yosina-lib/yosina](https://img.shields.io/packagist/v/yosina-lib/yosina)](https://packagist.org/packages/yosina-lib/yosina) | `composer require yosina-lib/yosina` |
+| C# (.NET) | [NuGet Gallery ![Yosina](https://img.shields.io/nuget/v/Yosina)](https://www.nuget.org/packages/Yosina) | `dotnet add package Yosina` |
+| Dart | [pub.dev ![yosina](https://img.shields.io/pub/v/yosina.svg)](https://pub.dev/packages/yosina) | `dart pub add yosina` |
 | Swift | Swift Package Manager | See [Quick Start](#swift) |
 
 ## Introduction
