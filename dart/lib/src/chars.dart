@@ -52,7 +52,7 @@ class Chars {
   }
 }
 
-/// Extension methods for Iterable<Char>
+/// Extension methods for Iterable&lt;Char&gt;
 extension CharsIterableExtension on Iterable<Char> {
   /// Converts this iterable of Char objects to a string.
   String charsToString() => Chars.charsToString(this);
