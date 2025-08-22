@@ -18,8 +18,8 @@ public class Main {
         // Find project root by looking for build.gradle
         Path projectRoot = findProjectRoot();
         Path dataRoot = projectRoot.getParent().resolve("data");
-        Path sourceDir = projectRoot.resolve("src/main/java/lib/yosina/transliterators");
-        Path resourceDir = projectRoot.resolve("src/main/resources/lib/yosina/transliterators");
+        Path sourceDir = projectRoot.resolve("src/main/java/io/yosina/transliterators");
+        Path resourceDir = projectRoot.resolve("src/main/resources/io/yosina/transliterators");
 
         System.out.println("Data root: " + dataRoot);
         System.out.println("Source dir: " + sourceDir);
