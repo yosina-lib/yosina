@@ -4,7 +4,6 @@
  * @module
  */
 import type { Char } from "../types.ts";
-
 type Record_ = [string, "c" | "s", boolean];
 type Mappings = Record<string, Record_>;
 export type Options = {
@@ -147,6 +146,7 @@ const mappings: Mappings = {
   "\u2791": ["8", "c", false],
   "\u2792": ["9", "c", false],
   "\u2793": ["10", "c", false],
+  "\u3036": ["\u3012", "c", false],
   "\u3244": ["\u554F", "c", false],
   "\u3245": ["\u5E7C", "c", false],
   "\u3246": ["\u6587", "c", false],

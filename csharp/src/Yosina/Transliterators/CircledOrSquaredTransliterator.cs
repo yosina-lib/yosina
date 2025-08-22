@@ -149,6 +149,7 @@ public class CircledOrSquaredTransliterator : ITransliterator
         [0x2791] = new CircledOrSquaredData("8", CharType.Circle, false),
         [0x2792] = new CircledOrSquaredData("9", CharType.Circle, false),
         [0x2793] = new CircledOrSquaredData("10", CharType.Circle, false),
+        [0x3036] = new CircledOrSquaredData("〒", CharType.Circle, false),
         [0x3244] = new CircledOrSquaredData("問", CharType.Circle, false),
         [0x3245] = new CircledOrSquaredData("幼", CharType.Circle, false),
         [0x3246] = new CircledOrSquaredData("文", CharType.Circle, false),

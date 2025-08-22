@@ -111,7 +111,7 @@ namespace Yosina.Transliterators;
 [RegisteredTransliterator(""hyphens"")]
 public class HyphensTransliterator : ITransliterator
 {{
-    public static readonly Mapping[] DefaultPrecedence = {{ Mapping.JISX0208_90 }};
+    public static readonly List<Mapping> DefaultPrecedence = new() {{ Mapping.JISX0208_90 }};
 
     private static readonly Dictionary<Mapping, Dictionary<int, int[]>> Mappings = new()
     {{
@@ -175,7 +175,7 @@ public class HyphensTransliterator : ITransliterator
 
     public class Options
     {{
-        public Mapping[]? Precedence {{ get; set; }}
+        public IList<Mapping>? Precedence {{ get; set; }}
     }}
 
     private class HyphensCharIterator : IEnumerator<Character>, IEnumerable<Character>

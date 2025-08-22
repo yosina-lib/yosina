@@ -139,6 +139,7 @@ class CircledOrSquaredTransliterator implements TransliteratorInterface
         '➑' => ['rendering' => "8", 'type' => "circle", 'emoji' => false],
         '➒' => ['rendering' => "9", 'type' => "circle", 'emoji' => false],
         '➓' => ['rendering' => "10", 'type' => "circle", 'emoji' => false],
+        '〶' => ['rendering' => '〒', 'type' => "circle", 'emoji' => false],
         '㉄' => ['rendering' => '問', 'type' => "circle", 'emoji' => false],
         '㉅' => ['rendering' => '幼', 'type' => "circle", 'emoji' => false],
         '㉆' => ['rendering' => '文', 'type' => "circle", 'emoji' => false],

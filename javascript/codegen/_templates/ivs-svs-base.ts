@@ -600,14 +600,9 @@ export default (options: Options): ((_: Iterable<Char>) => Iterable<Char>) => {
   return function* (in_: Iterable<Char>) {
     let offset = 0;
     for (const c of in_) {
-      const cc = a(c);
-      if (cc !== undefined) {
-        yield { c: cc, offset: offset, source: c };
-        offset += cc.length;
-      } else {
-        yield { c: c.c, offset: offset, source: c };
-        offset += c.c.length;
-      }
+      const cc = a(c) ?? c.c;
+      yield { c: cc, offset: offset, source: c };
+      offset += cc.length;
     }
   };
 };

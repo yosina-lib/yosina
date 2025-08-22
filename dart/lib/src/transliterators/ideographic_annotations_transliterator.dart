@@ -5,6 +5,7 @@ import '../transliterator.dart';
 
 /// Replace ideographic annotation marks used in traditional translation.
 class IdeographicAnnotationsTransliterator implements Transliterator {
+
   const IdeographicAnnotationsTransliterator(
       [Map<String, dynamic> options = const {}]);
   static const _mappings = <String, String>{

@@ -3,23 +3,9 @@
 import '../char.dart';
 import '../transliterator.dart';
 
-/// Transliterator that replaces old-style (kyūjitai) kanji characters with their modern (shinjitai) equivalents.
-///
-/// This transliterator converts traditional/old-style Japanese kanji characters to their
-/// simplified modern forms that are standard in contemporary Japanese writing.
-/// The conversion includes both standalone characters and those with variation selectors.
-///
-/// Example conversions:
-/// - 醫 (old) → 医 (modern) - "doctor/medicine"
-/// - 營 (old) → 営 (modern) - "business/camp"
-/// - 壓 (old) → 圧 (modern) - "pressure"
-///
-/// The transliterator handles Unicode variation sequences (IVS) to ensure proper
-/// glyph selection is maintained after conversion.
+/// Replace old-style kanji with modern equivalents.
 class KanjiOldNewTransliterator implements Transliterator {
-  /// Creates a new instance of [KanjiOldNewTransliterator].
-  ///
-  /// The [options] parameter is currently unused but reserved for future enhancements.
+
   const KanjiOldNewTransliterator([Map<String, dynamic> options = const {}]);
   static const _mappings = <String, String>{
     '\u{4e9e}\u{e0100}': '\u{4e9c}\u{e0100}',

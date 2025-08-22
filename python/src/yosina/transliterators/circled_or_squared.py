@@ -137,6 +137,7 @@ CIRCLED_OR_SQUARED_MAPPINGS: dict[str, tuple[str, Literal["c", "s"], bool]] = {
     "\u2791": ("8", "c", False),
     "\u2792": ("9", "c", False),
     "\u2793": ("10", "c", False),
+    "\u3036": ("〒", "c", False),
     "\u3244": ("問", "c", False),
     "\u3245": ("幼", "c", False),
     "\u3246": ("文", "c", False),

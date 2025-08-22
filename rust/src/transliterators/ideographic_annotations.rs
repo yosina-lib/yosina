@@ -3,7 +3,7 @@ use crate::transliterator::{
     TransliterationError, Transliterator, TransliteratorFactory, TransliteratorFactoryError,
 };
 use crate::transliterators::SimpleTransliterator;
-static IDEOGRAPHICANNOTATIONS_MAPPINGS: phf::Map<&'static str, &'static str> = phf::phf_map! { "㆗" => "中" , "㆘" => "下" , "㆓" => "二" , "㆖" => "上" , "㆛" => "丙" , "㆝" => "天" , "㆜" => "丁" , "㆞" => "地" , "㆟" => "人" , "㆕" => "四" , "㆙" => "甲" , "㆒" => "一" , "㆔" => "三" , "㆚" => "乙" };
+static IDEOGRAPHICANNOTATIONS_MAPPINGS: phf::Map<&'static str, &'static str> = phf::phf_map! { "㆔" => "三" , "㆕" => "四" , "㆓" => "二" , "㆖" => "上" , "㆘" => "下" , "㆚" => "乙" , "㆛" => "丙" , "㆜" => "丁" , "㆒" => "一" , "㆝" => "天" , "㆙" => "甲" , "㆞" => "地" , "㆟" => "人" , "㆗" => "中" };
 pub struct IdeographicAnnotationsTransliterator {
     inner: SimpleTransliterator,
 }

@@ -132,6 +132,7 @@ module Yosina
         "\u{2791}" => { rendering: '8', type: 'c', emoji: false },
         "\u{2792}" => { rendering: '9', type: 'c', emoji: false },
         "\u{2793}" => { rendering: '10', type: 'c', emoji: false },
+        "\u{3036}" => { rendering: "\u{3012}", type: 'c', emoji: false },
         "\u{3244}" => { rendering: "\u{554f}", type: 'c', emoji: false },
         "\u{3245}" => { rendering: "\u{5e7c}", type: 'c', emoji: false },
         "\u{3246}" => { rendering: "\u{6587}", type: 'c', emoji: false },

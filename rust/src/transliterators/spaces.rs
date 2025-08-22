@@ -3,7 +3,7 @@ use crate::transliterator::{
     TransliterationError, Transliterator, TransliteratorFactory, TransliteratorFactoryError,
 };
 use crate::transliterators::SimpleTransliterator;
-static SPACES_MAPPINGS: phf::Map<&'static str, &'static str> = phf::phf_map! { "\u{205f}" => " " , "\u{200b}" => " " , "\u{a0}" => " " , "\u{2000}" => " " , "\u{2006}" => " " , "\u{3000}" => " " , "\u{2008}" => " " , "\u{2007}" => " " , "\u{2009}" => " " , "\u{2003}" => " " , "ㅤ" => " " , "\u{2001}" => " " , "\u{2002}" => " " , "\u{2004}" => " " , "\u{180e}" => "" , "\u{2005}" => " " , "\u{200a}" => " " , "ﾠ" => " " , "\u{202f}" => " " , "\u{feff}" => "" };
+static SPACES_MAPPINGS: phf::Map<&'static str, &'static str> = phf::phf_map! { "ﾠ" => " " , "\u{2006}" => " " , "\u{180e}" => "" , "\u{2007}" => " " , "ㅤ" => " " , "\u{2000}" => " " , "\u{2009}" => " " , "\u{200b}" => " " , "\u{2003}" => " " , "\u{202f}" => " " , "\u{2004}" => " " , "\u{200a}" => " " , "\u{2002}" => " " , "\u{205f}" => " " , "\u{3000}" => " " , "\u{2001}" => " " , "\u{a0}" => " " , "\u{feff}" => "" , "\u{2008}" => " " , "\u{2005}" => " " };
 pub struct SpacesTransliterator {
     inner: SimpleTransliterator,
 }

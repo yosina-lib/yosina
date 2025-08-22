@@ -5,6 +5,7 @@ import '../transliterator.dart';
 
 /// Replace mathematical alphanumeric symbols with plain characters.
 class MathematicalAlphanumericsTransliterator implements Transliterator {
+
   const MathematicalAlphanumericsTransliterator(
       [Map<String, dynamic> options = const {}]);
   static const _mappings = <String, String>{
