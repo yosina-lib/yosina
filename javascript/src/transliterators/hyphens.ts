@@ -4,6 +4,7 @@
  * @module
  */
 import type { Char } from "../types.ts";
+
 type HyphensRecord = {
   ascii: string | null;
   jisx0201: string | null;

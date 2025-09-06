@@ -4,6 +4,7 @@
  * @module
  */
 import type { Char } from "../types.ts";
+
 type Record_ = [string, "c" | "s", boolean];
 type Mappings = Record<string, Record_>;
 export type Options = {

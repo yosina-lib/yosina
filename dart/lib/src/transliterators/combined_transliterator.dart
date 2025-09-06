@@ -5,7 +5,6 @@ import '../transliterator.dart';
 
 /// Replace single characters with arrays of characters.
 class CombinedTransliterator implements Transliterator {
-
   const CombinedTransliterator([Map<String, dynamic> options = const {}]);
   static const _mappings = <String, List<String>>{
     '\u{2116}': ['N', 'o'],

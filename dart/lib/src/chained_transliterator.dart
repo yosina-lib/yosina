@@ -8,6 +8,7 @@ class ChainedTransliterator implements Transliterator {
   /// The [transliterators] parameter is a list of transliterators that will be
   /// applied in order. Each transliterator receives the output of the previous one.
   const ChainedTransliterator(this.transliterators);
+
   /// The list of transliterators to apply in sequence.
   ///
   /// Each transliterator in this list will be called with the output from

@@ -5,7 +5,6 @@ import '../transliterator.dart';
 
 /// Replace various space characters with plain whitespace.
 class SpacesTransliterator implements Transliterator {
-
   const SpacesTransliterator([Map<String, dynamic> options = const {}]);
   static const _mappings = <String, String>{
     '\u{a0}': ' ',

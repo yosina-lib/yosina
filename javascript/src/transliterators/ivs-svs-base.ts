@@ -4,6 +4,7 @@
  * @module
  */
 import type { Char } from "../types.ts";
+
 type IVSSVSBaseMapping = {
   ivs: string;
   svs: string | undefined;

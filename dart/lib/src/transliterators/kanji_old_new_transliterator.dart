@@ -5,7 +5,6 @@ import '../transliterator.dart';
 
 /// Replace old-style kanji with modern equivalents.
 class KanjiOldNewTransliterator implements Transliterator {
-
   const KanjiOldNewTransliterator([Map<String, dynamic> options = const {}]);
   static const _mappings = <String, String>{
     '\u{4e9e}\u{e0100}': '\u{4e9c}\u{e0100}',
