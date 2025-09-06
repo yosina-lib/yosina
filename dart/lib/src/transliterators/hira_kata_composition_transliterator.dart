@@ -8,6 +8,12 @@ import 'hira_kata_table.dart';
 /// base characters with diacritical marks (dakuten and handakuten) into their
 /// precomposed forms.
 class HiraKataCompositionTransliterator implements Transliterator {
+  /// Creates a transliterator that composes hiragana and katakana characters.
+  ///
+  /// The [composeNonCombiningMarks] parameter determines whether to compose
+  /// non-combining voiced marks (゛ U+309B) and semi-voiced marks (゜ U+309C)
+  /// in addition to their combining counterparts (゛ U+3099 and ゜ U+309A).
+  /// Defaults to false.
   HiraKataCompositionTransliterator({
     this.composeNonCombiningMarks = false,
   }) {

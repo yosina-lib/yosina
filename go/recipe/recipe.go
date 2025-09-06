@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/yosina-lib/yosina/go/transliterators/hira_kata"
 	"github.com/yosina-lib/yosina/go/transliterators/hira_kata_composition"
 	"github.com/yosina-lib/yosina/go/transliterators/hyphens"
 	"github.com/yosina-lib/yosina/go/transliterators/ivs_svs_base"
@@ -27,6 +28,8 @@ const (
 	HankakuKana
 	DropAllSelectors
 	ExcludeEmojis
+	HiraToKata
+	KataToHira
 )
 
 // ReplaceHyphensOption represents hyphen replacement options
@@ -55,13 +58,13 @@ type TransliterationRecipe struct {
 	KanjiOldNew bool
 
 	// HiraKata converts between hiragana and katakana scripts
-	// Values: "hira-to-kata", "kata-to-hira", or empty string (disabled)
+	// Values: HiraToKata, KataToHira, or No (disabled)
 	// Example:
-	//   Input:  "ひらがな" (with "hira-to-kata")
+	//   Input:  "ひらがな" (with HiraToKata)
 	//   Output: "ヒラガナ"
-	//   Input:  "カタカナ" (with "kata-to-hira")
+	//   Input:  "カタカナ" (with KataToHira)
 	//   Output: "かたかな"
-	HiraKata string
+	HiraKata TransliterationRecipeOptionValue
 
 	// ReplaceJapaneseIterationMarks replaces Japanese iteration marks with the characters they represent
 	// Example:
@@ -302,14 +305,19 @@ func (r *TransliterationRecipe) applyKanjiOldNew(ctx *transliteratorConfigListBu
 }
 
 func (r *TransliterationRecipe) applyHiraKata(ctx *transliteratorConfigListBuilder) {
-	if r.HiraKata != "" {
-		ctx.insertMiddle(TransliteratorConfig{
-			Name: "hira-kata",
-			Options: map[string]interface{}{
-				"mode": r.HiraKata,
-			},
-		}, false)
+	var mode hira_kata.Mode
+	switch r.HiraKata {
+	case HiraToKata:
+		mode = hira_kata.HiraToKata
+	case KataToHira:
+		mode = hira_kata.KataToHira
+	default:
+		return
 	}
+	ctx.insertMiddle(TransliteratorConfig{
+		Name:    "hira-kata",
+		Options: &hira_kata.Options{Mode: mode},
+	}, false)
 }
 
 func (r *TransliterationRecipe) applyReplaceJapaneseIterationMarks(ctx *transliteratorConfigListBuilder) {

@@ -1,5 +1,10 @@
 /// Represents a character with its offset and source information.
 class Char {
+  /// Creates a character with its position and source information.
+  ///
+  /// - [c] is the character string value
+  /// - [offset] is the position in the output stream
+  /// - [source] is the optional source character this was derived from
   const Char(this.c, this.offset, [this.source]);
 
   /// The character string.
