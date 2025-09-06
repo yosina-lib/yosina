@@ -72,13 +72,13 @@ npm install @yosina-lib/yosina
 import { makeTransliterator, TransliterationRecipe } from '@yosina-lib/yosina';
 
 // Using recipes (recommended)
-const recipe = new TransliterationRecipe({
+const recipe: TransliterationRecipe = {
   kanjiOldNew: true,
   toHalfwidth: true,
   replaceSuspiciousHyphensToprolongedSoundMarks: true
-});
+};
 
-const transliterator = makeTransliterator(recipe);
+const transliterator = await makeTransliterator(recipe);
 const result = transliterator('some japanese text');
 console.log(result);
 ```
