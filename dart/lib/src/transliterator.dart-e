@@ -24,7 +24,7 @@ class TransliteratorConfig {
 
   /// The name/identifier of the transliterator.
   final String name;
-
+  
   /// Configuration options specific to this transliterator.
   final Map<String, dynamic> options;
 }

@@ -32,13 +32,13 @@ class ToFullwidthOptions {
 
   /// Whether fullwidth conversion is enabled.
   final bool enabled;
-
+  
   /// Whether to treat backslash (U+005C) as yen sign.
   final bool u005cAsYenSign;
 
   /// Whether fullwidth conversion is enabled.
   bool get isEnabled => enabled;
-
+  
   /// Whether backslash should be treated as yen sign.
   bool get isU005cAsYenSign => u005cAsYenSign;
 
@@ -75,7 +75,7 @@ class ToHalfwidthOptions {
 
   /// Whether halfwidth conversion is enabled.
   final bool enabled;
-
+  
   /// Whether to convert to hankaku (halfwidth) kana.
   final bool hankakuKana;
 
@@ -114,7 +114,7 @@ class RemoveIvsSvsOptions {
 
   /// Whether IVS/SVS removal is enabled.
   final bool enabled;
-
+  
   /// Whether to drop all variation selectors.
   final bool dropAllSelectors;
 
@@ -149,7 +149,7 @@ class ReplaceHyphensOptions {
 
   /// Whether hyphen replacement is enabled.
   final bool enabled;
-
+  
   /// The precedence order for hyphen replacement.
   final List<String>? precedence;
 
@@ -191,7 +191,7 @@ class ReplaceCircledOrSquaredCharactersOptions {
 
   /// Whether replacement is enabled.
   final bool enabled;
-
+  
   /// Whether to include emoji characters in the replacement.
   final bool includeEmojis;
 
@@ -252,50 +252,50 @@ class TransliterationRecipe {
 
   /// Whether to convert old kanji forms to new forms.
   final bool kanjiOldNew;
-
+  
   /// The hiragana/katakana conversion mode ('hira' or 'kata').
   final String? hiraKata;
-
+  
   /// Whether to replace Japanese iteration marks.
   final bool replaceJapaneseIterationMarks;
-
+  
   /// Whether to replace suspicious hyphens with prolonged sound marks.
   final bool replaceSuspiciousHyphensToProlongedSoundMarks;
-
+  
   /// Whether to replace combined characters.
   final bool replaceCombinedCharacters;
-
+  
   /// Options for replacing circled or squared characters.
   final ReplaceCircledOrSquaredCharactersOptions
       replaceCircledOrSquaredCharacters;
-
+  
   /// Whether to replace ideographic annotations.
   final bool replaceIdeographicAnnotations;
-
+  
   /// Whether to replace Kangxi radicals.
   final bool replaceRadicals;
-
+  
   /// Whether to replace various space characters.
   final bool replaceSpaces;
-
+  
   /// Options for replacing hyphens.
   final ReplaceHyphensOptions replaceHyphens;
-
+  
   /// Whether to replace mathematical alphanumeric symbols.
   final bool replaceMathematicalAlphanumerics;
-
+  
   /// Whether to combine decomposed hiragana and katakana characters.
   final bool combineDecomposedHiraganasAndKatakanas;
-
+  
   /// Options for converting to fullwidth characters.
   final ToFullwidthOptions toFullwidth;
-
+  
   /// Options for converting to halfwidth characters.
   final ToHalfwidthOptions toHalfwidth;
-
+  
   /// Options for removing IVS/SVS sequences.
   final RemoveIvsSvsOptions removeIvsSvs;
-
+  
   /// The character set to use for conversions.
   final Charset charset;
 

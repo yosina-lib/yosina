@@ -4,8 +4,15 @@ import '../char.dart';
 import '../transliterator.dart';
 
 /// Replace old-style kanji with modern equivalents.
+///
+/// This transliterator applies character-by-character replacements based on
+/// a predefined mapping table.
 class KanjiOldNewTransliterator implements Transliterator {
+  /// Creates a new instance of [KanjiOldNewTransliterator].
+  ///
+  /// [options] are currently unused but reserved for future extensions.
   const KanjiOldNewTransliterator([Map<String, dynamic> options = const {}]);
+
   static const _mappings = <String, String>{
     '\u{4e9e}\u{e0100}': '\u{4e9c}\u{e0100}',
     '\u{555e}\u{e0100}': '\u{5516}\u{e0100}',

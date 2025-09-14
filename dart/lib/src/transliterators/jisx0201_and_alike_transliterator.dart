@@ -3,7 +3,9 @@ import '../transliterator.dart';
 import 'hira_kata_table.dart';
 
 /// Options for JIS X 0201 transliterator.
-/// Resolved options with all defaults applied.
+///
+/// Internal class that holds the resolved configuration options with all
+/// defaults applied based on the conversion direction.
 class _ResolvedOptions {
   _ResolvedOptions({
     required this.combineVoicedSoundMarks,
@@ -48,6 +50,28 @@ class _ResolvedOptions {
 ///   - Hiragana/katakana voicing marks: U+309B, U+309C, and U+30FC.
 ///   - Japanese punctuations: U+3001, U+3002, U+30A0, and U+30FB.
 class Jisx0201AndAlikeTransliterator implements Transliterator {
+  /// Creates a JIS X 0201 transliterator with specified options.
+  ///
+  /// [fullwidthToHalfwidth] determines the conversion direction:
+  /// - true: Convert fullwidth to halfwidth (default)
+  /// - false: Convert halfwidth to fullwidth
+  ///
+  /// [combineVoicedSoundMarks] combines halfwidth katakana with voice marks
+  /// into precomposed forms (only applies to halfwidth to fullwidth).
+  ///
+  /// [convertHiraganas] enables hiragana to halfwidth katakana conversion.
+  ///
+  /// [convertGL] enables conversion of GL characters (ASCII range).
+  ///
+  /// [convertGR] enables conversion of GR characters (katakana range).
+  ///
+  /// [convertUnsafeSpecials] enables conversion of characters that might
+  /// cause issues in some contexts (defaults based on direction).
+  ///
+  /// Various options control the mapping of ambiguous characters:
+  /// - [u005cAsYenSign]/[u005cAsBackslash]: How to handle backslash
+  /// - [u007eAsFullwidthTilde]/[u007eAsWaveDash]/[u007eAsOverline]/[u007eAsFullwidthMacron]: How to handle tilde
+  /// - [u00a5AsYenSign]: How to handle yen sign
   Jisx0201AndAlikeTransliterator({
     bool fullwidthToHalfwidth = true,
     bool combineVoicedSoundMarks = true,
@@ -378,6 +402,7 @@ class Jisx0201AndAlikeTransliterator implements Transliterator {
     }
   }
 
+  /// Converts fullwidth characters to halfwidth.
   Iterable<Char> _toHalfwidth(Iterable<Char> inputChars) sync* {
     var offset = 0;
     // Build hiragana table if needed
@@ -439,6 +464,7 @@ class Jisx0201AndAlikeTransliterator implements Transliterator {
     }
   }
 
+  /// Converts halfwidth characters to fullwidth.
   Iterable<Char> _toFullwidth(Iterable<Char> inputChars) sync* {
     var offset = 0;
     final iterator = inputChars.iterator;

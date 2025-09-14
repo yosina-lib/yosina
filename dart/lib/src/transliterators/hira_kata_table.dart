@@ -1,10 +1,20 @@
-/// Shared hiragana-katakana mapping table
+/// Shared hiragana-katakana mapping table.
+///
+/// This class provides static data and utility methods for converting between
+/// hiragana, katakana, and halfwidth katakana characters. It serves as a
+/// central repository for character mappings used by various transliterators.
 class HiraKataTable {
   // Private constructor to prevent instantiation
   HiraKataTable._();
 
-  /// Entry in the hiragana-katakana table
-  /// Format: [hiragana[base, voiced, semivoiced], katakana[base, voiced, semivoiced], halfwidth]
+  /// Main mapping table for hiragana and katakana characters.
+  ///
+  /// Each entry contains:
+  /// - Hiragana forms: (base, voiced with dakuten, semi-voiced with handakuten)
+  /// - Katakana forms: (base, voiced with dakuten, semi-voiced with handakuten)
+  /// - Halfwidth katakana form (if available)
+  ///
+  /// Empty strings indicate that a particular form doesn't exist.
   static const hiraganaKatakanaTable = [
     // Vowels
     (('あ', '', ''), ('ア', '', ''), 'ｱ'),
@@ -66,8 +76,14 @@ class HiraKataTable {
     (('ん', '', ''), ('ン', '', ''), 'ﾝ'),
   ];
 
-  /// Small kana table
-  /// Format: [hiragana, katakana, halfwidth]
+  /// Mapping table for small kana characters (sutegana).
+  ///
+  /// Each entry contains:
+  /// - Small hiragana form
+  /// - Small katakana form
+  /// - Halfwidth katakana form (if available)
+  ///
+  /// These are used for representing palatalized sounds and other special cases.
   static const hiraganaKatakanaSmallTable = [
     ('ぁ', 'ァ', 'ｧ'),
     ('ぃ', 'ィ', 'ｨ'),
@@ -83,7 +99,14 @@ class HiraKataTable {
     ('ゖ', 'ヶ', ''),
   ];
 
-  /// Generate voiced characters map for HiraKataCompositionTransliterator
+  /// Generates a map of base characters to their voiced equivalents.
+  ///
+  /// This includes:
+  /// - Hiragana characters that can take dakuten (゛)
+  /// - Katakana characters that can take dakuten (゛)
+  /// - Iteration marks that have voiced forms
+  ///
+  /// Used by [HiraKataCompositionTransliterator] to compose characters.
   static Map<String, String> generateVoicedCharacters() {
     final result = <String, String>{};
 
@@ -111,7 +134,12 @@ class HiraKataTable {
     return result;
   }
 
-  /// Generate semi-voiced characters map for HiraKataCompositionTransliterator
+  /// Generates a map of base characters to their semi-voiced equivalents.
+  ///
+  /// This includes characters from the H-row (は行) that can take
+  /// handakuten (゜) to form P-sounds.
+  ///
+  /// Used by [HiraKataCompositionTransliterator] to compose characters.
   static Map<String, String> generateSemiVoicedCharacters() {
     final result = <String, String>{};
 
@@ -133,7 +161,13 @@ class HiraKataTable {
     return result;
   }
 
-  /// Generate GR table for JIS X 0201 (katakana fullwidth to halfwidth)
+  /// Generates the GR (Graphics Right) table for JIS X 0201 conversion.
+  ///
+  /// Maps fullwidth katakana characters to their halfwidth equivalents,
+  /// including punctuation marks and special symbols.
+  ///
+  /// The GR designation refers to the right half of the JIS X 0201
+  /// character set (0xA1-0xDF), which contains halfwidth katakana.
   static Map<String, String> generateGRTable() {
     final result = <String, String>{
       '\u{3002}': '\u{ff61}', // 。 -> ｡
@@ -168,7 +202,11 @@ class HiraKataTable {
     return result;
   }
 
-  /// Generate voiced letters table for JIS X 0201
+  /// Generates a table mapping voiced/semi-voiced katakana to halfwidth sequences.
+  ///
+  /// Since halfwidth katakana doesn't have precomposed voiced forms,
+  /// they are represented as base character + combining mark sequences.
+  /// For example: ガ -> ｶﾞ (halfwidth カ + halfwidth dakuten)
   static Map<String, String> generateVoicedLettersTable() {
     final result = <String, String>{};
 
@@ -188,7 +226,11 @@ class HiraKataTable {
     return result;
   }
 
-  /// Generate hiragana table for JIS X 0201
+  /// Generates a table mapping hiragana characters to halfwidth katakana.
+  ///
+  /// This is used when converting hiragana directly to halfwidth forms,
+  /// effectively performing both script conversion (hiragana to katakana)
+  /// and width conversion (fullwidth to halfwidth) in one step.
   static Map<String, String> generateHiraganaTable() {
     final result = <String, String>{};
 

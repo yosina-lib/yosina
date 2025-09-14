@@ -34,22 +34,22 @@ class IvsSvsBaseTransliterator implements Transliterator {
 
   /// Cached records loaded from compressed data.
   static List<_IvsSvsRecord>? _records;
-
+  
   /// Cache for reverse mappings (variation sequence to base).
   static Map<Charset, Map<String, String>> revMappingsCache = {};
-
+  
   /// Cache for forward mappings (base to variation sequence).
   static Map<(Charset, bool), Map<String, String>> fwdMappingsCache = {};
 
   /// The operation mode: 'base' or 'ivs-or-svs'.
   final String mode;
-
+  
   /// The character set to use for character mappings.
   final Charset charset;
-
+  
   /// Whether to prefer SVS over IVS when both are available.
   final bool preferSvs;
-
+  
   /// Whether to remove all variation selectors regardless of mappings.
   final bool dropSelectorsAltogether;
 
@@ -183,16 +183,16 @@ class _IvsSvsRecord {
     required this.base90,
     required this.base2004,
   });
-
+  
   /// The IVS (Ideographic Variation Sequence) form.
   final String ivs;
-
+  
   /// The SVS (Standardized Variation Sequence) form, if available.
   final String? svs;
-
+  
   /// The base character in JIS90 charset.
   final String? base90;
-
+  
   /// The base character in JIS2004 charset.
   final String? base2004;
 }

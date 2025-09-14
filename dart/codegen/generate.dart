@@ -239,10 +239,16 @@ import '../char.dart';
 import '../transliterator.dart';
 
 /// $description
+///
+/// This transliterator applies character-by-character replacements based on
+/// a predefined mapping table.
 class ${className}Transliterator implements Transliterator {
-${buffer.toString()}
+  /// Creates a new instance of [${className}Transliterator].
+  ///
+  /// [options] are currently unused but reserved for future extensions.
   const ${className}Transliterator([Map<String, dynamic> options = const {}]);
 
+${buffer.toString()}
   @override
   Iterable<Char> call(Iterable<Char> inputChars) sync* {
     var offset = 0;

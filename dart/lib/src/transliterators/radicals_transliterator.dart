@@ -4,8 +4,15 @@ import '../char.dart';
 import '../transliterator.dart';
 
 /// Replace Kangxi radicals with equivalent CJK ideographs.
+///
+/// This transliterator applies character-by-character replacements based on
+/// a predefined mapping table.
 class RadicalsTransliterator implements Transliterator {
+  /// Creates a new instance of [RadicalsTransliterator].
+  ///
+  /// [options] are currently unused but reserved for future extensions.
   const RadicalsTransliterator([Map<String, dynamic> options = const {}]);
+
   static const _mappings = <String, String>{
     '\u{2f00}': '\u{4e00}',
     '\u{2f01}': '\u{4e28}',

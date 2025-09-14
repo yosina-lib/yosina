@@ -7,16 +7,32 @@ import 'hira_kata_table.dart';
 /// This transliterator can convert hiragana characters to their katakana equivalents
 /// or vice versa, based on the mode specified in the constructor.
 class HiraKataTransliterator implements Transliterator {
+  /// Creates a hiragana/katakana transliterator.
+  ///
+  /// [mode] specifies the conversion direction:
+  /// - 'hira-to-kata': Convert hiragana to katakana (default)
+  /// - 'kata-to-hira': Convert katakana to hiragana
+  /// - 'hira': Alias for 'kata-to-hira'
+  /// - 'kata': Alias for 'hira-to-kata'
   HiraKataTransliterator({
     this.mode = 'hira-to-kata',
   }) {
     _mappingTable = _buildMappingTable();
   }
 
-  /// Conversion mode: 'hira-to-kata' or 'kata-to-hira'
+  /// The conversion mode determining the direction of transliteration.
+  ///
+  /// Valid values:
+  /// - 'hira-to-kata': Convert hiragana characters to katakana
+  /// - 'kata-to-hira': Convert katakana characters to hiragana
+  /// - 'hira': Shorthand for 'kata-to-hira'
+  /// - 'kata': Shorthand for 'hira-to-kata'
   final String mode;
 
-  // Static cache for mapping tables
+  /// Static cache for mapping tables to avoid rebuilding them for each instance.
+  ///
+  /// Since the character mappings are constant and depend only on the mode,
+  /// we cache them to improve performance when creating multiple transliterators.
   static final Map<String, Map<String, String>> _mappingCache = {};
 
   late final Map<String, String> _mappingTable;
@@ -40,6 +56,10 @@ class HiraKataTransliterator implements Transliterator {
     }
   }
 
+  /// Builds the character mapping table based on the current mode.
+  ///
+  /// Returns a map where keys are source characters and values are
+  /// their corresponding characters in the target script.
   Map<String, String> _buildMappingTable() {
     // Check cache first
     final cached = _mappingCache[mode];

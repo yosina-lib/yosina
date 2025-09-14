@@ -4,9 +4,15 @@ import '../char.dart';
 import '../transliterator.dart';
 
 /// Replace ideographic annotation marks used in traditional translation.
+///
+/// This transliterator applies character-by-character replacements based on
+/// a predefined mapping table.
 class IdeographicAnnotationsTransliterator implements Transliterator {
-  const IdeographicAnnotationsTransliterator(
-      [Map<String, dynamic> options = const {}]);
+  /// Creates a new instance of [IdeographicAnnotationsTransliterator].
+  ///
+  /// [options] are currently unused but reserved for future extensions.
+  const IdeographicAnnotationsTransliterator([Map<String, dynamic> options = const {}]);
+
   static const _mappings = <String, String>{
     '\u{3192}': '\u{4e00}',
     '\u{3193}': '\u{4e8c}',

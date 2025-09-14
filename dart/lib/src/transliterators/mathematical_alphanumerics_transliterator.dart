@@ -4,9 +4,15 @@ import '../char.dart';
 import '../transliterator.dart';
 
 /// Replace mathematical alphanumeric symbols with plain characters.
+///
+/// This transliterator applies character-by-character replacements based on
+/// a predefined mapping table.
 class MathematicalAlphanumericsTransliterator implements Transliterator {
-  const MathematicalAlphanumericsTransliterator(
-      [Map<String, dynamic> options = const {}]);
+  /// Creates a new instance of [MathematicalAlphanumericsTransliterator].
+  ///
+  /// [options] are currently unused but reserved for future extensions.
+  const MathematicalAlphanumericsTransliterator([Map<String, dynamic> options = const {}]);
+
   static const _mappings = <String, String>{
     '\u{2102}': 'C',
     '\u{210a}': 'g',

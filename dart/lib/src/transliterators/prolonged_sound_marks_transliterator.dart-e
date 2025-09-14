@@ -86,16 +86,16 @@ class ProlongedSoundMarksTransliterator implements Transliterator {
 
   /// Whether to skip characters that have already been transliterated.
   final bool skipAlreadyTransliteratedChars;
-
+  
   /// Whether to allow prolongation after hatsuon characters (ん/ン).
   final bool allowProlongedHatsuon;
-
+  
   /// Whether to allow prolongation after sokuon characters (っ/ッ).
   final bool allowProlongedSokuon;
-
+  
   /// Whether to replace prolonged marks after alphanumeric characters.
   final bool replaceProlongedMarksFollowingAlnums;
-
+  
   /// Bitmask of character types that can be prolonged.
   late final int prolongables;
 

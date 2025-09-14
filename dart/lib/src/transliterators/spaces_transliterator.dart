@@ -4,8 +4,15 @@ import '../char.dart';
 import '../transliterator.dart';
 
 /// Replace various space characters with plain whitespace.
+///
+/// This transliterator applies character-by-character replacements based on
+/// a predefined mapping table.
 class SpacesTransliterator implements Transliterator {
+  /// Creates a new instance of [SpacesTransliterator].
+  ///
+  /// [options] are currently unused but reserved for future extensions.
   const SpacesTransliterator([Map<String, dynamic> options = const {}]);
+
   static const _mappings = <String, String>{
     '\u{a0}': ' ',
     '\u{180e}': '',

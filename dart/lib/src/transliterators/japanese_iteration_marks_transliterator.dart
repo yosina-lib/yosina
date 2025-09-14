@@ -19,7 +19,7 @@ import '../transliterator.dart';
 /// Halfwidth katakana with iteration marks are NOT supported.
 /// Consecutive iteration marks: only the first one is expanded.
 
-// Character type enum
+/// Character type classification for iteration mark handling.
 enum _CharType {
   other,
   hiragana,
@@ -29,7 +29,7 @@ enum _CharType {
   kanji,
 }
 
-// Helper class to store character information
+/// Helper class to store character information for iteration mark processing.
 class _CharInfo {
   _CharInfo(this.charStr, this.type);
   final String charStr;
@@ -37,6 +37,10 @@ class _CharInfo {
 }
 
 class JapaneseIterationMarksTransliterator implements Transliterator {
+  /// Creates a Japanese iteration marks transliterator.
+  ///
+  /// This transliterator replaces iteration marks with the appropriate
+  /// repeated characters based on context.
   JapaneseIterationMarksTransliterator();
   // Iteration mark characters
   static const int _hiraganaIterationMark = 0x309D; // ゝ
@@ -170,6 +174,7 @@ class JapaneseIterationMarksTransliterator implements Transliterator {
     'ヴ': 'ウ',
   };
 
+  /// Checks if the given codepoint is any type of iteration mark.
   bool _isIterationMark(int codepoint) {
     return codepoint == _hiraganaIterationMark ||
         codepoint == _hiraganaVoicedIterationMark ||
@@ -182,6 +187,11 @@ class JapaneseIterationMarksTransliterator implements Transliterator {
         codepoint == _verticalKatakanaVoicedIterationMark;
   }
 
+  /// Determines the character type for iteration mark processing.
+  ///
+  /// Returns the appropriate [_CharType] based on the character's script
+  /// and voicing status. Characters that cannot be repeated (hatsuon,
+  /// sokuon, semi-voiced) return [_CharType.other].
   _CharType _getCharType(String charStr) {
     if (charStr.isEmpty) {
       return _CharType.other;
