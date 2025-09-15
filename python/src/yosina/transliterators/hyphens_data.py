@@ -53,6 +53,8 @@ HYPHENS_MAPPINGS = {
     '︱': HyphensRecord(ascii='|', jisx0201='|', jisx0208_90='｜', jisx0208_90_windows='｜'),
     '﹘': HyphensRecord(ascii='-', jisx0201='-', jisx0208_90='‐', jisx0208_90_windows='‐'),
     '﹣': HyphensRecord(ascii='-', jisx0201='-', jisx0208_90='‐', jisx0208_90_windows='‐'),
+    '＂': HyphensRecord(ascii='"', jisx0201='"', jisx0208_90='″', jisx0208_90_windows='＂'),
+    '＇': HyphensRecord(ascii="'", jisx0201="'", jisx0208_90='′', jisx0208_90_windows='＇'),
     '－': HyphensRecord(ascii='-', jisx0201='-', jisx0208_90='−', jisx0208_90_windows='－'),
     '｜': HyphensRecord(ascii='|', jisx0201='|', jisx0208_90='｜', jisx0208_90_windows='｜', jisx0208_verbatim='｜'),
     '～': HyphensRecord(ascii='~', jisx0201='~', jisx0208_90='〜', jisx0208_90_windows='～'),

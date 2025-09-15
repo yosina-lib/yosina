@@ -48,6 +48,8 @@ module Yosina
         "\u{fe31}" => HyphensRecord.new(ascii: '|', jisx0201: '|', jisx0208_90: "\u{ff5c}", jisx0208_90_windows: "\u{ff5c}"),
         "\u{fe58}" => HyphensRecord.new(ascii: '-', jisx0201: '-', jisx0208_90: "\u{2010}", jisx0208_90_windows: "\u{2010}"),
         "\u{fe63}" => HyphensRecord.new(ascii: '-', jisx0201: '-', jisx0208_90: "\u{2010}", jisx0208_90_windows: "\u{2010}"),
+        "\u{ff02}" => HyphensRecord.new(ascii: "\"", jisx0201: "\"", jisx0208_90: "\u{2033}", jisx0208_90_windows: "\u{ff02}"),
+        "\u{ff07}" => HyphensRecord.new(ascii: "\'", jisx0201: "\'", jisx0208_90: "\u{2032}", jisx0208_90_windows: "\u{ff07}"),
         "\u{ff0d}" => HyphensRecord.new(ascii: '-', jisx0201: '-', jisx0208_90: "\u{2212}", jisx0208_90_windows: "\u{ff0d}"),
         "\u{ff5c}" => HyphensRecord.new(ascii: '|', jisx0201: '|', jisx0208_90: "\u{ff5c}", jisx0208_90_windows: "\u{ff5c}"),
         "\u{ff5e}" => HyphensRecord.new(ascii: '~', jisx0201: '~', jisx0208_90: "\u{301c}", jisx0208_90_windows: "\u{ff5e}"),

@@ -280,6 +280,20 @@ const mappings: Mappings = {
     jisx0208_90_windows: "\u2010",
     jisx0208_verbatim: null,
   },
+  "\uFF02": {
+    ascii: '"',
+    jisx0201: '"',
+    jisx0208_90: "\u2033",
+    jisx0208_90_windows: "\uFF02",
+    jisx0208_verbatim: null,
+  },
+  "\uFF07": {
+    ascii: "'",
+    jisx0201: "'",
+    jisx0208_90: "\u2032",
+    jisx0208_90_windows: "\uFF07",
+    jisx0208_verbatim: null,
+  },
   "\uFF0D": {
     ascii: "-",
     jisx0201: "-",

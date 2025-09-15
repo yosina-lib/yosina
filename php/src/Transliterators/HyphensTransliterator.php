@@ -264,6 +264,20 @@ class HyphensTransliterator implements TransliteratorInterface
             'jisx0208_90_windows' => "\u{2010}",
             'jisx0208_verbatim' => null,
         ],
+        "\u{FF02}" => [
+            'ascii' => "\"",
+            'jisx0201' => "\"",
+            'jisx0208_90' => "\u{2033}",
+            'jisx0208_90_windows' => "\u{FF02}",
+            'jisx0208_verbatim' => null,
+        ],
+        "\u{FF07}" => [
+            'ascii' => "'",
+            'jisx0201' => "'",
+            'jisx0208_90' => "\u{2032}",
+            'jisx0208_90_windows' => "\u{FF07}",
+            'jisx0208_verbatim' => null,
+        ],
         "\u{FF0D}" => [
             'ascii' => "-",
             'jisx0201' => "-",

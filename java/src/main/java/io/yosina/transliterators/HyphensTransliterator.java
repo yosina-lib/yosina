@@ -397,6 +397,24 @@ public class HyphensTransliterator implements Transliterator {
                         new CodePointTuple[] {CodePointTuple.of(0x2010)},
                         null));
         mappings_.put(
+                CodePointTuple.of(0xFF02),
+                new HyphensRecord(
+                        CodePointTuple.of(0xFF02),
+                        new CodePointTuple[] {CodePointTuple.of(0x0022)},
+                        new CodePointTuple[] {CodePointTuple.of(0x0022)},
+                        new CodePointTuple[] {CodePointTuple.of(0x2033)},
+                        new CodePointTuple[] {CodePointTuple.of(0xFF02)},
+                        null));
+        mappings_.put(
+                CodePointTuple.of(0xFF07),
+                new HyphensRecord(
+                        CodePointTuple.of(0xFF07),
+                        new CodePointTuple[] {CodePointTuple.of(0x0027)},
+                        new CodePointTuple[] {CodePointTuple.of(0x0027)},
+                        new CodePointTuple[] {CodePointTuple.of(0x2032)},
+                        new CodePointTuple[] {CodePointTuple.of(0xFF07)},
+                        null));
+        mappings_.put(
                 CodePointTuple.of(0xFF0D),
                 new HyphensRecord(
                         CodePointTuple.of(0xFF0D),
