@@ -148,18 +148,16 @@ YELLOW := \033[1;33m
 BLUE := \033[0;34m
 NC := \033[0m # No Color
 
-# All generated files
-ALL_GENERATED := $(GO_GENERATED) $(JAVASCRIPT_GENERATED) $(PYTHON_GENERATED) \
-	$(RUBY_GENERATED) $(RUST_GENERATED) $(PHP_GENERATED) \
-	$(CSHARP_GENERATED) $(JAVA_GENERATED) $(DART_GENERATED) $(SWIFT_GENERATED)
-
 # Default target
 .PHONY: all
-all: $(ALL_GENERATED)
+all: codegen
+
+.PHONY: clean
+clean: codegen-clean
 
 # Generate all language implementations
 .PHONY: codegen
-codegen-all: $(ALL_GENERATED)
+codegen: codegen-csharp codegen-dart codegen-go codegen-java codegen-javascript codegen-php codegen-python codegen-ruby codegen-rust codegen-swift
 	@echo -e "$(GREEN)✓ All language implementations regenerated$(NC)"
 
 # Clean all generated files
@@ -170,86 +168,85 @@ codegen-clean:
 	@echo -e "$(GREEN)✓ Clean complete$(NC)"
 
 # Rule to generate all files when data changes
-$(GO_GENERATED): $(DATA_FILES)
+$(GO_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Go code...$(NC)"
 	@cd go && go run internal/codegen/main.go && go fmt ./...
 	@echo -e "$(GREEN)✓ Go code generation complete$(NC)"
 
-$(JAVASCRIPT_GENERATED): $(DATA_FILES)
+.PHONY: codegen-go
+codegen-go: $(GO_GENERATED)
+
+$(JAVASCRIPT_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating JavaScript/TypeScript code...$(NC)"
 	@cd javascript && npm run codegen && npm run format && npm run check -- --fix
 	@echo -e "$(GREEN)✓ JavaScript/TypeScript code generation complete$(NC)"
 
-$(PYTHON_GENERATED): $(DATA_FILES)
+.PHONY: codegen-javascript
+codegen-javascript: $(JAVASCRIPT_GENERATED)
+
+$(PYTHON_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Python code...$(NC)"
 	@cd python && python -m codegen && uv run ruff format
 	@echo -e "$(GREEN)✓ Python code generation complete$(NC)"
 
-$(RUBY_GENERATED): $(DATA_FILES)
+.PHONY: codegen-python
+codegen-python: $(PYTHON_GENERATED)
+
+$(RUBY_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Ruby code...$(NC)"
 	@cd ruby && bundle exec ruby codegen/main.rb && bundle exec rake rubocop:autocorrect_all
 	@echo -e "$(GREEN)✓ Ruby code generation complete$(NC)"
 
-$(RUST_GENERATED): $(DATA_FILES)
+.PHONY: codegen-ruby
+codegen-ruby: $(RUBY_GENERATED)
+
+$(RUST_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Rust code...$(NC)"
 	@cd rust && cargo run -F codegen --bin codegen && cargo fmt
 	@echo -e "$(GREEN)✓ Rust code generation complete$(NC)"
 
-$(PHP_GENERATED): $(DATA_FILES)
+.PHONY: codegen-rust
+codegen-rust: $(RUST_GENERATED)
+
+$(PHP_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating PHP code...$(NC)"
 	@cd php && composer exec php codegen/generate.php && composer cs-fix
 	@echo -e "$(GREEN)✓ PHP code generation complete$(NC)"
 
-$(CSHARP_GENERATED): $(DATA_FILES)
+.PHONY: codegen-php
+codegen-php: $(PHP_GENERATED)
+
+$(CSHARP_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating C# code...$(NC)"
 	@cd csharp && dotnet run --project src/Yosina.Codegen/Yosina.Codegen.csproj && $(MAKE) format
 	@echo -e "$(GREEN)✓ C# code generation complete$(NC)"
 
-$(JAVA_GENERATED): $(DATA_FILES)
+.PHONY: codegen-csharp
+codegen-csharp: $(CSHARP_GENERATED)
+
+$(JAVA_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Java code...$(NC)"
 	@cd java && gradle :codegen:run && gradle spotlessApply
 	@echo -e "$(GREEN)✓ Java code generation complete$(NC)"
 
-$(DART_GENERATED): $(DATA_FILES)
+.PHONY: codegen-java
+codegen-java: $(JAVA_GENERATED)
+
+$(DART_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Dart code...$(NC)"
 	@cd dart && dart run codegen/generate.dart && dart format .
 	@echo -e "$(GREEN)✓ Dart code generation complete$(NC)"
 
-$(SWIFT_GENERATED): $(DATA_FILES)
+.PHONY: codegen-dart
+codegen-dart: $(DART_GENERATED)
+
+$(SWIFT_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Swift code...$(NC)"
 	@cd swift/codegen && swift run && cd .. && swiftformat Sources/
 	@echo -e "$(GREEN)✓ Swift code generation complete$(NC)"
 
-# Individual language generation targets (phony targets for manual use)
-.PHONY: generate-csharp
-generate-csharp: $(CSHARP_GENERATED)
-
-.PHONY: generate-go
-generate-go: $(GO_GENERATED)
-
-.PHONY: generate-java
-generate-java: $(JAVA_GENERATED)
-
-.PHONY: generate-javascript
-generate-javascript: $(JAVASCRIPT_GENERATED)
-
-.PHONY: generate-php
-generate-php: $(PHP_GENERATED)
-
-.PHONY: generate-python
-generate-python: $(PYTHON_GENERATED)
-
-.PHONY: generate-ruby
-generate-ruby: $(RUBY_GENERATED)
-
-.PHONY: generate-rust
-generate-rust: $(RUST_GENERATED)
-
-.PHONY: generate-dart
-generate-dart: $(DART_GENERATED)
-
-.PHONY: generate-swift
-generate-swift: $(SWIFT_GENERATED)
+.PHONY: codegen-swift
+codegen-swift: $(SWIFT_GENERATED)
 
 # Documentation generation targets for individual languages
 .PHONY: docs-csharp
