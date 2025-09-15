@@ -258,8 +258,6 @@ public struct TransliterationRecipe: TransliteratorFactory {
     /// Character set for IVS/SVS operations.
     public var charset: IvsSvsBaseTransliterator.Charset = .unijis2004
 
-    public init() {}
-
     /// Build transliterator configurations from this recipe.
     ///
     /// Returns a TransliteratorConfig that can be passed to Yosina.makeTransliterator.

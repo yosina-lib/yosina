@@ -31,6 +31,42 @@ final class TransliterationRecipeTests: XCTestCase {
         XCTAssertEqual(recipe.charset, .unijis2004)
     }
 
+    func testInitializeWithConstructor() {
+        let recipe = TransliterationRecipe(
+            kanjiOldNew: true,
+            replaceSuspiciousHyphensToProlongedSoundMarks: true,
+            replaceCombinedCharacters: true,
+            replaceCircledOrSquaredCharacters: .enabled,
+            replaceIdeographicAnnotations: true,
+            replaceRadicals: true,
+            replaceSpaces: true,
+            replaceHyphens: .enabled,
+            replaceMathematicalAlphanumerics: true,
+            combineDecomposedHiraganasAndKatakanas: true,
+            toFullwidth: .u005cAsYenSign,
+            toHalfwidth: .hankakuKana,
+            removeIvsSvs: .dropAllSelectors,
+            charset: .unijis90
+        )
+        XCTAssertTrue(recipe.kanjiOldNew)
+        XCTAssertTrue(recipe.replaceSuspiciousHyphensToProlongedSoundMarks)
+        XCTAssertTrue(recipe.replaceCombinedCharacters)
+        XCTAssertTrue(recipe.replaceCircledOrSquaredCharacters.isEnabled)
+        XCTAssertTrue(recipe.replaceIdeographicAnnotations)
+        XCTAssertTrue(recipe.replaceRadicals)
+        XCTAssertTrue(recipe.replaceSpaces)
+        XCTAssertTrue(recipe.replaceHyphens.isEnabled)
+        XCTAssertTrue(recipe.replaceMathematicalAlphanumerics)
+        XCTAssertTrue(recipe.combineDecomposedHiraganasAndKatakanas)
+        XCTAssertTrue(recipe.toFullwidth.isEnabled)
+        XCTAssertTrue(recipe.toFullwidth.isU005cAsYenSign)
+        XCTAssertTrue(recipe.toHalfwidth.isEnabled)
+        XCTAssertTrue(recipe.toHalfwidth.isHankakuKana)
+        XCTAssertTrue(recipe.removeIvsSvs.isEnabled)
+        XCTAssertTrue(recipe.removeIvsSvs.isDropAllSelectors)
+        XCTAssertEqual(recipe.charset, .unijis90)
+    }
+
     // MARK: - Individual Transliterator Configuration Tests
 
     func testKanjiOldNew() throws {
