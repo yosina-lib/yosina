@@ -11,7 +11,8 @@ class MathematicalAlphanumericsTransliterator implements Transliterator {
   /// Creates a new instance of [MathematicalAlphanumericsTransliterator].
   ///
   /// [options] are currently unused but reserved for future extensions.
-  const MathematicalAlphanumericsTransliterator([Map<String, dynamic> options = const {}]);
+  const MathematicalAlphanumericsTransliterator(
+      [Map<String, dynamic> options = const {}]);
 
   static const _mappings = <String, String>{
     '\u{2102}': 'C',

@@ -13,8 +13,10 @@ void registerGeneratedTransliterators(TransliteratorRegistry registry) {
   registry
     ..register('spaces', (options) => SpacesTransliterator())
     ..register('radicals', (options) => RadicalsTransliterator())
-    ..register('mathematicalAlphanumerics', (options) => MathematicalAlphanumericsTransliterator())
-    ..register('ideographicAnnotations', (options) => IdeographicAnnotationsTransliterator())
+    ..register('mathematicalAlphanumerics',
+        (options) => MathematicalAlphanumericsTransliterator())
+    ..register('ideographicAnnotations',
+        (options) => IdeographicAnnotationsTransliterator())
     ..register('kanjiOldNew', (options) => KanjiOldNewTransliterator())
     ..register('combined', (options) => CombinedTransliterator());
 }

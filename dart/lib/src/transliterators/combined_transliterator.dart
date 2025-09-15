@@ -5,7 +5,6 @@ import '../transliterator.dart';
 
 /// Replace single characters with arrays of characters.
 class CombinedTransliterator implements Transliterator {
-
   const CombinedTransliterator([Map<String, dynamic> options = const {}]);
   static const _mappings = <String, List<String>>{
     '\u{2116}': ['N', 'o'],
@@ -206,7 +205,14 @@ class CombinedTransliterator implements Transliterator {
     '\u{3313}': ['\u{30ae}', '\u{30eb}', '\u{30c0}', '\u{30fc}'],
     '\u{3314}': ['\u{30ad}', '\u{30ed}'],
     '\u{3315}': ['\u{30ad}', '\u{30ed}', '\u{30b0}', '\u{30e9}', '\u{30e0}'],
-    '\u{3316}': ['\u{30ad}', '\u{30ed}', '\u{30e1}', '\u{30fc}', '\u{30c8}', '\u{30eb}'],
+    '\u{3316}': [
+      '\u{30ad}',
+      '\u{30ed}',
+      '\u{30e1}',
+      '\u{30fc}',
+      '\u{30c8}',
+      '\u{30eb}'
+    ],
     '\u{3317}': ['\u{30ad}', '\u{30ed}', '\u{30ef}', '\u{30c3}', '\u{30c8}'],
     '\u{3318}': ['\u{30b0}', '\u{30e9}', '\u{30e0}'],
     '\u{3319}': ['\u{30b0}', '\u{30e9}', '\u{30e0}', '\u{30c8}', '\u{30f3}'],

@@ -11,7 +11,8 @@ class IdeographicAnnotationsTransliterator implements Transliterator {
   /// Creates a new instance of [IdeographicAnnotationsTransliterator].
   ///
   /// [options] are currently unused but reserved for future extensions.
-  const IdeographicAnnotationsTransliterator([Map<String, dynamic> options = const {}]);
+  const IdeographicAnnotationsTransliterator(
+      [Map<String, dynamic> options = const {}]);
 
   static const _mappings = <String, String>{
     '\u{3192}': '\u{4e00}',

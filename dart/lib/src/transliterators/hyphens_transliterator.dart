@@ -20,6 +20,7 @@ class HyphensTransliterator implements Transliterator {
   HyphensTransliterator({
     List<String>? precedence,
   }) : precedence = precedence ?? _defaultPrecedence;
+
   /// Default precedence order for replacement selection.
   static const _defaultPrecedence = ['jisx0208_90'];
 
