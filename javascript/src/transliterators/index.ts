@@ -12,6 +12,7 @@ import type { default as KanjiOldNewTF } from "./kanji-old-new.js";
 import type { default as mathematicalAlphanumericsTF } from "./mathematical-alphanumerics.js";
 import type { default as ProlongedSoundMarksTF } from "./prolonged-sound-marks.js";
 import type { default as RadicalsTF } from "./radicals.js";
+import type { default as RomanNumeralsTF } from "./roman-numerals.js";
 import type { default as SpacesTF } from "./spaces.js";
 
 type TransliteratorModule = {
@@ -30,6 +31,7 @@ export type TransliteratorConfig =
   | ["mathematical-alphanumerics", Parameters<typeof mathematicalAlphanumericsTF>[0]]
   | ["prolonged-sound-marks", Parameters<typeof ProlongedSoundMarksTF>[0]]
   | ["radicals", Parameters<typeof RadicalsTF>[0]]
+  | ["roman-numerals", Parameters<typeof RomanNumeralsTF>[0]]
   | ["spaces", Parameters<typeof SpacesTF>[0]]
   | ["combined", Parameters<typeof CombinedCharsTF>[0]]
   | ["circled-or-squared", Parameters<typeof CircledOrSquaredTF>[0]];
@@ -46,6 +48,7 @@ export const supportedTransliterators = [
   "mathematical-alphanumerics",
   "prolonged-sound-marks",
   "radicals",
+  "roman-numerals",
   "spaces",
   "combined",
   "circled-or-squared",

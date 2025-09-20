@@ -246,3 +246,19 @@ pub fn parse_circled_or_squared_transliteration_records(
 
     Ok(result)
 }
+
+pub fn parse_roman_numerals_records(
+    data: &str,
+) -> Result<Vec<(String, RomanNumeralsRecord)>, anyhow::Error> {
+    let records: Vec<RomanNumeralsRecord> = serde_json::from_str(data)?;
+
+    let mut result = Vec::new();
+    for record in records {
+        // Use upper code as the key
+        let upper_codepoint = parse_unicode_codepoint(&record.codes.upper)?;
+        let upper_char = codepoint_to_string(upper_codepoint)?;
+        result.push((upper_char, record));
+    }
+
+    Ok(result)
+}

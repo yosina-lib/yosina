@@ -107,7 +107,8 @@ public class CodeGenerator {
 
     /** Generates the combined transliterator. */
     public void generateCombinedTransliterator(Map<String, String> mappings) throws IOException {
-        CombinedTransliteratorGenerator generator = new CombinedTransliteratorGenerator(mappings);
+        CombinedTransliteratorGenerator generator =
+                new CombinedTransliteratorGenerator(mappings, "CombinedTransliterator", "combined");
         writeToFile(generator.generate());
     }
 
@@ -116,6 +117,58 @@ public class CodeGenerator {
             throws IOException {
         CircledOrSquaredTransliteratorGenerator generator =
                 new CircledOrSquaredTransliteratorGenerator(mappings);
+        writeToFile(generator.generate());
+    }
+
+    /** Generates the roman numerals transliterator. */
+    public void generateRomanNumeralsTransliterator(List<RomanNumeralsRecord> records)
+            throws IOException {
+        // Convert records to a Map format similar to combined transliterator
+        // Keep the Unicode notation format (e.g., "U+2160") for the keys
+        Map<String, String> mappings =
+                records.stream()
+                        .filter(
+                                record ->
+                                        record.getCodes() != null && record.getDecomposed() != null)
+                        .flatMap(
+                                record -> {
+                                    Stream.Builder<SimpleImmutableEntry<String, String>> builder =
+                                            Stream.builder();
+
+                                    if (record.getCodes().getUpper() != null
+                                            && record.getDecomposed().getUpper() != null) {
+                                        builder.add(
+                                                new SimpleImmutableEntry<String, String>(
+                                                        record.getCodes()
+                                                                .getUpper(), // Keep as "U+XXXX"
+                                                        // format
+                                                        record.getDecomposed().getUpper().stream()
+                                                                .map(UnicodeUtils::unicodeToString)
+                                                                .collect(Collectors.joining())));
+                                    }
+
+                                    if (record.getCodes().getLower() != null
+                                            && record.getDecomposed().getLower() != null) {
+                                        builder.add(
+                                                new SimpleImmutableEntry<String, String>(
+                                                        record.getCodes()
+                                                                .getLower(), // Keep as "U+XXXX"
+                                                        // format
+                                                        record.getDecomposed().getLower().stream()
+                                                                .map(UnicodeUtils::unicodeToString)
+                                                                .collect(Collectors.joining())));
+                                    }
+
+                                    return builder.build();
+                                })
+                        .collect(
+                                Collectors.toMap(
+                                        entry -> entry.getKey(), entry -> entry.getValue()));
+
+        // Reuse the combined transliterator generator since the structure is similar
+        CombinedTransliteratorGenerator generator =
+                new CombinedTransliteratorGenerator(
+                        mappings, "RomanNumeralsTransliterator", "roman-numerals");
         writeToFile(generator.generate());
     }
 }

@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Literal
 
-__all__ = ["HyphensRecord", "IvsSvsBaseRecord", "CircledOrSquaredRecord"]
+__all__ = ["HyphensRecord", "IvsSvsBaseRecord", "CircledOrSquaredRecord", "RomanNumeralsRecord"]
 
 
 @dataclass
@@ -34,3 +34,14 @@ class CircledOrSquaredRecord:
     rendering: str
     type: Literal["circle", "square"]
     emoji: bool
+
+
+@dataclass
+class RomanNumeralsRecord:
+    """Record for roman numerals transliteration data."""
+
+    value: int
+    upper: str
+    lower: str
+    decomposed_upper: list[str]
+    decomposed_lower: list[str]

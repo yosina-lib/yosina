@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /** Tests for combined transliterator operations based on JavaScript test patterns. */
-public class CombinedTransliteratorsTest {
+public class CombinationTest {
 
     @Test
     public void testIvsSvsBaseWithKanjiOldNewCombination() {

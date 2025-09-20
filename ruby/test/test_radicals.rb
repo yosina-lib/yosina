@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'yosina'
+require 'minitest/autorun'
+require_relative '../lib/yosina'
 
 class TestRadicals < Minitest::Test
   def setup

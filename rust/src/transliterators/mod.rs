@@ -24,6 +24,8 @@ mod mathematical_alphanumerics;
 mod prolonged_sound_marks;
 #[cfg(not(feature = "codegen"))]
 mod radicals;
+#[cfg(not(feature = "codegen"))]
+mod roman_numerals;
 mod simple;
 #[cfg(not(feature = "codegen"))]
 mod spaces;
@@ -76,6 +78,8 @@ pub use mathematical_alphanumerics::{
 #[cfg(not(feature = "codegen"))]
 pub use radicals::{RadicalsTransliterator, RadicalsTransliteratorFactory};
 #[cfg(not(feature = "codegen"))]
+pub use roman_numerals::{RomanNumeralsTransliterator, RomanNumeralsTransliteratorFactory};
+#[cfg(not(feature = "codegen"))]
 pub use spaces::{SpacesTransliterator, SpacesTransliteratorFactory};
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Deserialize, Serialize)]
@@ -121,6 +125,9 @@ pub enum TransliteratorConfig {
     #[cfg(not(feature = "codegen"))]
     #[serde(rename = "radicals")]
     Radicals,
+    #[cfg(not(feature = "codegen"))]
+    #[serde(rename = "roman-numerals")]
+    RomanNumerals,
     #[cfg(not(feature = "codegen"))]
     #[serde(rename = "spaces")]
     Spaces,
@@ -169,6 +176,8 @@ impl TransliteratorFactory for TransliteratorConfig {
             }
             #[cfg(not(feature = "codegen"))]
             Radicals => RadicalsTransliteratorFactory::new().new_transliterator(),
+            #[cfg(not(feature = "codegen"))]
+            RomanNumerals => RomanNumeralsTransliteratorFactory::new().new_transliterator(),
             #[cfg(not(feature = "codegen"))]
             Spaces => SpacesTransliteratorFactory::new().new_transliterator(),
             #[cfg(not(feature = "codegen"))]

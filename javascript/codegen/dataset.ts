@@ -22,6 +22,22 @@ export type CircledOrSquaredRecord = {
   emoji: boolean;
 };
 
+export type RomanNumeralsRecord = {
+  value: number;
+  codes: {
+    upper: string;
+    lower: string;
+  };
+  shift_jis: {
+    upper: number[];
+    lower: number[];
+  };
+  decomposed: {
+    upper: string[];
+    lower: string[];
+  };
+};
+
 export type Dataset = {
   spaces: [string, string][];
   radicals: [string, string][];
@@ -32,6 +48,7 @@ export type Dataset = {
   kanjiOldNew: [string, string][];
   combined: [string, string[]][];
   circledOrSquared: [string, CircledOrSquaredRecord][];
+  romanNumerals: [string, string[]][];
 };
 
 export type DatasetSourceDefs = Record<keyof Dataset, string>;

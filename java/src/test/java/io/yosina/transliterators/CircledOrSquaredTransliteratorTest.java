@@ -12,8 +12,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-/** Tests for CircledOrSquared transliterator. */
-public class CircledOrSquaredTest {
+/** Tests for CircledOrSquaredTransliterator transliterator. */
+public class CircledOrSquaredTransliteratorTest {
 
     private static Stream<Arguments> circledNumberTestCases() {
         return Stream.of(
@@ -59,8 +59,9 @@ public class CircledOrSquaredTest {
     @ParameterizedTest(name = "Circled number test: {2}")
     @MethodSource("circledNumberTestCases")
     public void testCircledNumbers(String expected, String input, String description) {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -71,8 +72,9 @@ public class CircledOrSquaredTest {
     @ParameterizedTest(name = "Circled letter test: {2}")
     @MethodSource("circledLetterTestCases")
     public void testCircledLetters(String expected, String input, String description) {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -83,8 +85,9 @@ public class CircledOrSquaredTest {
     @ParameterizedTest(name = "Circled kanji test: {2}")
     @MethodSource("circledKanjiTestCases")
     public void testCircledKanji(String expected, String input, String description) {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -95,8 +98,9 @@ public class CircledOrSquaredTest {
     @ParameterizedTest(name = "Circled katakana test: {2}")
     @MethodSource("circledKatakanaTestCases")
     public void testCircledKatakana(String expected, String input, String description) {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -107,8 +111,9 @@ public class CircledOrSquaredTest {
     @ParameterizedTest(name = "Squared letter test: {2}")
     @MethodSource("squaredLetterTestCases")
     public void testSquaredLetters(String expected, String input, String description) {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -119,8 +124,9 @@ public class CircledOrSquaredTest {
     @ParameterizedTest(name = "Regional indicator test: {2}")
     @MethodSource("regionalIndicatorTestCases")
     public void testRegionalIndicators(String expected, String input, String description) {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -130,8 +136,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testEmojiExclusionDefault() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "🆂🅾🆂";
         String expected = "[S][O][S]";
@@ -143,8 +150,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testEmptyString() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         CharIterator result = transliterator.transliterate(Chars.of("").iterator());
         String output = result.string();
@@ -154,8 +162,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testUnmappedCharacters() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "hello world 123 abc こんにちは";
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
@@ -166,8 +175,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testMixedContent() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "Hello ① World Ⓐ Test";
         String expected = "Hello (1) World (A) Test";
@@ -179,8 +189,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testSequenceOfCircledNumbers() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "①②③④⑤";
         String expected = "(1)(2)(3)(4)(5)";
@@ -192,8 +203,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testSequenceOfCircledLetters() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "ⒶⒷⒸ";
         String expected = "(A)(B)(C)";
@@ -205,8 +217,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testMixedCirclesAndSquares() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "①🅰②🅱";
         String expected = "(1)[A](2)[B]";
@@ -218,8 +231,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testCircledKanjiSequence() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "㊀㊁㊂㊃㊄";
         String expected = "(一)(二)(三)(四)(五)";
@@ -231,8 +245,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testJapaneseTextWithCircledElements() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "項目①は重要で、項目②は補足です。";
         String expected = "項目(1)は重要で、項目(2)は補足です。";
@@ -244,8 +259,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testNumberedListWithCircledNumbers() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "①準備\n②実行\n③確認";
         String expected = "(1)準備\n(2)実行\n(3)確認";
@@ -257,8 +273,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testLargeCircledNumbers() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "㊱㊲㊳";
         String expected = "(36)(37)(38)";
@@ -270,8 +287,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testCircledNumbersUpTo50() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "㊿";
         String expected = "(50)";
@@ -283,8 +301,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testSpecialCircledCharacters() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "🄴🅂";
         String expected = "[E][S]";
@@ -296,8 +315,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testIncludeEmojisTrue() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "🆘";
         String expected = "[SOS]";
@@ -309,8 +329,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testIncludeEmojisFalse() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(false));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(false));
 
         String input = "🆘";
         String expected = "🆘";
@@ -322,8 +343,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testMixedEmojiAndNonEmojiWithIncludeEmojisTrue() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "①🅰②";
         String expected = "(1)[A](2)";
@@ -335,8 +357,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testMixedEmojiAndNonEmojiWithIncludeEmojisFalse() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(false));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(false));
 
         String input = "①🅰②";
         String expected = "(1)[A](2)";
@@ -352,9 +375,9 @@ public class CircledOrSquaredTest {
                 Map.of(
                         "circle", "〔?〕",
                         "square", "[?]");
-        CircledOrSquared transliterator =
-                new CircledOrSquared(
-                        new CircledOrSquared.Options()
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options()
                                 .withIncludeEmojis(true)
                                 .withTemplates(
                                         Optional.of(templates.get("circle")),
@@ -374,9 +397,9 @@ public class CircledOrSquaredTest {
                 Map.of(
                         "circle", "(?)",
                         "square", "【?】");
-        CircledOrSquared transliterator =
-                new CircledOrSquared(
-                        new CircledOrSquared.Options()
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options()
                                 .withIncludeEmojis(true)
                                 .withTemplates(
                                         Optional.of(templates.get("circle")),
@@ -396,9 +419,9 @@ public class CircledOrSquaredTest {
                 Map.of(
                         "circle", "〔?〕",
                         "square", "[?]");
-        CircledOrSquared transliterator =
-                new CircledOrSquared(
-                        new CircledOrSquared.Options()
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options()
                                 .withIncludeEmojis(true)
                                 .withTemplates(
                                         Optional.of(templates.get("circle")),
@@ -418,9 +441,9 @@ public class CircledOrSquaredTest {
                 Map.of(
                         "circle", "〔?〕",
                         "square", "【?】");
-        CircledOrSquared transliterator =
-                new CircledOrSquared(
-                        new CircledOrSquared.Options()
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options()
                                 .withIncludeEmojis(true)
                                 .withTemplates(
                                         Optional.of(templates.get("circle")),
@@ -436,8 +459,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testUnicodeCharactersPreserved() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "こんにちは①世界🅰です";
         String expected = "こんにちは(1)世界[A]です";
@@ -449,8 +473,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testOtherEmojiPreserved() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "😀①😊";
         String expected = "😀(1)😊";
@@ -462,8 +487,9 @@ public class CircledOrSquaredTest {
 
     @Test
     public void testIteratorProperties() {
-        CircledOrSquared transliterator =
-                new CircledOrSquared(new CircledOrSquared.Options().withIncludeEmojis(true));
+        CircledOrSquaredTransliterator transliterator =
+                new CircledOrSquaredTransliterator(
+                        new CircledOrSquaredTransliterator.Options().withIncludeEmojis(true));
 
         String input = "test①data";
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());

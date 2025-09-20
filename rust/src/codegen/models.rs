@@ -24,3 +24,29 @@ pub struct CircledOrSquaredRecord {
     pub type_: String,
     pub emoji: bool,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RomanNumeralsRecord {
+    pub value: i32,
+    pub codes: RomanNumeralsCodes,
+    pub shift_jis: RomanNumeralsShiftJis,
+    pub decomposed: RomanNumeralsDecomposed,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RomanNumeralsCodes {
+    pub upper: String,
+    pub lower: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RomanNumeralsShiftJis {
+    pub upper: Vec<u8>,
+    pub lower: Vec<u8>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RomanNumeralsDecomposed {
+    pub upper: Vec<String>,
+    pub lower: Vec<String>,
+}

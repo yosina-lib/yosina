@@ -73,6 +73,7 @@ struct CodeGenerator {
         try generateCombinedTransliterator()
         try generateCircledOrSquaredTransliterator()
         try generateIvsSvsBaseTransliterator()
+        try generateRomanNumeralsTransliterator()
 
         print("Code generation completed successfully!")
     }
@@ -691,6 +692,85 @@ func unicodeTupleToString(_ unicodes: StringOrArray) throws -> String {
 
 func unicodeTupleToChar(_ unicodes: [String]) throws -> Character {
     return try Character(unicodeTupleToString(unicodes))
+}
+
+// MARK: - Roman Numerals Transliterator
+
+extension CodeGenerator {
+    struct RomanNumeralsEntry: Codable {
+        let value: Int
+        let codes: RomanCodes
+        let decomposed: RomanDecomposed
+
+        struct RomanCodes: Codable {
+            let upper: String
+            let lower: String
+        }
+
+        struct RomanDecomposed: Codable {
+            let upper: [String]
+            let lower: [String]
+        }
+    }
+
+    func generateRomanNumeralsTransliterator() throws {
+        let data = try loadJSONData("roman-numerals.json", as: [RomanNumeralsEntry].self)
+
+        var content = fileHeader()
+        content += """
+        public struct RomanNumeralsTransliterator: Transliterator {
+            private static let mapping: [Character: String] = [
+        """
+
+        // Process each entry to create mappings for both upper and lower case
+        for entry in data {
+            // Upper case mapping
+            let upperChar = try unicodeToChar(entry.codes.upper)
+            let upperDecomposed = try unicodeTupleToString(entry.decomposed.upper)
+            content += "\n        \(escape(upperChar)): \(escape(upperDecomposed)),"
+
+            // Lower case mapping
+            let lowerChar = try unicodeToChar(entry.codes.lower)
+            let lowerDecomposed = try unicodeTupleToString(entry.decomposed.lower)
+            content += "\n        \(escape(lowerChar)): \(escape(lowerDecomposed)),"
+        }
+
+        content += """
+
+            ]
+
+            public init() {}
+
+            public func transliterate<S: Sequence>(_ chars: S) -> [TransliteratorChar] where S.Element == TransliteratorChar {
+                var result: [TransliteratorChar] = []
+                var offset = 0
+
+                for char in chars {
+                    if let charValue = char.value, let replacements = Self.mapping[charValue] {
+                        for replacement in replacements {
+                            let char = TransliteratorChar(
+                                value: replacement,
+                                offset: offset,
+                                source: char
+                            )
+                            offset += replacement.utf8.count
+                            result.append(char)
+                        }
+                    } else {
+                        let char = char.withOffset(offset)
+                        offset += char.utf8Count
+                        result.append(char)
+                    }
+                }
+
+                return result
+            }
+        }
+        """
+
+        try writeFile("RomanNumeralsTransliterator.swift", content: content)
+        print("Generated RomanNumeralsTransliterator.swift")
+    }
 }
 
 // MARK: - Main

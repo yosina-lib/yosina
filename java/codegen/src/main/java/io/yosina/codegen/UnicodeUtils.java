@@ -29,6 +29,12 @@ public class UnicodeUtils {
                 : cpReprs.stream().mapToInt(UnicodeUtils::parseUnicodeCodepoint).toArray();
     }
 
+    /** Convert a Unicode codepoint representation like "U+1234" to a String. */
+    public static String unicodeToString(String cpRepr) {
+        int codepoint = parseUnicodeCodepoint(cpRepr);
+        return new String(Character.toChars(codepoint));
+    }
+
     /** Escape a string for Java code generation. */
     public static String escapeJavaString(String str) {
         if (str == null) {

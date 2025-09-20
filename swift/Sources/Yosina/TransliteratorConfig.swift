@@ -7,6 +7,7 @@ public enum TransliteratorConfig: TransliteratorFactory {
     case kanjiOldNew
     case combined
     case circledOrSquared(options: CircledOrSquaredTransliterator.Options = CircledOrSquaredTransliterator.Options())
+    case romanNumerals
     case prolongedSoundMarks
     case hiraKata(options: HiraKataTransliterator.Options = HiraKataTransliterator.Options())
     case hiraKataComposition(options: HiraKataCompositionTransliterator.Options = HiraKataCompositionTransliterator.Options())
@@ -33,6 +34,8 @@ public enum TransliteratorConfig: TransliteratorFactory {
             return CombinedTransliterator()
         case let .circledOrSquared(options):
             return CircledOrSquaredTransliterator(options: options)
+        case .romanNumerals:
+            return RomanNumeralsTransliterator()
         case .prolongedSoundMarks:
             return ProlongedSoundMarksTransliterator()
         case let .hiraKata(options):

@@ -108,6 +108,19 @@ describe("Individual Transliterators", () => {
     expect(configNames).toContain("mathematical-alphanumerics");
   });
 
+  it("roman numerals configuration", () => {
+    const configs = buildTransliteratorConfigsFromRecipe({
+      replaceRomanNumerals: true,
+    });
+
+    const configNames = configs.map((c) => c[0]);
+    expect(configNames).toContain("roman-numerals");
+
+    const config = configs.find((c) => c[0] === "roman-numerals");
+    expect(config).toBeDefined();
+    expect(config?.[1]).toEqual({});
+  });
+
   it("hira kata composition configuration", () => {
     const configs = buildTransliteratorConfigsFromRecipe({
       combineDecomposedHiraganasAndKatakanas: true,
@@ -116,6 +129,29 @@ describe("Individual Transliterators", () => {
     const config = configs.find((c) => c[0] === "hira-kata-composition");
     expect(config).toBeDefined();
     expect(config?.[1]).toEqual({ composeNonCombiningMarks: true });
+  });
+});
+
+// Test actual transliteration with recipes
+describe("Recipe Integration", () => {
+  it("transliterates roman numerals through recipe", async () => {
+    const tl = await makeChainedTransliterator(
+      buildTransliteratorConfigsFromRecipe({
+        replaceRomanNumerals: true,
+      }),
+    );
+
+    const testCases = [
+      ["Ⅰ Ⅱ Ⅲ", "I II III"],
+      ["ⅰ ⅱ ⅲ", "i ii iii"],
+      ["Year Ⅻ", "Year XII"],
+      ["Chapter ⅳ", "Chapter iv"],
+    ];
+
+    for (const [input, expected] of testCases) {
+      const result = fromChars(tl(buildCharArray(input)));
+      expect(result).toBe(expected);
+    }
   });
 });
 

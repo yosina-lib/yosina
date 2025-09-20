@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-/** Tests for Combined transliterator. */
+/** Tests for CombinedTransliterator transliterator. */
 public class CombinedTransliteratorTest {
 
     private static Stream<Arguments> controlCharacterTestCases() {
@@ -70,7 +70,7 @@ public class CombinedTransliteratorTest {
     @ParameterizedTest(name = "Control character test: {2}")
     @MethodSource("controlCharacterTestCases")
     public void testControlCharacterMappings(String expected, String input, String description) {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -81,7 +81,7 @@ public class CombinedTransliteratorTest {
     @ParameterizedTest(name = "Parenthesized number test: {2}")
     @MethodSource("parenthesizedNumberTestCases")
     public void testParenthesizedNumbers(String expected, String input, String description) {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -92,7 +92,7 @@ public class CombinedTransliteratorTest {
     @ParameterizedTest(name = "Period number test: {2}")
     @MethodSource("periodNumberTestCases")
     public void testPeriodNumbers(String expected, String input, String description) {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -103,7 +103,7 @@ public class CombinedTransliteratorTest {
     @ParameterizedTest(name = "Parenthesized letter test: {2}")
     @MethodSource("parenthesizedLetterTestCases")
     public void testParenthesizedLetters(String expected, String input, String description) {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -114,7 +114,7 @@ public class CombinedTransliteratorTest {
     @ParameterizedTest(name = "Parenthesized kanji test: {2}")
     @MethodSource("parenthesizedKanjiTestCases")
     public void testParenthesizedKanji(String expected, String input, String description) {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -125,7 +125,7 @@ public class CombinedTransliteratorTest {
     @ParameterizedTest(name = "Japanese unit test: {2}")
     @MethodSource("japaneseUnitTestCases")
     public void testJapaneseUnits(String expected, String input, String description) {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -136,7 +136,7 @@ public class CombinedTransliteratorTest {
     @ParameterizedTest(name = "Scientific unit test: {2}")
     @MethodSource("scientificUnitTestCases")
     public void testScientificUnits(String expected, String input, String description) {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
@@ -146,29 +146,32 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testCombinedControlAndNumbers() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "␉⑴␠⒈";
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
 
-        assertEquals("HT(1)SP1.", output, "Combined control and number characters");
+        assertEquals("HT(1)SP1.", output, "CombinedTransliterator control and number characters");
     }
 
     @Test
     public void testCombinedWithRegularText() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "Hello ⑴ World ␉";
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
         String output = result.string();
 
-        assertEquals("Hello (1) World HT", output, "Combined characters with regular text");
+        assertEquals(
+                "Hello (1) World HT",
+                output,
+                "CombinedTransliterator characters with regular text");
     }
 
     @Test
     public void testEmptyString() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         CharIterator result = transliterator.transliterate(Chars.of("").iterator());
         String output = result.string();
@@ -178,7 +181,7 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testUnmappedCharacters() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "hello world 123 abc こんにちは";
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());
@@ -189,7 +192,7 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testSequenceOfCombinedCharacters() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "␀␁␂␃␄";
         String expected = "NULSOHSTXETXEOT";
@@ -201,7 +204,7 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testJapaneseMonths() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "㋀㋁㋂";
         String expected = "1月2月3月";
@@ -213,7 +216,7 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testJapaneseUnitsCombinations() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "㌀㌁㌂";
         String expected = "アパートアルファアンペア";
@@ -225,7 +228,7 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testScientificMeasurements() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "\u3378\u3379\u337a";
         String expected = "dm2dm3IU";
@@ -237,7 +240,7 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testMixedContent() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "Text ⑴ with ␉ combined ㈱ characters ㍍";
         String expected = "Text (1) with HT combined (株) characters メートル";
@@ -249,7 +252,7 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testUnicodeCharactersPreserved() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "こんにちは⑴世界␉です";
         String expected = "こんにちは(1)世界HTです";
@@ -261,7 +264,7 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testNewlineAndTabPreserved() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "Line1\nLine2\tTab";
         String expected = "Line1\nLine2\tTab";
@@ -273,7 +276,7 @@ public class CombinedTransliteratorTest {
 
     @Test
     public void testIteratorProperties() {
-        Combined transliterator = new Combined();
+        CombinedTransliterator transliterator = new CombinedTransliterator();
 
         String input = "test⑴data";
         CharIterator result = transliterator.transliterate(Chars.of(input).iterator());

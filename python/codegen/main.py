@@ -8,6 +8,7 @@ from .emitters import (
     render_combined_transliterator,
     render_hyphens_transliterator_data,
     render_ivs_svs_base_transliterator_data,
+    render_roman_numerals_transliterator,
     render_simple_transliterator,
 )
 
@@ -47,6 +48,7 @@ def main() -> None:
         kanji_old_new="kanji-old-new-form.json",
         combined="combined-chars.json",
         circled_or_squared="circled-or-squared.json",
+        roman_numerals="roman-numerals.json",
     )
 
     # Load the dataset
@@ -110,6 +112,12 @@ def main() -> None:
     output = render_circled_or_squared_transliterator(dataset.circled_or_squared)
     filepath = dest_root / "circled_or_squared.py"
     print("Generating: circled_or_squared.py")
+    filepath.write_text(output, encoding="utf-8")
+
+    # Generate roman numerals transliterator
+    output = render_roman_numerals_transliterator(dataset.roman_numerals)
+    filepath = dest_root / "roman_numerals.py"
+    print("Generating: roman_numerals.py")
     filepath.write_text(output, encoding="utf-8")
 
     print("Code generation complete!")

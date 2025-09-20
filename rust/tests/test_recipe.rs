@@ -29,6 +29,7 @@ fn test_default_values() {
     assert!(!recipe.replace_spaces);
     assert_eq!(recipe.replace_hyphens, ReplaceHyphensOptions::No);
     assert!(!recipe.replace_mathematical_alphanumerics);
+    assert!(!recipe.replace_roman_numerals);
     assert!(!recipe.combine_decomposed_hiraganas_and_katakanas);
     assert_eq!(recipe.to_fullwidth, ToFullWidthOptions::No);
     assert_eq!(recipe.to_halfwidth, ToHalfwidthOptions::No);
@@ -173,6 +174,21 @@ fn test_mathematical_alphanumerics() {
     assert!(matches!(
         &configs[0],
         yosina::TransliteratorConfig::MathematicalAlphanumerics
+    ));
+}
+
+#[test]
+fn test_roman_numerals() {
+    let recipe = TransliterationRecipe {
+        replace_roman_numerals: true,
+        ..Default::default()
+    };
+    let configs = recipe.build().unwrap();
+
+    assert_eq!(configs.len(), 1);
+    assert!(matches!(
+        &configs[0],
+        yosina::TransliteratorConfig::RomanNumerals
     ));
 }
 
@@ -522,6 +538,7 @@ fn test_all_transliterators_enabled() {
         },
         replace_combined_characters: true,
         replace_mathematical_alphanumerics: true,
+        replace_roman_numerals: true,
         to_halfwidth: ToHalfwidthOptions::Yes { hankaku_kana: true },
         charset: Charset::Unijis90,
         ..Default::default()
@@ -590,6 +607,12 @@ fn test_all_transliterators_enabled() {
             1,
             Box::new(|c: &yosina::TransliteratorConfig| {
                 matches!(c, yosina::TransliteratorConfig::MathematicalAlphanumerics)
+            }),
+        ),
+        (
+            1,
+            Box::new(|c: &yosina::TransliteratorConfig| {
+                matches!(c, yosina::TransliteratorConfig::RomanNumerals)
             }),
         ),
         (
@@ -695,4 +718,29 @@ fn test_exclude_emojis_functional() {
 
     // Emoji characters should not be processed
     assert_eq!(transliterator("🆘").unwrap(), "🆘");
+}
+
+#[test]
+fn test_roman_numerals_functional() {
+    let recipe = TransliterationRecipe {
+        replace_roman_numerals: true,
+        ..Default::default()
+    };
+
+    let transliterator = make_transliterator(&recipe).unwrap();
+
+    // Test roman numeral conversion
+    let test_cases = vec![
+        ("Ⅰ", "I"),                       // Uppercase I
+        ("Ⅻ", "XII"),                     // Uppercase XII
+        ("ⅰ", "i"),                       // Lowercase i
+        ("ⅻ", "xii"),                     // Lowercase xii
+        ("Chapter Ⅴ", "Chapter V"),       // Mixed text
+        ("Section ⅲ.A", "Section iii.A"), // Mixed text with punctuation
+    ];
+
+    for (input, expected) in test_cases {
+        let result = transliterator(input).unwrap();
+        assert_eq!(result, expected, "Failed for input '{}'", input);
+    }
 }

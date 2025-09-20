@@ -56,3 +56,10 @@ pub fn load_circled_or_squared(
     let content = load_file(path)?;
     parse_circled_or_squared_transliteration_records(&content)
 }
+
+pub fn load_roman_numerals(
+    path: &Path,
+) -> Result<Vec<(String, RomanNumeralsRecord)>, anyhow::Error> {
+    let content = load_file(path)?;
+    parse_roman_numerals_records(&content)
+}

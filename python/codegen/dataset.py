@@ -12,9 +12,10 @@ from .loaders import (
     load_kanji_old_new,
     load_mathematical_alphanumerics,
     load_radicals,
+    load_roman_numerals,
     load_spaces,
 )
-from .models import CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord
+from .models import CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord, RomanNumeralsRecord
 
 __all__ = ["Dataset", "DatasetSourceDefs", "build_dataset_from_data_root"]
 
@@ -30,6 +31,7 @@ class DatasetSourceDefs:
     kanji_old_new: str
     combined: str
     circled_or_squared: str
+    roman_numerals: str
 
 
 @dataclass(frozen=True)
@@ -45,6 +47,7 @@ class Dataset:
     kanji_old_new: list[tuple[str, str]]
     combined: list[tuple[str, list[str]]]
     circled_or_squared: list[tuple[str, CircledOrSquaredRecord]]
+    roman_numerals: list[tuple[str, RomanNumeralsRecord]]
 
 
 def build_dataset_from_data_root(root: Path, defs: DatasetSourceDefs) -> Dataset:
@@ -67,4 +70,5 @@ def build_dataset_from_data_root(root: Path, defs: DatasetSourceDefs) -> Dataset
         kanji_old_new=load_kanji_old_new(root / defs.kanji_old_new),
         combined=load_combined(root / defs.combined),
         circled_or_squared=load_circled_or_squared(root / defs.circled_or_squared),
+        roman_numerals=load_roman_numerals(root / defs.roman_numerals),
     )

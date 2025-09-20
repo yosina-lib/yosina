@@ -218,6 +218,15 @@ public struct TransliterationRecipe: TransliteratorFactory {
     /// Output: "123"
     public var replaceMathematicalAlphanumerics: Bool = false
 
+    /// Replace Roman numeral characters with their ASCII letter equivalents.
+    ///
+    /// Example:
+    /// Input:  "ⅠⅡⅢ" (Roman numerals)
+    /// Output: "III"
+    /// Input:  "ⅸⅹ" (lowercase Roman numerals)
+    /// Output: "ixx"
+    public var replaceRomanNumerals: Bool = false
+
     /// Combine decomposed hiraganas and katakanas into single counterparts.
     ///
     /// Example:
@@ -286,6 +295,7 @@ public struct TransliterationRecipe: TransliteratorFactory {
         applyReplaceSpaces(to: builder)
         applyReplaceHyphens(to: builder)
         applyReplaceMathematicalAlphanumerics(to: builder)
+        applyReplaceRomanNumerals(to: builder)
         applyCombineDecomposedHiraganasAndKatakanas(to: builder)
         applyToFullwidth(to: builder)
         applyHiraKata(to: builder)
@@ -383,6 +393,12 @@ public struct TransliterationRecipe: TransliteratorFactory {
     private func applyReplaceMathematicalAlphanumerics(to builder: TransliteratorConfigListBuilder) {
         if replaceMathematicalAlphanumerics {
             builder.insertMiddle(.mathematicalAlphanumerics, forceReplace: false)
+        }
+    }
+
+    private func applyReplaceRomanNumerals(to builder: TransliteratorConfigListBuilder) {
+        if replaceRomanNumerals {
+            builder.insertMiddle(.romanNumerals, forceReplace: false)
         }
     }
 
@@ -491,6 +507,12 @@ public extension TransliterationRecipe {
         return recipe
     }
 
+    func withReplaceRomanNumerals(_ value: Bool) -> TransliterationRecipe {
+        var recipe = self
+        recipe.replaceRomanNumerals = value
+        return recipe
+    }
+
     func withCombineDecomposedHiraganasAndKatakanas(_ value: Bool) -> TransliterationRecipe {
         var recipe = self
         recipe.combineDecomposedHiraganasAndKatakanas = value
@@ -589,7 +611,8 @@ class TransliteratorConfigListBuilder {
              (.ideographicAnnotations, .ideographicAnnotations),
              (.kanjiOldNew, .kanjiOldNew),
              (.combined, .combined),
-             (.prolongedSoundMarks, .prolongedSoundMarks):
+             (.prolongedSoundMarks, .prolongedSoundMarks),
+             (.romanNumerals, .romanNumerals):
             return true
         case (.hyphens, .hyphens),
              (.jisx0201AndAlike, .jisx0201AndAlike),

@@ -248,8 +248,8 @@ const hyphensData = <String, Map<String, String?>>{
     'jisx0208_verbatim': null,
   },
   '\u{ff02}': {
-    'ascii': '\"',
-    'jisx0201': '\"',
+    'ascii': '"',
+    'jisx0201': '"',
     'jisx0208_90': '\u{2033}',
     'jisx0208_90_windows': '\u{ff02}',
     'jisx0208_verbatim': null,

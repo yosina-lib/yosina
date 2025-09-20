@@ -125,6 +125,16 @@ class TransliterationRecipe:
         Output: "123"
     """
 
+    replace_roman_numerals: bool = False
+    """Replace roman numeral characters with their ASCII letter equivalents.
+
+    Example:
+        Input:  "Ⅲ" (U+2162)
+        Output: "III"
+        Input:  "ⅸ" (U+2178)
+        Output: "ix"
+    """
+
     combine_decomposed_hiraganas_and_katakanas: bool = False
     """Combine decomposed hiraganas and katakanas into single counterparts.
 
@@ -384,6 +394,15 @@ class _TransliteratorConfigListBuilder:
             ctx = ctx.insert_middle(("mathematical-alphanumerics", {}))
         return ctx
 
+    def apply_replace_roman_numerals(
+        self,
+        recipe: TransliterationRecipe,
+    ) -> _TransliteratorConfigListBuilder:
+        ctx = self
+        if recipe.replace_roman_numerals:
+            ctx = ctx.insert_middle(("roman-numerals", {}))
+        return ctx
+
     def apply_combine_decomposed_hiraganas_and_katakanas(
         self,
         recipe: TransliterationRecipe,
@@ -477,6 +496,7 @@ def build_transliterator_configs_from_recipe(
     ctx = ctx.apply_replace_spaces(recipe)
     ctx = ctx.apply_replace_hyphens(recipe)
     ctx = ctx.apply_replace_mathematical_alphanumerics(recipe)
+    ctx = ctx.apply_replace_roman_numerals(recipe)
     ctx = ctx.apply_combine_decomposed_hiraganas_and_katakanas(recipe)
     ctx = ctx.apply_to_fullwidth(recipe)
     ctx = ctx.apply_hira_kata(recipe)

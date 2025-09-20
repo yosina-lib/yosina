@@ -44,6 +44,7 @@ class YosinaCodeGenerator
         $this->generateIvsSvsBaseTransliterator();
         $this->generateCombinedTransliterator();
         $this->generateCircledOrSquaredTransliterator();
+        $this->generateRomanNumeralsTransliterator();
     }
 
     private function generateSimpleTransliterator(string $identifier, string $className, string $description, string $dataFile): void
@@ -688,6 +689,110 @@ class CircledOrSquaredTransliterator implements TransliteratorInterface
                 // Yield each character in the replacement string
                 \$replacementChars = mb_str_split(\$replacement, 1, 'UTF-8');
                 foreach (\$replacementChars as \$replacementChar) {
+                    yield new Char(\$replacementChar, \$offset, \$char);
+                    \$offset += strlen(\$replacementChar);
+                }
+            } else {
+                yield \$char->withOffset(\$offset);
+                \$offset += strlen(\$char->c);
+            }
+        }
+    }
+}
+PHP;
+    }
+
+    private function generateRomanNumeralsTransliterator(): void
+    {
+        $dataPath = "{$this->dataRoot}/roman-numerals.json";
+        if (!file_exists($dataPath)) {
+            echo "Warning: Roman numerals data file not found: {$dataPath}\n";
+            return;
+        }
+
+        $data = json_decode(file_get_contents($dataPath), true);
+        if (!$data) {
+            echo "Warning: Failed to parse roman numerals JSON data: {$dataPath}\n";
+            return;
+        }
+
+        // Convert roman numerals data to combined-style mappings
+        $mappings = [];
+        foreach ($data as $record) {
+            if (isset($record['codes']) && isset($record['decomposed'])) {
+                // Add uppercase mapping
+                if (isset($record['codes']['upper']) && isset($record['decomposed']['upper'])) {
+                    $upperChar = self::convertUnicodeNotation($record['codes']['upper']);
+                    $upperDecomposed = array_map([self::class, 'convertUnicodeNotation'], $record['decomposed']['upper']);
+                    $mappings[$upperChar] = $upperDecomposed;
+                }
+
+                // Add lowercase mapping
+                if (isset($record['codes']['lower']) && isset($record['decomposed']['lower'])) {
+                    $lowerChar = self::convertUnicodeNotation($record['codes']['lower']);
+                    $lowerDecomposed = array_map([self::class, 'convertUnicodeNotation'], $record['decomposed']['lower']);
+                    $mappings[$lowerChar] = $lowerDecomposed;
+                }
+            }
+        }
+
+        // Reuse the combined transliterator rendering logic
+        $output = $this->renderRomanNumeralsTransliterator($mappings);
+
+        $filename = "RomanNumeralsTransliterator.php";
+        $filepath = "{$this->destRoot}/{$filename}";
+
+        file_put_contents($filepath, $output);
+        echo "Generated: {$filename}\n";
+    }
+
+    private function renderRomanNumeralsTransliterator(array $mappings): string
+    {
+        $mappingsCode = '';
+        foreach ($mappings as $from => $toArray) {
+            $fromCode = $this->phpStringLiteral($from);
+            $toArrayCode = '[' . implode(', ', array_map([$this, 'phpStringLiteral'], $toArray)) . ']';
+            $mappingsCode .= "        $fromCode => $toArrayCode,\n";
+        }
+        $mappingsCode = rtrim($mappingsCode, ",\n");
+
+        return <<<PHP
+<?php
+
+declare(strict_types=1);
+
+namespace Yosina\\Transliterators;
+
+use Yosina\\Char;
+use Yosina\\TransliteratorInterface;
+
+/**
+ * Replace roman numeral characters with their ASCII letter equivalents.
+ */
+class RomanNumeralsTransliterator implements TransliteratorInterface
+{
+    private const MAPPINGS = [
+{$mappingsCode}
+    ];
+
+    /**
+     * @param array<string, mixed> \$options
+     */
+    public function __construct(/* @phpstan-ignore constructor.unusedParameter */ array \$options = [])
+    {
+    }
+
+    /**
+     * @param iterable<Char> \$inputChars
+     * @return iterable<Char>
+     */
+    public function __invoke(iterable \$inputChars): iterable
+    {
+        \$offset = 0;
+        foreach (\$inputChars as \$char) {
+            \$replacement = self::MAPPINGS[\$char->c] ?? null;
+            if (\$replacement !== null && is_array(\$replacement)) {
+                foreach (\$replacement as \$replacementChar) {
                     yield new Char(\$replacementChar, \$offset, \$char);
                     \$offset += strlen(\$replacementChar);
                 }

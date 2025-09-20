@@ -295,6 +295,19 @@ pub struct TransliterationRecipe {
     /// Output: "123"
     /// ```
     pub replace_mathematical_alphanumerics: bool,
+    /// Replace Roman numeral characters with their ASCII equivalents.
+    ///
+    /// # Example
+    /// ```text
+    /// Input:  "Chapter Ⅻ"
+    /// Output: "Chapter XII"
+    /// ```
+    /// ```text
+    /// Input:  "section ⅲ"
+    /// Output: "section iii"
+    /// ```
+    #[serde(default)]
+    pub replace_roman_numerals: bool,
     /// Combine decomposed hiraganas and katakanas into single counterparts.
     ///
     /// # Example
@@ -586,6 +599,19 @@ impl TransliterationRecipe {
         (builder, None)
     }
 
+    fn apply_replace_roman_numerals(
+        &self,
+        mut builder: TransliteratorConfigBuilder,
+    ) -> (
+        TransliteratorConfigBuilder,
+        Option<TransliterationRecipeError>,
+    ) {
+        if self.replace_roman_numerals {
+            builder = builder.insert_middle(TransliteratorConfig::RomanNumerals, false);
+        }
+        (builder, None)
+    }
+
     fn apply_combine_decomposed_hiraganas_and_katakanas(
         &self,
         mut builder: TransliteratorConfigBuilder,
@@ -777,7 +803,13 @@ impl TransliterationRecipe {
             errors.push(e);
         }
 
-        // 10. combineDecomposedHiraganasAndKatakanas
+        // 10. replaceRomanNumerals
+        let (builder, e) = self.apply_replace_roman_numerals(builder);
+        if let Some(e) = e {
+            errors.push(e);
+        }
+
+        // 11. combineDecomposedHiraganasAndKatakanas
         let (builder, e) = self.apply_combine_decomposed_hiraganas_and_katakanas(builder);
         if let Some(e) = e {
             errors.push(e);
@@ -842,6 +874,7 @@ impl Default for TransliterationRecipe {
             replace_spaces: false,
             replace_hyphens: ReplaceHyphensOptions::No,
             replace_mathematical_alphanumerics: false,
+            replace_roman_numerals: false,
             combine_decomposed_hiraganas_and_katakanas: false,
             to_fullwidth: ToFullWidthOptions::No,
             to_halfwidth: ToHalfwidthOptions::No,

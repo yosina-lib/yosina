@@ -32,7 +32,8 @@ type TransliteratorTemplates = {
     | "hyphens"
     | "ivsSVSBase"
     | "combined"
-    | "circledOrSquared"]: ts.SourceFile;
+    | "circledOrSquared"
+    | "romanNumerals"]: ts.SourceFile;
 };
 
 type TransliteratorDescriptions = { moduleDescription: string; functionDescription: string };
@@ -70,6 +71,7 @@ const readTemplates = async (
       ),
     ),
     circledOrSquared: parseTSProgram(path.join(baseDir, "circled-or-squared.ts")),
+    romanNumerals: parseTSProgram(path.join(baseDir, "multi-chars.ts")),
   });
   const results = await Promise.all(resultPromises.map((pair) => pair[1]));
   return Object.fromEntries(resultPromises.map((pair, i) => [pair[0], results[i]])) as TransliteratorTemplates;
@@ -95,6 +97,7 @@ const templateDir = path.join(dirname, "_templates");
     kanjiOldNew: "kanji-old-new-form.json",
     combined: "combined-chars.json",
     circledOrSquared: "circled-or-squared.json",
+    romanNumerals: "roman-numerals.json",
   });
 
   const templates = await readTemplates(templateDir, {
@@ -152,6 +155,10 @@ const templateDir = path.join(dirname, "_templates");
     fs.writeFile(
       path.join(destRoot, "circled-or-squared.ts"),
       renderTSProgram(renderCircledOrSquaredTransliterator(templates.circledOrSquared, dataset.circledOrSquared)),
+    ),
+    fs.writeFile(
+      path.join(destRoot, "roman-numerals.ts"),
+      renderTSProgram(renderMultiCharsTransliterator(templates.romanNumerals, dataset.romanNumerals)),
     ),
   ]);
 })();

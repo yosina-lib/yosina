@@ -50,6 +50,7 @@ public class Main {
         generateKanjiOldNewTransliterator(generator, dataRoot);
         generateCombinedTransliterator(generator, dataRoot);
         generateCircledOrSquaredTransliterator(generator, dataRoot);
+        generateRomanNumeralsTransliterator(generator, dataRoot);
 
         System.out.println("Code generation complete!");
     }
@@ -152,5 +153,19 @@ public class Main {
             throws IOException {
         return objectMapper.readValue(
                 path.toFile(), new TypeReference<Map<String, CircledOrSquaredRecord>>() {});
+    }
+
+    private static void generateRomanNumeralsTransliterator(CodeGenerator generator, Path dataRoot)
+            throws IOException {
+        System.out.println("Generating roman_numerals...");
+
+        List<RomanNumeralsRecord> data =
+                loadRomanNumeralsData(dataRoot.resolve("roman-numerals.json"));
+        generator.generateRomanNumeralsTransliterator(data);
+    }
+
+    private static List<RomanNumeralsRecord> loadRomanNumeralsData(Path path) throws IOException {
+        return objectMapper.readValue(
+                path.toFile(), new TypeReference<List<RomanNumeralsRecord>>() {});
     }
 }

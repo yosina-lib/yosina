@@ -56,7 +56,7 @@ module Yosina
                   :replace_suspicious_hyphens_to_prolonged_sound_marks,
                   :replace_combined_characters, :replace_circled_or_squared_characters,
                   :replace_ideographic_annotations, :replace_radicals, :replace_spaces,
-                  :replace_hyphens, :replace_mathematical_alphanumerics,
+                  :replace_hyphens, :replace_mathematical_alphanumerics, :replace_roman_numerals,
                   :combine_decomposed_hiraganas_and_katakanas, :to_fullwidth, :to_halfwidth,
                   :remove_ivs_svs, :charset
 
@@ -123,6 +123,12 @@ module Yosina
     #     # Output: "ABC"
     #     # Input:  "𝟏𝟐𝟑" (mathematical bold digits)
     #     # Output: "123"
+    # @param replace_roman_numerals [Boolean] Replace roman numeral characters
+    #   @example
+    #     # Input:  "Ⅲ" (Roman numeral III)
+    #     # Output: "III"
+    #     # Input:  "ⅻ" (Roman numeral xii)
+    #     # Output: "xii"
     # @param combine_decomposed_hiraganas_and_katakanas [Boolean] Combine decomposed hiraganas/katakanas
     #   @example
     #     # Input:  "が" (か + ゙)
@@ -154,7 +160,7 @@ module Yosina
                    replace_combined_characters: false, replace_circled_or_squared_characters: false,
                    replace_ideographic_annotations: false, replace_radicals: false,
                    replace_spaces: false, replace_hyphens: false,
-                   replace_mathematical_alphanumerics: false,
+                   replace_mathematical_alphanumerics: false, replace_roman_numerals: false,
                    combine_decomposed_hiraganas_and_katakanas: false,
                    to_fullwidth: false, to_halfwidth: false, remove_ivs_svs: false,
                    charset: 'unijis_2004')
@@ -169,6 +175,7 @@ module Yosina
       @replace_spaces = replace_spaces
       @replace_hyphens = replace_hyphens
       @replace_mathematical_alphanumerics = replace_mathematical_alphanumerics
+      @replace_roman_numerals = replace_roman_numerals
       @combine_decomposed_hiraganas_and_katakanas = combine_decomposed_hiraganas_and_katakanas
       @to_fullwidth = to_fullwidth
       @to_halfwidth = to_halfwidth
@@ -200,6 +207,7 @@ module Yosina
       ctx = apply_replace_spaces(ctx)
       ctx = apply_replace_hyphens(ctx)
       ctx = apply_replace_mathematical_alphanumerics(ctx)
+      ctx = apply_replace_roman_numerals(ctx)
       ctx = apply_combine_decomposed_hiraganas_and_katakanas(ctx)
       ctx = apply_to_fullwidth(ctx)
       ctx = apply_hira_kata(ctx)
@@ -308,6 +316,14 @@ module Yosina
     def apply_replace_mathematical_alphanumerics(ctx)
       if @replace_mathematical_alphanumerics
         ctx.insert_middle([:mathematical_alphanumerics, {}])
+      else
+        ctx
+      end
+    end
+
+    def apply_replace_roman_numerals(ctx)
+      if @replace_roman_numerals
+        ctx.insert_middle([:roman_numerals, {}])
       else
         ctx
       end

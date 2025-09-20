@@ -27,6 +27,7 @@ class TestBasicRecipe:
         assert recipe.replace_spaces is False
         assert recipe.replace_hyphens is False
         assert recipe.replace_mathematical_alphanumerics is False
+        assert recipe.replace_roman_numerals is False
         assert recipe.combine_decomposed_hiraganas_and_katakanas is False
         assert recipe.to_fullwidth is False
         assert recipe.to_halfwidth is False
@@ -116,6 +117,14 @@ class TestIndividualTransliterators:
 
         config_names = [c[0] for c in configs]
         assert "mathematical-alphanumerics" in config_names
+
+    def test_roman_numerals(self):
+        """Test replace_roman_numerals configuration."""
+        recipe = TransliterationRecipe(replace_roman_numerals=True)
+        configs = build_transliterator_configs_from_recipe(recipe)
+
+        config_names = [c[0] for c in configs]
+        assert "roman-numerals" in config_names
 
     def test_hira_kata_composition(self):
         """Test combine_decomposed_hiraganas_and_katakanas configuration."""
@@ -306,6 +315,7 @@ class TestComprehensiveConfiguration:
             replace_spaces=True,
             replace_hyphens=True,
             replace_mathematical_alphanumerics=True,
+            replace_roman_numerals=True,
             combine_decomposed_hiraganas_and_katakanas=True,
             to_halfwidth="hankaku-kana",
             remove_ivs_svs="drop-all-selectors",
@@ -327,6 +337,7 @@ class TestComprehensiveConfiguration:
             "spaces",
             "hyphens",
             "mathematical-alphanumerics",
+            "roman-numerals",
             "hira-kata-composition",
             "jisx0201-and-alike",
         ]
@@ -356,6 +367,7 @@ class TestFunctionalIntegration:
             replace_combined_characters=True,
             replace_spaces=True,
             replace_mathematical_alphanumerics=True,
+            replace_roman_numerals=True,
         )
         transliterator = make_transliterator(recipe)
 
@@ -365,6 +377,8 @@ class TestFunctionalIntegration:
             ("⑴", "(1)"),  # Parenthesized number (combined)
             ("𝐇𝐞𝐥𝐥𝐨", "Hello"),  # Mathematical alphanumerics
             ("　", " "),  # Full-width space
+            ("Ⅲ", "III"),  # Roman numeral (uppercase)
+            ("ⅸ", "ix"),  # Roman numeral (lowercase)
         ]
 
         for input_text, expected in test_cases:

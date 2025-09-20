@@ -301,6 +301,20 @@ public record class TransliterationRecipe
     public bool ReplaceMathematicalAlphanumerics { get; init; }
 
     /// <summary>
+    /// Gets a value indicating whether replace roman numeral characters with their ASCII letter equivalents.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// // Input:  "Ⅻ"
+    /// // Output: "XII"
+    /// // Input:  "ⅻ"
+    /// // Output: "xii"
+    /// var recipe = new TransliterationRecipe { ReplaceRomanNumerals = true };
+    /// </code>
+    /// </example>
+    public bool ReplaceRomanNumerals { get; init; }
+
+    /// <summary>
     /// Gets a value indicating whether combine decomposed hiraganas and katakanas into single counterparts.
     /// </summary>
     /// <example>
@@ -389,6 +403,7 @@ public record class TransliterationRecipe
         ctx = this.ApplyReplaceSpaces(ctx);
         ctx = this.ApplyReplaceHyphens(ctx);
         ctx = this.ApplyReplaceMathematicalAlphanumerics(ctx);
+        ctx = this.ApplyReplaceRomanNumerals(ctx);
         ctx = this.ApplyCombineDecomposedHiraganasAndKatakanas(ctx);
         ctx = this.ApplyToFullwidth(ctx);
         ctx = this.ApplyHiraKata(ctx);
@@ -483,6 +498,16 @@ public record class TransliterationRecipe
         if (this.ReplaceMathematicalAlphanumerics)
         {
             ctx = ctx.InsertMiddle(new TransliteratorConfig("mathematical-alphanumerics"), false);
+        }
+
+        return ctx;
+    }
+
+    private TransliteratorConfigListBuilder ApplyReplaceRomanNumerals(TransliteratorConfigListBuilder ctx)
+    {
+        if (this.ReplaceRomanNumerals)
+        {
+            ctx = ctx.InsertMiddle(new TransliteratorConfig("roman-numerals"), false);
         }
 
         return ctx;

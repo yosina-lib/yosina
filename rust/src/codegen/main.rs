@@ -62,6 +62,10 @@ fn main() -> Result<(), anyhow::Error> {
         "circled_or_squared".to_string(),
         "circled-or-squared.json".to_string(),
     );
+    defs.insert(
+        "roman_numerals".to_string(),
+        "roman-numerals.json".to_string(),
+    );
 
     // Load the dataset
     let dataset = Dataset::from_data_root(&data_root, &defs)?;
@@ -115,6 +119,14 @@ fn main() -> Result<(), anyhow::Error> {
         let output = render_circled_or_squared_data(&dataset.circled_or_squared)?;
         let filepath = dest_root.join("circled_or_squared_data.rs");
         println!("Generating: circled_or_squared_data.rs");
+        fs::write(filepath, output)?;
+    }
+
+    // Roman numerals transliterator data
+    {
+        let output = render_roman_numerals_data(&dataset.roman_numerals)?;
+        let filepath = dest_root.join("roman_numerals_data.rs");
+        println!("Generating: roman_numerals_data.rs");
         fs::write(filepath, output)?;
     }
 

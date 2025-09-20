@@ -2,7 +2,7 @@ package io.yosina;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import io.yosina.transliterators.CircledOrSquared;
+import io.yosina.transliterators.CircledOrSquaredTransliterator;
 import io.yosina.transliterators.HiraKataCompositionTransliterator;
 import io.yosina.transliterators.HyphensTransliterator;
 import io.yosina.transliterators.IvsSvsBaseTransliterator;
@@ -92,8 +92,9 @@ public class TransliterationRecipeTest {
             assertTrue(containsConfig(configs, "circled-or-squared"));
             Yosina.TransliteratorConfig config = findConfig(configs, "circled-or-squared");
             assertTrue(config.getOptions().isPresent());
-            assertTrue(config.getOptions().get() instanceof CircledOrSquared.Options);
-            CircledOrSquared.Options options = (CircledOrSquared.Options) config.getOptions().get();
+            assertTrue(config.getOptions().get() instanceof CircledOrSquaredTransliterator.Options);
+            CircledOrSquaredTransliterator.Options options =
+                    (CircledOrSquaredTransliterator.Options) config.getOptions().get();
             assertTrue(options.isIncludeEmojis());
         }
 
@@ -106,8 +107,9 @@ public class TransliterationRecipeTest {
             assertTrue(containsConfig(configs, "circled-or-squared"));
             Yosina.TransliteratorConfig config = findConfig(configs, "circled-or-squared");
             assertTrue(config.getOptions().isPresent());
-            assertTrue(config.getOptions().get() instanceof CircledOrSquared.Options);
-            CircledOrSquared.Options options = (CircledOrSquared.Options) config.getOptions().get();
+            assertTrue(config.getOptions().get() instanceof CircledOrSquaredTransliterator.Options);
+            CircledOrSquaredTransliterator.Options options =
+                    (CircledOrSquaredTransliterator.Options) config.getOptions().get();
             assertFalse(options.isIncludeEmojis());
         }
 

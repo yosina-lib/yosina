@@ -71,6 +71,7 @@ class YosinaCodeGenerator {
     await _generateIvsSvsBaseTransliteratorData();
     await _generateCombinedTransliterator();
     await _generateCircledOrSquaredTransliteratorData();
+    await _generateRomanNumeralsTransliterator();
   }
 
   Future<void> _generateComplexTransliterators() async {
@@ -580,6 +581,7 @@ ${buffer.toString()}
       ('ideographicAnnotations', 'IdeographicAnnotationsTransliterator'),
       ('kanjiOldNew', 'KanjiOldNewTransliterator'),
       ('combined', 'CombinedTransliterator'),
+      ('romanNumerals', 'RomanNumeralsTransliterator'),
     ];
 
     final buffer = StringBuffer();
@@ -625,6 +627,89 @@ ${buffer.toString()}
         path.join(path.dirname(destRoot), 'generated_registry.dart');
     await File(registryPath).writeAsString(buffer.toString());
     print('Generated: generated_registry.dart');
+  }
+
+  Future<void> _generateRomanNumeralsTransliterator() async {
+    final dataPath = path.join(dataRoot, 'roman-numerals.json');
+    final file = File(dataPath);
+    if (!await file.exists()) {
+      print('Warning: Roman numerals data file not found: $dataPath');
+      return;
+    }
+
+    final jsonString = await file.readAsString();
+    final data = json.decode(jsonString) as List<dynamic>;
+
+    final mappings = <String, List<String>>{};
+    for (final record in data) {
+      // Parse upper and lower codes
+      final upperChar = _convertUnicodeNotation(record['codes']['upper']);
+      final lowerChar = _convertUnicodeNotation(record['codes']['lower']);
+
+      // Parse decomposed forms
+      final upperDecomposed = (record['decomposed']['upper'] as List)
+          .map((cp) => _convertUnicodeNotation(cp))
+          .toList();
+      final lowerDecomposed = (record['decomposed']['lower'] as List)
+          .map((cp) => _convertUnicodeNotation(cp))
+          .toList();
+
+      // Add both upper and lower mappings
+      mappings[upperChar] = upperDecomposed;
+      mappings[lowerChar] = lowerDecomposed;
+    }
+
+    final output = _renderRomanNumeralsTransliterator(mappings);
+
+    final filename = 'roman_numerals_transliterator.dart';
+    final filepath = path.join(destRoot, filename);
+
+    await File(filepath).writeAsString(output);
+    print('Generated: $filename');
+  }
+
+  String _renderRomanNumeralsTransliterator(
+      Map<String, List<String>> mappings) {
+    final buffer = StringBuffer();
+    // ignore: cascade_invocations
+    buffer.writeln('  static const _mappings = <String, List<String>>{');
+    for (final entry in mappings.entries) {
+      final from = _escapeString(entry.key);
+      final toList = entry.value.map((s) => "'${_escapeString(s)}'").join(', ');
+      buffer.writeln("    '$from': [$toList],");
+    }
+    buffer.writeln('  };');
+
+    return '''
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+import '../char.dart';
+import '../transliterator.dart';
+
+/// Replace roman numeral characters with their ASCII letter equivalents.
+class RomanNumeralsTransliterator implements Transliterator {
+${buffer.toString()}
+
+  const RomanNumeralsTransliterator();
+
+  @override
+  Iterable<Char> call(Iterable<Char> inputChars) sync* {
+    var offset = 0;
+    for (final char in inputChars) {
+      final replacement = _mappings[char.c];
+      if (replacement != null) {
+        for (final replacementChar in replacement) {
+          yield Char(replacementChar, offset, char);
+          offset += replacementChar.length;
+        }
+      } else {
+        yield char.withOffset(offset);
+        offset += char.c.length;
+      }
+    }
+  }
+}
+''';
   }
 }
 

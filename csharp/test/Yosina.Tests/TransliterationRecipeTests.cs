@@ -33,6 +33,7 @@ public static class TransliterationRecipeTests
             Assert.False(recipe.ReplaceSpaces);
             Assert.Equal(TransliterationRecipe.ReplaceHyphensOptions.Disabled, recipe.ReplaceHyphens);
             Assert.False(recipe.ReplaceMathematicalAlphanumerics);
+            Assert.False(recipe.ReplaceRomanNumerals);
             Assert.False(recipe.CombineDecomposedHiraganasAndKatakanas);
             Assert.Equal(TransliterationRecipe.ToFullwidthOptions.Disabled, recipe.ToFullwidth);
             Assert.Equal(TransliterationRecipe.ToHalfwidthOptions.Disabled, recipe.ToHalfwidth);
@@ -143,6 +144,17 @@ public static class TransliterationRecipeTests
 
             Assert.Single(configs);
             Assert.Equal("mathematical-alphanumerics", configs[0].Name);
+            Assert.Null(configs[0].Options);
+        }
+
+        [Fact]
+        public void RomanNumerals_Configuration()
+        {
+            var recipe = new TransliterationRecipe { ReplaceRomanNumerals = true };
+            var configs = recipe.BuildTransliteratorConfigs();
+
+            Assert.Single(configs);
+            Assert.Equal("roman-numerals", configs[0].Name);
             Assert.Null(configs[0].Options);
         }
 
@@ -359,6 +371,7 @@ public static class TransliterationRecipeTests
                 ReplaceCircledOrSquaredCharacters = TransliterationRecipe.ReplaceCircledOrSquaredCharactersOptions.Enabled,
                 ReplaceCombinedCharacters = true,
                 ReplaceMathematicalAlphanumerics = true,
+                ReplaceRomanNumerals = true,
                 ToHalfwidth = TransliterationRecipe.ToHalfwidthOptions.HankakuKana,
                 Charset = Charset.UniJis90,
             };
@@ -380,6 +393,7 @@ public static class TransliterationRecipeTests
                 "spaces",
                 "hyphens",
                 "mathematical-alphanumerics",
+                "roman-numerals",
                 "hira-kata-composition",
                 "jisx0201-and-alike",
             };
@@ -415,6 +429,31 @@ public static class TransliterationRecipeTests
             Assert.Equal("(1)", transliterator("⑴"));  // Parenthesized number (combined)
             Assert.Equal("Hello", transliterator("𝐇𝐞𝐥𝐥𝐨"));  // Mathematical alphanumerics
             Assert.Equal(" ", transliterator("　"));  // Full-width space
+        }
+
+        [Fact]
+        public void RomanNumerals_Functional()
+        {
+            var recipe = new TransliterationRecipe
+            {
+                ReplaceRomanNumerals = true,
+            };
+
+            var transliterator = Entrypoint.MakeTransliterator(recipe);
+
+            // Test uppercase Roman numerals
+            Assert.Equal("I", transliterator("Ⅰ"));
+            Assert.Equal("XII", transliterator("Ⅻ"));
+            Assert.Equal("M", transliterator("Ⅿ"));
+
+            // Test lowercase Roman numerals
+            Assert.Equal("i", transliterator("ⅰ"));
+            Assert.Equal("xii", transliterator("ⅻ"));
+            Assert.Equal("m", transliterator("ⅿ"));
+
+            // Test mixed content
+            Assert.Equal("Chapter XII", transliterator("Chapter Ⅻ"));
+            Assert.Equal("section iii", transliterator("section ⅲ"));
         }
 
         [Fact]

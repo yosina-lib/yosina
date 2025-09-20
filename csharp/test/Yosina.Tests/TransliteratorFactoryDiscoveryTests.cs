@@ -14,6 +14,7 @@ public class TransliteratorFactoryDiscoveryTests
         {
             "spaces",
             "radicals",
+            "roman-numerals",
             "mathematical-alphanumerics",
             "ideographic-annotations",
             "hyphens",

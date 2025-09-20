@@ -21,6 +21,7 @@ type DatasetSourceDefs struct {
 	IvsSvsBase                string
 	Combined                  string
 	CircledOrSquared          string
+	RomanNumerals             string
 }
 
 type SimpleDataset struct {
@@ -88,6 +89,7 @@ var sources = DatasetSourceDefs{
 	IvsSvsBase:                "ivs-svs-base-mappings.json",
 	Combined:                  "combined-chars.json",
 	CircledOrSquared:          "circled-or-squared.json",
+	RomanNumerals:             "roman-numerals.json",
 }
 
 func (sd *SimpleDataset) KanjiOldNew() (map[data.UCodepointTuple]data.UCodepointTuple, error) {
@@ -118,6 +120,16 @@ func (sd *SimpleDataset) CircledOrSquared() (map[data.UCodepoint]data.CircledOrS
 	}
 	defer f.Close()
 	return data.LoadCircledOrSquared(bufio.NewReader(f))
+}
+
+func (sd *SimpleDataset) RomanNumerals() ([]data.RomanNumeralsRecord, error) {
+	dataPath := filepath.Join(sd.dataRoot, sd.defs.RomanNumerals)
+	f, err := os.Open(dataPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open roman-numerals data file: %w", err)
+	}
+	defer f.Close()
+	return data.LoadRomanNumerals(bufio.NewReader(f))
 }
 
 func renderSimpleTransliterators(outputDir string, em *emitter.Emitter, dataset *SimpleDataset) error {
@@ -280,6 +292,30 @@ func renderCircledOrSquaredTransliterator(outputDir string, em *emitter.Emitter,
 	return nil
 }
 
+func renderRomanNumeralsTransliterator(outputDir string, em *emitter.Emitter, dataset *SimpleDataset) error {
+	fmt.Println("Generating roman_numerals...")
+
+	// Load roman numerals data
+	records, err := dataset.RomanNumerals()
+	if err != nil {
+		return fmt.Errorf("failed to load roman numerals data: %w", err)
+	}
+
+	// Generate roman numerals transliterator
+	artifacts, err := em.GenerateRomanNumeralsTransliterator("roman_numerals", records)
+	if err != nil {
+		return fmt.Errorf("failed to generate roman numerals transliterator: %w", err)
+	}
+
+	// Write artifacts
+	err = writeArtifacts(outputDir, artifacts)
+	if err != nil {
+		return fmt.Errorf("failed to write roman numerals artifacts: %w", err)
+	}
+
+	return nil
+}
+
 func main() {
 	// Determine paths
 	wd, err := os.Getwd()
@@ -337,6 +373,11 @@ func main() {
 	err = renderCircledOrSquaredTransliterator(outputDir, em, dataset)
 	if err != nil {
 		log.Fatalf("Failed to render circled or squared transliterator: %v", err)
+	}
+
+	err = renderRomanNumeralsTransliterator(outputDir, em, dataset)
+	if err != nil {
+		log.Fatalf("Failed to render roman numerals transliterator: %v", err)
 	}
 
 	fmt.Println("Code generation complete!")

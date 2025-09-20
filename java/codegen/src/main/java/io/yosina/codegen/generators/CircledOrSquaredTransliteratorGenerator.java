@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import io.yosina.Char;
 import io.yosina.CharIterator;
 import io.yosina.CodePointTuple;
 import io.yosina.Transliterator;
@@ -40,7 +41,7 @@ import io.yosina.annotations.RegisteredTransliterator;
  * Replace circled or squared characters with templated forms.
  */
 @RegisteredTransliterator(name = "circled-or-squared")
-public class CircledOrSquared implements Transliterator {
+public class %1$s implements Transliterator {
     /** Configuration options for the circled-or-squared transliterator. */
     public static class Options {
         private final String templateForCircled;
@@ -148,7 +149,7 @@ public class CircledOrSquared implements Transliterator {
         final Map<CodePointTuple, Record> mappings_ = new TreeMap<>();
         final ByteBuffer b;
         try {
-            try (final InputStream s = CircledOrSquared.class.getResourceAsStream("circled_or_squared.data")) {
+            try (final InputStream s = %1$s.class.getResourceAsStream("circled_or_squared.data")) {
                 b = ByteBuffer.wrap(s.readAllBytes()).order(ByteOrder.BIG_ENDIAN);
             }
         } catch (IOException e) {
@@ -171,40 +172,40 @@ public class CircledOrSquared implements Transliterator {
 
     private final Options options;
 
-    /** Creates a new CircledOrSquared transliterator with default options. */
-    public CircledOrSquared() {
+    /** Creates a new %1$sTransliterator with default options. */
+    public %1$s() {
         this(new Options());
     }
 
     /**
-     * Creates a new CircledOrSquared transliterator with the specified options.
+     * Creates a new %1$s with the specified options.
      *
      * @param options the configuration options
      */
-    public CircledOrSquared(Options options) {
+    public %1$s(Options options) {
         this.options = options;
     }
 
     @Override
     public CharIterator transliterate(CharIterator input) {
-        return new CircledOrSquaredCharIterator(input, mappings, options);
+        return new %1$sCharIterator(input, mappings, options);
     }
 
-    private static class CircledOrSquaredCharIterator implements CharIterator {
+    private static class %1$sCharIterator implements CharIterator {
         private final CharIterator input;
         private final Map<CodePointTuple, Record> mappings;
         private final Options options;
-        private final List<io.yosina.Char> queue = new ArrayList<>();
+        private final List<Char> queue = new ArrayList<>();
         private int queueIndex = 0;
 
-        public CircledOrSquaredCharIterator(CharIterator input, Map<CodePointTuple, Record> mappings, Options options) {
+        public %1$sCharIterator(CharIterator input, Map<CodePointTuple, Record> mappings, Options options) {
             this.input = input;
             this.mappings = mappings;
             this.options = options;
         }
 
         @Override
-        public io.yosina.Char next() {
+        public Char next() {
             // Return queued characters first
             if (queueIndex < queue.size()) {
                 return queue.get(queueIndex++);
@@ -218,7 +219,7 @@ public class CircledOrSquared implements Transliterator {
                 return null;
             }
 
-            io.yosina.Char ch = input.next();
+            final Char ch = input.next();
             if (ch.isSentinel()) {
                 return ch;
             }
@@ -231,15 +232,15 @@ public class CircledOrSquared implements Transliterator {
                 }
 
                 // Get template
-                String template = record.type == CharType.CIRCLE ? options.getTemplateForCircled() : options.getTemplateForSquared();
-                String replacement = template.replace("?", record.rendering);
+                final String template = record.type == CharType.CIRCLE ? options.getTemplateForCircled() : options.getTemplateForSquared();
+                final String replacement = template.replace("?", record.rendering);
 
                 if (replacement.isEmpty()) {
                     return ch;
                 }
 
                 // Create new characters for each replacement code point
-                int[] replacementCodePoints = replacement.codePoints().toArray();
+                final int[] replacementCodePoints = replacement.codePoints().toArray();
                 for (int i = 0; i < replacementCodePoints.length; i++) {
                     queue.add(new io.yosina.Char(
                         CodePointTuple.of(replacementCodePoints[i], -1),
@@ -262,6 +263,7 @@ public class CircledOrSquared implements Transliterator {
 """;
 
     private final Map<String, CircledOrSquaredRecord> mappings;
+    private final String className = "CircledOrSquaredTransliterator";
 
     public CircledOrSquaredTransliteratorGenerator(Map<String, CircledOrSquaredRecord> mappings) {
         this.mappings = mappings;
@@ -275,10 +277,10 @@ public class CircledOrSquared implements Transliterator {
         artifacts.add(
                 new Artifact(
                         Artifact.Type.SOURCE,
-                        Path.of("CircledOrSquared.java"),
+                        Path.of(String.format("%s.java", className)),
                         ByteBuffer.wrap(
-                                CIRCLED_OR_SQUARED_TRANSLITERATOR_TEMPLATE.getBytes(
-                                        StandardCharsets.UTF_8))));
+                                String.format(CIRCLED_OR_SQUARED_TRANSLITERATOR_TEMPLATE, className)
+                                        .getBytes(StandardCharsets.UTF_8))));
 
         // Generate binary data file
         ByteBuffer dataBuffer = generateBinaryData();
@@ -293,7 +295,8 @@ public class CircledOrSquared implements Transliterator {
         // Calculate total size needed
         int totalSize = 0;
         for (Map.Entry<String, CircledOrSquaredRecord> entry : mappings.entrySet()) {
-            // 2 ints for key + 1 int for rendering length + n ints for rendering + 1 int for type +
+            // 2 ints for key + 1 int for rendering length + n ints for rendering + 1 int
+            // for type +
             // 1 int for emoji
             totalSize +=
                     5 * 4

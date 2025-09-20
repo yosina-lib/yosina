@@ -17,6 +17,7 @@ use Yosina\Transliterators\Jisx0201AndAlikeTransliterator;
 use Yosina\Transliterators\ProlongedSoundMarksTransliterator;
 use Yosina\Transliterators\CircledOrSquaredTransliterator;
 use Yosina\Transliterators\CombinedTransliterator;
+use Yosina\Transliterators\RomanNumeralsTransliterator;
 use Yosina\Transliterators\JapaneseIterationMarksTransliterator;
 
 class TransliteratorRegistry
@@ -35,6 +36,7 @@ class TransliteratorRegistry
         'prolonged-sound-marks',
         'circled-or-squared',
         'combined',
+        'roman-numerals',
         'japanese-iteration-marks',
     ];
 
@@ -53,6 +55,7 @@ class TransliteratorRegistry
         'prolonged-sound-marks' => ProlongedSoundMarksTransliterator::class,
         'circled-or-squared' => CircledOrSquaredTransliterator::class,
         'combined' => CombinedTransliterator::class,
+        'roman-numerals' => RomanNumeralsTransliterator::class,
         'japanese-iteration-marks' => JapaneseIterationMarksTransliterator::class,
     ];
 

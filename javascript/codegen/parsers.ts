@@ -1,7 +1,7 @@
 import { json } from "node:stream/consumers";
 import type { ReadableStream } from "node:stream/web";
 import * as zod from "zod";
-import type { CircledOrSquaredRecord, HyphensRecord, IVSSVSBaseRecord } from "./dataset";
+import type { CircledOrSquaredRecord, HyphensRecord, IVSSVSBaseRecord, RomanNumeralsRecord } from "./dataset";
 
 const simpleTransliterationFileSchema = zod.record(zod.string(), zod.nullable(zod.string()));
 
@@ -41,6 +41,24 @@ const circledOrSquaredFileSchema = zod.record(
     rendering: zod.string(),
     type: zod.enum(["circle", "square"]),
     emoji: zod.boolean(),
+  }),
+);
+
+const romanNumeralsFileSchema = zod.array(
+  zod.object({
+    value: zod.number(),
+    codes: zod.object({
+      upper: zod.string(),
+      lower: zod.string(),
+    }),
+    shift_jis: zod.object({
+      upper: zod.array(zod.number()),
+      lower: zod.array(zod.number()),
+    }),
+    decomposed: zod.object({
+      upper: zod.array(zod.string()),
+      lower: zod.array(zod.string()),
+    }),
   }),
 );
 
@@ -107,4 +125,23 @@ export const parseCircledOrSquaredTransliterationRecord = async (
       emoji: pair[1].emoji,
     },
   ]);
+};
+
+export const parseRomanNumeralsRecord = async (f: ReadableStream): Promise<[string, string[]][]> => {
+  const data = await romanNumeralsFileSchema.parseAsync(await json(f));
+  const result: [string, string[]][] = [];
+  data.forEach((record) => {
+    // Parse upper and lower codes
+    const upperChar = String.fromCodePoint(parseUnicodeCodepoint(record.codes.upper));
+    const lowerChar = String.fromCodePoint(parseUnicodeCodepoint(record.codes.lower));
+
+    // Parse decomposed forms
+    const upperDecomposed = record.decomposed.upper.map((cp) => String.fromCodePoint(parseUnicodeCodepoint(cp)));
+    const lowerDecomposed = record.decomposed.lower.map((cp) => String.fromCodePoint(parseUnicodeCodepoint(cp)));
+
+    // Add both upper and lower mappings
+    result.push([upperChar, upperDecomposed]);
+    result.push([lowerChar, lowerDecomposed]);
+  });
+  return result;
 };

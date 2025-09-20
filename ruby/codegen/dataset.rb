@@ -13,6 +13,7 @@ DatasetSourceDefs = Struct.new(
   :kanji_old_new,
   :combined,
   :circled_or_squared,
+  :roman_numerals,
   keyword_init: true
 )
 
@@ -27,6 +28,7 @@ Dataset = Struct.new(
   :kanji_old_new,
   :combined,
   :circled_or_squared,
+  :roman_numerals,
   keyword_init: true
 )
 
@@ -199,6 +201,34 @@ def load_circled_or_squared_data(filepath)
   mappings
 end
 
+# Load roman numerals data
+def load_roman_numerals_data(filepath)
+  data = JSON.parse(File.read(filepath))
+  mappings = {}
+
+  data.each do |record|
+    # Parse upper and lower codes
+    upper_char = unicode_to_char(record['codes']['upper'])
+    lower_char = unicode_to_char(record['codes']['lower'])
+
+    # Parse decomposed forms
+    decomposed_upper = record['decomposed']['upper'].map { |cp| unicode_to_char(cp) }
+    decomposed_lower = record['decomposed']['lower'].map { |cp| unicode_to_char(cp) }
+
+    # Store both upper and lower mappings
+    mappings[upper_char] = {
+      value: record['value'],
+      decomposed: decomposed_upper
+    }
+    mappings[lower_char] = {
+      value: record['value'],
+      decomposed: decomposed_lower
+    }
+  end
+
+  mappings
+end
+
 # Build dataset from data root directory
 def build_dataset_from_data_root(data_root, defs)
   Dataset.new(
@@ -210,6 +240,7 @@ def build_dataset_from_data_root(data_root, defs)
     ivs_svs_base: load_ivs_svs_base_data(data_root / defs.ivs_svs_base),
     kanji_old_new: load_kanji_old_new_data(data_root / defs.kanji_old_new),
     combined: load_combined_data(data_root / defs.combined),
-    circled_or_squared: load_circled_or_squared_data(data_root / defs.circled_or_squared)
+    circled_or_squared: load_circled_or_squared_data(data_root / defs.circled_or_squared),
+    roman_numerals: load_roman_numerals_data(data_root / defs.roman_numerals)
   )
 end

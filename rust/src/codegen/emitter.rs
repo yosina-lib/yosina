@@ -2,7 +2,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::{format_ident, quote};
 use syn::{LitInt, LitStr};
 
-use super::models::{CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord};
+use super::models::{CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord, RomanNumeralsRecord};
 
 pub fn render_simple_transliterator(
     module_name: &str,
@@ -290,6 +290,48 @@ pub fn render_circled_or_squared_data(
 
         lazy_static! {
             pub static ref MAPPINGS: HashMap<&'static str, CircledOrSquaredRecord> = {
+                let mut mappings = HashMap::new();
+                #(#mapping_inserts)*
+                mappings
+            };
+        }
+    };
+
+    Ok(tokens.to_string())
+}
+
+pub fn render_roman_numerals_data(
+    data: &[(String, RomanNumeralsRecord)],
+) -> Result<String, anyhow::Error> {
+    // Build mapping entries for both upper and lower cases
+    let mapping_inserts: Vec<TokenStream> = data
+        .iter()
+        .flat_map(|(_, record)| {
+            let upper_codepoint = u32::from_str_radix(&record.codes.upper[2..], 16).unwrap();
+            let upper_char = char::from_u32(upper_codepoint).unwrap().to_string();
+            let lower_codepoint = u32::from_str_radix(&record.codes.lower[2..], 16).unwrap();
+            let lower_char = char::from_u32(lower_codepoint).unwrap().to_string();
+
+            let upper_decomposed = record.decomposed.upper.join("");
+            let lower_decomposed = record.decomposed.lower.join("");
+
+            vec![
+                quote! {
+                    mappings.insert(#upper_char, #upper_decomposed);
+                },
+                quote! {
+                    mappings.insert(#lower_char, #lower_decomposed);
+                },
+            ]
+        })
+        .collect();
+
+    let tokens = quote! {
+        use std::collections::HashMap;
+        use lazy_static::lazy_static;
+
+        lazy_static! {
+            pub static ref MAPPINGS: HashMap<&'static str, &'static str> = {
                 let mut mappings = HashMap::new();
                 #(#mapping_inserts)*
                 mappings

@@ -233,6 +233,7 @@ class TransliterationRecipe {
     this.replaceSpaces = false,
     this.replaceHyphens = const ReplaceHyphensOptions.disabled(),
     this.replaceMathematicalAlphanumerics = false,
+    this.replaceRomanNumerals = false,
     this.combineDecomposedHiraganasAndKatakanas = false,
     this.toFullwidth = const ToFullwidthOptions.disabled(),
     this.toHalfwidth = const ToHalfwidthOptions.disabled(),
@@ -284,6 +285,9 @@ class TransliterationRecipe {
   /// Whether to replace mathematical alphanumeric symbols.
   final bool replaceMathematicalAlphanumerics;
 
+  /// Whether to replace roman numeral characters.
+  final bool replaceRomanNumerals;
+
   /// Whether to combine decomposed hiragana and katakana characters.
   final bool combineDecomposedHiraganasAndKatakanas;
 
@@ -319,6 +323,7 @@ class TransliterationRecipe {
     _applyReplaceHyphens(builder, replaceHyphens);
     _applyReplaceMathematicalAlphanumerics(
         builder, replaceMathematicalAlphanumerics);
+    _applyReplaceRomanNumerals(builder, replaceRomanNumerals);
     _applyCombineDecomposedHiraganasAndKatakanas(
         builder, combineDecomposedHiraganasAndKatakanas);
     _applyToFullwidth(builder, toFullwidth);
@@ -455,6 +460,16 @@ class TransliterationRecipe {
     if (replace) {
       ctx.insertMiddle(
         const TransliteratorConfig('mathematicalAlphanumerics'),
+        forceReplace: false,
+      );
+    }
+  }
+
+  static void _applyReplaceRomanNumerals(
+      _TransliteratorConfigListBuilder ctx, bool replace) {
+    if (replace) {
+      ctx.insertMiddle(
+        const TransliteratorConfig('romanNumerals'),
         forceReplace: false,
       );
     }

@@ -1,6 +1,6 @@
 """Code emitters for generating Python transliterator modules."""
 
-from .models import CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord
+from .models import CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord, RomanNumeralsRecord
 
 __all__ = [
     "render_simple_transliterator",
@@ -9,6 +9,7 @@ __all__ = [
     "build_compressed_ivs_svs_base_records",
     "render_combined_transliterator",
     "render_circled_or_squared_transliterator",
+    "render_roman_numerals_transliterator",
 ]
 
 
@@ -454,6 +455,68 @@ class Transliterator:
                 template = self.templates[type_abbrev]
                 replacement = template.replace("?", rendering)
                 for replacement_char in replacement:
+                    yield Char(c=replacement_char, offset=offset, source=char)
+                    offset += len(replacement_char)
+            else:
+                yield char.with_offset(offset)
+                offset += len(char.c)
+'''
+
+    return code
+
+
+def render_roman_numerals_transliterator(data: list[tuple[str, RomanNumeralsRecord]]) -> str:
+    """Render a roman numerals transliterator module.
+
+    :param data: List of (upper_char, RomanNumeralsRecord) tuples
+    :returns: Generated Python module code
+    """
+    # Build mapping dicts for upper and lower to decomposed forms
+    upper_to_decomposed: dict[str, list[str]] = {}
+    lower_to_decomposed: dict[str, list[str]] = {}
+
+    for _, record in data:
+        upper_to_decomposed[record.upper] = record.decomposed_upper
+        lower_to_decomposed[record.lower] = record.decomposed_lower
+
+    # Combine both mappings
+    all_mappings = {**upper_to_decomposed, **lower_to_decomposed}
+    mapping_repr = python_repr_multi_char_dict(all_mappings)
+
+    code = f'''"""Auto-generated roman numerals transliterator.
+
+Replace roman numeral characters with their ASCII letter equivalents.
+"""
+from collections.abc import Iterable
+from typing import Any
+
+from ..chars import Char
+
+__all__ = ["Transliterator"]
+
+# Generated mapping data
+ROMAN_NUMERAL_MAPPINGS = {mapping_repr}
+
+
+class Transliterator:
+    """Transliterator for roman numerals.
+
+    Replace roman numeral characters with their ASCII letter equivalents.
+    """
+
+    def __init__(self, **_options: Any) -> None:
+        """Initialize the transliterator with options.
+
+        :param _options: Configuration options (currently unused)
+        """
+
+    def __call__(self, input_chars: Iterable[Char]) -> Iterable[Char]:
+        """Replace each roman numeral with its ASCII letter equivalent."""
+        offset = 0
+        for char in input_chars:
+            replacement_list = ROMAN_NUMERAL_MAPPINGS.get(char.c)
+            if replacement_list is not None:
+                for replacement_char in replacement_list:
                     yield Char(c=replacement_char, offset=offset, source=char)
                     offset += len(replacement_char)
             else:

@@ -5,6 +5,7 @@ import {
   parseHyphenTransliterationRecord,
   parseIVSSVSBaseTransliterationRecord,
   parseKanjiOldNewTransliterationRecord,
+  parseRomanNumeralsRecord,
   parseSimpleTransliterationRecords,
 } from "./parsers";
 
@@ -58,6 +59,14 @@ export default {
     const f = await fs.open(path);
     try {
       return await parseCircledOrSquaredTransliterationRecord(f.readableWebStream());
+    } finally {
+      await f.close();
+    }
+  },
+  romanNumerals: async (path: string) => {
+    const f = await fs.open(path);
+    try {
+      return await parseRomanNumeralsRecord(f.readableWebStream());
     } finally {
       await f.close();
     }

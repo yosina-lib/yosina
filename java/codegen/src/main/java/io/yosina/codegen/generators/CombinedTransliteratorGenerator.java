@@ -27,24 +27,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import io.yosina.Char;
 import io.yosina.CharIterator;
 import io.yosina.CodePointTuple;
 import io.yosina.Transliterator;
 import io.yosina.annotations.RegisteredTransliterator;
 
 /**
- * Auto-generated transliterator for Combined.
+ * Auto-generated transliterator for %2$s.
  * Replace single characters with arrays of characters.
  */
-@RegisteredTransliterator(name = "combined")
-public class Combined implements Transliterator {
+@RegisteredTransliterator(name = "%2$s")
+public class %1$s implements Transliterator {
     private static final Map<CodePointTuple, int[]> mappings;
 
     static {
         final Map<CodePointTuple, int[]> mappings_ = new TreeMap<>();
         final ByteBuffer b;
         try {
-            try (final InputStream s = Combined.class.getResourceAsStream("combined.data")) {
+            try (final InputStream s = %1$s.class.getResourceAsStream("%2$s.data")) {
                 b = ByteBuffer.wrap(s.readAllBytes()).order(ByteOrder.BIG_ENDIAN);
             }
         } catch (IOException e) {
@@ -62,19 +63,19 @@ public class Combined implements Transliterator {
         mappings = Collections.unmodifiableMap(mappings_);
     }
 
-    private static class CombinedCharIterator implements CharIterator {
+    private static class %1$sCharIterator implements CharIterator {
         private final CharIterator input;
         private final Map<CodePointTuple, int[]> mappings;
-        private final List<io.yosina.Char> queue = new ArrayList<>();
+        private final List<Char> queue = new ArrayList<>();
         private int queueIndex = 0;
 
-        public CombinedCharIterator(CharIterator input, Map<CodePointTuple, int[]> mappings) {
+        public %1$sCharIterator(CharIterator input, Map<CodePointTuple, int[]> mappings) {
             this.input = input;
             this.mappings = mappings;
         }
 
         @Override
-        public io.yosina.Char next() {
+        public Char next() {
             // Return queued characters first
             if (queueIndex < queue.size()) {
                 return queue.get(queueIndex++);
@@ -88,7 +89,7 @@ public class Combined implements Transliterator {
                 return null;
             }
 
-            io.yosina.Char ch = input.next();
+            Char ch = input.next();
             if (ch.isSentinel()) {
                 return ch;
             }
@@ -97,7 +98,7 @@ public class Combined implements Transliterator {
             if (replacement != null) {
                 // Create new characters for each replacement
                 for (int i = 0; i < replacement.length; i++) {
-                    queue.add(new io.yosina.Char(
+                    queue.add(new Char(
                         CodePointTuple.of(replacement[i], -1),
                         ch.getOffset() + i,
                         ch
@@ -117,19 +118,24 @@ public class Combined implements Transliterator {
 
     @Override
     public CharIterator transliterate(CharIterator input) {
-        return new CombinedCharIterator(input, mappings);
+        return new %1$sCharIterator(input, mappings);
     }
 
     /** Creates a new Combined transliterator. */
-    public Combined() {
+    public %1$s() {
     }
 }
 """;
 
     private final Map<String, String> mappings;
+    private final String className;
+    private final String name;
 
-    public CombinedTransliteratorGenerator(Map<String, String> mappings) {
+    public CombinedTransliteratorGenerator(
+            Map<String, String> mappings, String className, String name) {
         this.mappings = mappings;
+        this.className = className;
+        this.name = name;
     }
 
     @Override
@@ -140,14 +146,14 @@ public class Combined implements Transliterator {
         artifacts.add(
                 new Artifact(
                         Artifact.Type.SOURCE,
-                        Path.of("Combined.java"),
+                        Path.of(String.format("%s.java", className)),
                         ByteBuffer.wrap(
-                                COMBINED_TRANSLITERATOR_TEMPLATE.getBytes(
-                                        StandardCharsets.UTF_8))));
+                                String.format(COMBINED_TRANSLITERATOR_TEMPLATE, className, name)
+                                        .getBytes(StandardCharsets.UTF_8))));
 
         // Generate binary data file
         ByteBuffer dataBuffer = generateBinaryData();
-        artifacts.add(new Artifact(Artifact.Type.RESOURCE, Path.of("combined.data"), dataBuffer));
+        artifacts.add(new Artifact(Artifact.Type.RESOURCE, Path.of(name + ".data"), dataBuffer));
 
         return artifacts;
     }

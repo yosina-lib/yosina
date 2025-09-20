@@ -31,7 +31,8 @@ def main
     ivs_svs_base: 'ivs-svs-base-mappings.json',
     kanji_old_new: 'kanji-old-new-form.json',
     combined: 'combined-chars.json',
-    circled_or_squared: 'circled-or-squared.json'
+    circled_or_squared: 'circled-or-squared.json',
+    roman_numerals: 'roman-numerals.json'
   )
 
   # Load the dataset
@@ -96,6 +97,12 @@ def main
   output = render_circled_or_squared_transliterator_data(dataset.circled_or_squared)
   filepath = dest_root / 'circled_or_squared_data.rb'
   puts 'Generating: circled_or_squared_data.rb'
+  filepath.write(output)
+
+  # Generate roman numerals transliterator
+  output = render_roman_numerals_transliterator_data(dataset.roman_numerals)
+  filepath = dest_root / 'roman_numerals_data.rb'
+  puts 'Generating: roman_numerals_data.rb'
   filepath.write(output)
 
   puts 'Code generation complete!'

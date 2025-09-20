@@ -1,5 +1,6 @@
 package io.yosina;
 
+import io.yosina.transliterators.CircledOrSquaredTransliterator;
 import io.yosina.transliterators.HiraKataCompositionTransliterator;
 import io.yosina.transliterators.HyphensTransliterator;
 import io.yosina.transliterators.HyphensTransliterator.Mapping;
@@ -235,6 +236,7 @@ public class TransliterationRecipe {
     private boolean replaceSpaces = false;
     private ReplaceHyphensOptions replaceHyphens = ReplaceHyphensOptions.DISABLED;
     private boolean replaceMathematicalAlphanumerics = false;
+    private boolean replaceRomanNumerals = false;
     private boolean combineDecomposedHiraganasAndKatakanas = false;
     private ToFullwidthOptions toFullwidth = ToFullwidthOptions.DISABLED;
     private ToHalfwidthOptions toHalfwidth = ToHalfwidthOptions.DISABLED;
@@ -481,6 +483,28 @@ public class TransliterationRecipe {
     }
 
     /**
+     * Enables or disables replacement of Roman numeral characters.
+     *
+     * <p>Example usage:
+     *
+     * <pre>{@code
+     * // Input:  "Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ"
+     * // Output: "I II III IV V"
+     * // Input:  "ⅰ ⅱ ⅲ ⅳ ⅴ"
+     * // Output: "i ii iii iv v"
+     * TransliterationRecipe recipe = new TransliterationRecipe()
+     *     .withReplaceRomanNumerals(true);
+     * }</pre>
+     *
+     * @param replace true to enable replacement, false to disable
+     * @return this recipe instance for method chaining
+     */
+    public TransliterationRecipe withReplaceRomanNumerals(boolean replace) {
+        this.replaceRomanNumerals = replace;
+        return this;
+    }
+
+    /**
      * Enables or disables combination of decomposed hiragana and katakana characters.
      *
      * <p>Example usage:
@@ -680,6 +704,15 @@ public class TransliterationRecipe {
     }
 
     /**
+     * Checks if replacement of Roman numeral characters is enabled.
+     *
+     * @return true if replacement is enabled, false otherwise
+     */
+    public boolean isReplaceRomanNumerals() {
+        return replaceRomanNumerals;
+    }
+
+    /**
      * Checks if combination of decomposed hiragana and katakana characters is enabled.
      *
      * @return true if combination is enabled, false otherwise
@@ -754,6 +787,7 @@ public class TransliterationRecipe {
         ctx = applyReplaceSpaces(ctx);
         ctx = applyReplaceHyphens(ctx);
         ctx = applyReplaceMathematicalAlphanumerics(ctx);
+        ctx = applyReplaceRomanNumerals(ctx);
         ctx = applyCombineDecomposedHiraganasAndKatakanas(ctx);
         ctx = applyToFullwidth(ctx);
         ctx = applyHiraKata(ctx);
@@ -904,6 +938,14 @@ public class TransliterationRecipe {
         return ctx;
     }
 
+    private TransliteratorConfigListBuilder applyReplaceRomanNumerals(
+            TransliteratorConfigListBuilder ctx) {
+        if (replaceRomanNumerals) {
+            ctx = ctx.insertMiddle(new Yosina.TransliteratorConfig("roman-numerals"), false);
+        }
+        return ctx;
+    }
+
     private TransliteratorConfigListBuilder applyCombineDecomposedHiraganasAndKatakanas(
             TransliteratorConfigListBuilder ctx) {
         if (combineDecomposedHiraganasAndKatakanas) {
@@ -973,7 +1015,7 @@ public class TransliterationRecipe {
                             new Yosina.TransliteratorConfig(
                                     "circled-or-squared",
                                     Optional.of(
-                                            new io.yosina.transliterators.CircledOrSquared.Options()
+                                            new CircledOrSquaredTransliterator.Options()
                                                     .withIncludeEmojis(
                                                             replaceCircledOrSquaredCharacters
                                                                     .isIncludeEmojis()))),

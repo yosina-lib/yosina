@@ -17,6 +17,7 @@ from . import (
     mathematical_alphanumerics,
     prolonged_sound_marks,
     radicals,
+    roman_numerals,
     spaces,
 )
 
@@ -34,6 +35,7 @@ __all__ = [
     "mathematical_alphanumerics",
     "prolonged_sound_marks",
     "radicals",
+    "roman_numerals",
     "spaces",
     "TRANSLITERATORS",
     "TransliteratorConfig",
@@ -54,6 +56,7 @@ TransliteratorIdentifier = Literal[
     "mathematical-alphanumerics",
     "prolonged-sound-marks",
     "radicals",
+    "roman-numerals",
     "spaces",
 ]
 
@@ -74,6 +77,7 @@ _TRANSLITERATOR_MODULES = {
     "mathematical-alphanumerics": mathematical_alphanumerics,
     "prolonged-sound-marks": prolonged_sound_marks,
     "radicals": radicals,
+    "roman-numerals": roman_numerals,
     "spaces": spaces,
 }
 

@@ -113,6 +113,16 @@ void main() {
         expect(configs[0].name, equals('mathematicalAlphanumerics'));
       });
 
+      test('replaceRomanNumerals', () {
+        final recipe = TransliterationRecipe(
+          replaceRomanNumerals: true,
+        );
+        final configs = recipe.buildTransliteratorConfigs();
+
+        expect(configs.length, equals(1));
+        expect(configs[0].name, equals('romanNumerals'));
+      });
+
       test('combineDecomposedHiraganasAndKatakanas', () {
         final recipe = TransliterationRecipe(
           combineDecomposedHiraganasAndKatakanas: true,

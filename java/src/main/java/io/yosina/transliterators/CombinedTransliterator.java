@@ -1,5 +1,6 @@
 package io.yosina.transliterators;
 
+import io.yosina.Char;
 import io.yosina.CharIterator;
 import io.yosina.CodePointTuple;
 import io.yosina.Transliterator;
@@ -16,17 +17,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Auto-generated transliterator for Combined. Replace single characters with arrays of characters.
+ * Auto-generated transliterator for combined. Replace single characters with arrays of characters.
  */
 @RegisteredTransliterator(name = "combined")
-public class Combined implements Transliterator {
+public class CombinedTransliterator implements Transliterator {
     private static final Map<CodePointTuple, int[]> mappings;
 
     static {
         final Map<CodePointTuple, int[]> mappings_ = new TreeMap<>();
         final ByteBuffer b;
         try {
-            try (final InputStream s = Combined.class.getResourceAsStream("combined.data")) {
+            try (final InputStream s =
+                    CombinedTransliterator.class.getResourceAsStream("combined.data")) {
                 b = ByteBuffer.wrap(s.readAllBytes()).order(ByteOrder.BIG_ENDIAN);
             }
         } catch (IOException e) {
@@ -44,19 +46,20 @@ public class Combined implements Transliterator {
         mappings = Collections.unmodifiableMap(mappings_);
     }
 
-    private static class CombinedCharIterator implements CharIterator {
+    private static class CombinedTransliteratorCharIterator implements CharIterator {
         private final CharIterator input;
         private final Map<CodePointTuple, int[]> mappings;
-        private final List<io.yosina.Char> queue = new ArrayList<>();
+        private final List<Char> queue = new ArrayList<>();
         private int queueIndex = 0;
 
-        public CombinedCharIterator(CharIterator input, Map<CodePointTuple, int[]> mappings) {
+        public CombinedTransliteratorCharIterator(
+                CharIterator input, Map<CodePointTuple, int[]> mappings) {
             this.input = input;
             this.mappings = mappings;
         }
 
         @Override
-        public io.yosina.Char next() {
+        public Char next() {
             // Return queued characters first
             if (queueIndex < queue.size()) {
                 return queue.get(queueIndex++);
@@ -70,7 +73,7 @@ public class Combined implements Transliterator {
                 return null;
             }
 
-            io.yosina.Char ch = input.next();
+            Char ch = input.next();
             if (ch.isSentinel()) {
                 return ch;
             }
@@ -80,7 +83,7 @@ public class Combined implements Transliterator {
                 // Create new characters for each replacement
                 for (int i = 0; i < replacement.length; i++) {
                     queue.add(
-                            new io.yosina.Char(
+                            new Char(
                                     CodePointTuple.of(replacement[i], -1), ch.getOffset() + i, ch));
                 }
                 return queue.get(queueIndex++);
@@ -97,9 +100,9 @@ public class Combined implements Transliterator {
 
     @Override
     public CharIterator transliterate(CharIterator input) {
-        return new CombinedCharIterator(input, mappings);
+        return new CombinedTransliteratorCharIterator(input, mappings);
     }
 
     /** Creates a new Combined transliterator. */
-    public Combined() {}
+    public CombinedTransliterator() {}
 }

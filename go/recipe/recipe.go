@@ -132,6 +132,14 @@ type TransliterationRecipe struct {
 	//   Output: "123"
 	ReplaceMathematicalAlphanumerics bool
 
+	// ReplaceRomanNumerals replaces Roman numeral characters with ASCII equivalents
+	// Example:
+	//   Input:  "Ⅰ Ⅱ Ⅲ Ⅳ"
+	//   Output: "I II III IV"
+	//   Input:  "ⅰ ⅱ ⅲ ⅳ"
+	//   Output: "i ii iii iv"
+	ReplaceRomanNumerals bool
+
 	// CombineDecomposedHiraganasAndKatakanas combines decomposed hiraganas and katakanas
 	// Example:
 	//   Input:  "が" (か + ゙)
@@ -287,6 +295,7 @@ func (r *TransliterationRecipe) BuildTransliteratorConfigs() ([]TransliteratorCo
 	r.applyReplaceSpaces(ctx)
 	r.applyReplaceHyphens(ctx)
 	r.applyReplaceMathematicalAlphanumerics(ctx)
+	r.applyReplaceRomanNumerals(ctx)
 	r.applyCombineDecomposedHiraganasAndKatakanas(ctx)
 	r.applyToFullwidth(ctx)
 	r.applyHiraKata(ctx)
@@ -412,6 +421,12 @@ func (r *TransliterationRecipe) applyReplaceHyphens(ctx *transliteratorConfigLis
 func (r *TransliterationRecipe) applyReplaceMathematicalAlphanumerics(ctx *transliteratorConfigListBuilder) {
 	if r.ReplaceMathematicalAlphanumerics {
 		ctx.insertMiddle(TransliteratorConfig{Name: "mathematical-alphanumerics"}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceRomanNumerals(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceRomanNumerals {
+		ctx.insertMiddle(TransliteratorConfig{Name: "roman-numerals"}, false)
 	}
 }
 

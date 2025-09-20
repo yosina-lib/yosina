@@ -70,6 +70,9 @@ internal static class Program
             // Generate circled-or-squared transliterator
             GenerateCircledOrSquaredTransliterator(dataRoot, destRoot);
 
+            // Generate roman numerals transliterator
+            GenerateRomanNumeralsTransliterator(dataRoot, destRoot);
+
             Console.WriteLine("Code generation complete!");
         }
         catch (IOException ex)
@@ -304,6 +307,56 @@ internal static class Program
         var code = CircledOrSquaredTransliteratorGenerator.Generate(mappings);
         var outputPath = Path.Combine(destRoot, "CircledOrSquaredTransliterator.cs");
 
+        File.WriteAllText(outputPath, code);
+        Console.WriteLine($"  Written to: {Path.GetRelativePath(dataRoot, outputPath)}");
+    }
+
+    private static void GenerateRomanNumeralsTransliterator(string dataRoot, string destRoot)
+    {
+        Console.WriteLine("Generating roman numerals...");
+
+        var dataPath = Path.Combine(dataRoot, "roman-numerals.json");
+        var jsonContent = File.ReadAllText(dataPath);
+        var records = JsonSerializer.Deserialize<List<RomanNumeralsRecord>>(jsonContent);
+
+        if (records == null)
+        {
+            throw new InvalidOperationException("Failed to deserialize roman numerals data.");
+        }
+
+        // Convert to the same format as combined transliterator
+        var mappings = new Dictionary<int, string[]>();
+        foreach (var record in records)
+        {
+            if (record.Codes != null && record.Decomposed != null)
+            {
+                if (record.Decomposed.Upper != null)
+                {
+                    mappings[record.Codes.Upper] = record.Decomposed.Upper
+                        .Select(cp => char.ConvertFromUtf32(cp))
+                        .ToArray();
+                }
+
+                if (record.Decomposed.Lower != null)
+                {
+                    mappings[record.Codes.Lower] = record.Decomposed.Lower
+                        .Select(cp => char.ConvertFromUtf32(cp))
+                        .ToArray();
+                }
+            }
+        }
+
+        // Reuse the combined transliterator generator
+        var code = CombinedTransliteratorGenerator.Generate(mappings);
+
+        // Replace class name and description
+        code = code.Replace("CombinedTransliterator", "RomanNumeralsTransliterator");
+        code = code.Replace(
+            "Replace single characters with arrays of characters.",
+            "Replace roman numeral characters with their ASCII letter equivalents.");
+        code = code.Replace("combined", "roman-numerals");
+
+        var outputPath = Path.Combine(destRoot, "RomanNumeralsTransliterator.cs");
         File.WriteAllText(outputPath, code);
         Console.WriteLine($"  Written to: {Path.GetRelativePath(dataRoot, outputPath)}");
     }

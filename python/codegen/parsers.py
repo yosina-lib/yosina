@@ -4,7 +4,7 @@ import json
 import re
 from typing import Any
 
-from .models import CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord
+from .models import CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord, RomanNumeralsRecord
 
 __all__ = [
     "parse_simple_transliteration_records",
@@ -13,6 +13,7 @@ __all__ = [
     "parse_kanji_old_new_transliteration_records",
     "parse_combined_transliteration_records",
     "parse_circled_or_squared_transliteration_records",
+    "parse_roman_numerals_records",
 ]
 
 
@@ -226,5 +227,39 @@ def parse_circled_or_squared_transliteration_records(data: str) -> list[tuple[st
         )
 
         result.append((from_char, record))
+
+    return result
+
+
+def parse_roman_numerals_records(data: str) -> list[tuple[str, RomanNumeralsRecord]]:
+    """Parse roman numerals transliteration records from JSON data.
+
+    :param data: JSON string containing roman numerals mapping data
+    :returns: List of (upper_char, RomanNumeralsRecord) tuples paired by upper char
+    """
+    records: list[dict[str, Any]] = json.loads(data)
+
+    result: list[tuple[str, RomanNumeralsRecord]] = []
+    for record in records:
+        # Parse upper and lower codes
+        upper_codepoint = parse_unicode_codepoint(record["codes"]["upper"])
+        upper_char = codepoint_to_string(upper_codepoint)
+
+        lower_codepoint = parse_unicode_codepoint(record["codes"]["lower"])
+        lower_char = codepoint_to_string(lower_codepoint)
+
+        # Parse decomposed forms
+        decomposed_upper = [codepoint_to_string(parse_unicode_codepoint(cp)) for cp in record["decomposed"]["upper"]]
+        decomposed_lower = [codepoint_to_string(parse_unicode_codepoint(cp)) for cp in record["decomposed"]["lower"]]
+
+        roman_record = RomanNumeralsRecord(
+            value=record["value"],
+            upper=upper_char,
+            lower=lower_char,
+            decomposed_upper=decomposed_upper,
+            decomposed_lower=decomposed_lower,
+        )
+
+        result.append((upper_char, roman_record))
 
     return result

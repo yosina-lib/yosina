@@ -3,6 +3,7 @@
 require_relative 'transliterators/spaces'
 require_relative 'transliterators/kanji_old_new'
 require_relative 'transliterators/radicals'
+require_relative 'transliterators/roman_numerals'
 require_relative 'transliterators/ideographic_annotations'
 require_relative 'transliterators/mathematical_alphanumerics'
 require_relative 'transliterators/prolonged_sound_marks'
@@ -22,6 +23,7 @@ module Yosina
       spaces: Transliterators::Spaces,
       kanji_old_new: Transliterators::KanjiOldNew,
       radicals: Transliterators::Radicals,
+      roman_numerals: Transliterators::RomanNumerals,
       ideographic_annotations: Transliterators::IdeographicAnnotations,
       mathematical_alphanumerics: Transliterators::MathematicalAlphanumerics,
       prolonged_sound_marks: Transliterators::ProlongedSoundMarks,

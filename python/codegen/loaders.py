@@ -2,13 +2,14 @@
 
 from pathlib import Path
 
-from .models import CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord
+from .models import CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord, RomanNumeralsRecord
 from .parsers import (
     parse_circled_or_squared_transliteration_records,
     parse_combined_transliteration_records,
     parse_hyphen_transliteration_records,
     parse_ivs_svs_base_transliteration_records,
     parse_kanji_old_new_transliteration_records,
+    parse_roman_numerals_records,
     parse_simple_transliteration_records,
 )
 
@@ -22,6 +23,7 @@ __all__ = [
     "load_kanji_old_new",
     "load_combined",
     "load_circled_or_squared",
+    "load_roman_numerals",
 ]
 
 
@@ -82,3 +84,9 @@ def load_circled_or_squared(path: Path) -> list[tuple[str, CircledOrSquaredRecor
     """Load circled or squared character mappings."""
     content = load_file(path)
     return parse_circled_or_squared_transliteration_records(content)
+
+
+def load_roman_numerals(path: Path) -> list[tuple[str, RomanNumeralsRecord]]:
+    """Load roman numerals character mappings."""
+    content = load_file(path)
+    return parse_roman_numerals_records(content)

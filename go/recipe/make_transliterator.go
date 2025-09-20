@@ -16,6 +16,7 @@ import (
 	"github.com/yosina-lib/yosina/go/transliterators/mathematical_alphanumerics"
 	"github.com/yosina-lib/yosina/go/transliterators/prolonged_sound_marks"
 	"github.com/yosina-lib/yosina/go/transliterators/radicals"
+	"github.com/yosina-lib/yosina/go/transliterators/roman_numerals"
 	"github.com/yosina-lib/yosina/go/transliterators/spaces"
 )
 
@@ -108,6 +109,11 @@ func createTransliteratorFromConfig(config TransliteratorConfig) (yosina.Transli
 	case "mathematical-alphanumerics":
 		return yosina.TransliteratorFunc(func(input yosina.CharIterator) (yosina.CharIterator, error) {
 			return mathematical_alphanumerics.Transliterate(input), nil
+		}), nil
+
+	case "roman-numerals":
+		return yosina.TransliteratorFunc(func(input yosina.CharIterator) (yosina.CharIterator, error) {
+			return roman_numerals.Transliterate(input), nil
 		}), nil
 
 	case "hyphens":

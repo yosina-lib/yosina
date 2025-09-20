@@ -118,6 +118,17 @@ export type TransliterationRecipe = {
    */
   replaceMathematicalAlphanumerics?: boolean;
   /**
+   * Replace Roman numeral characters with their ASCII equivalents.
+   * @example
+   * ```js
+   * // Input:  "Ⅰ Ⅱ Ⅲ" (Roman numeral characters)
+   * // Output: "I II III"
+   * // Input:  "ⅰ ⅱ ⅲ" (lowercase Roman numerals)
+   * // Output: "i ii iii"
+   * ```
+   */
+  replaceRomanNumerals?: boolean;
+  /**
    * Combine decomposed hiraganas and katakanas into single counterparts.
    * @example
    * ```js
@@ -182,6 +193,7 @@ const applicationOrder: TransliterationRecipeKeys[] = [
   "replaceSpaces",
   "replaceHyphens",
   "replaceMathematicalAlphanumerics",
+  "replaceRomanNumerals",
   "combineDecomposedHiraganasAndKatakanas",
   "toFullwidth",
   "hiraKata",
@@ -309,6 +321,8 @@ const transliteratorAppliers: {
       : ctx,
   replaceMathematicalAlphanumerics: (ctx, recipe) =>
     recipe.replaceMathematicalAlphanumerics ? insertMiddle(ctx, ["mathematical-alphanumerics", {}]) : ctx,
+  replaceRomanNumerals: (ctx, recipe) =>
+    recipe.replaceRomanNumerals ? insertMiddle(ctx, ["roman-numerals", {}]) : ctx,
   combineDecomposedHiraganasAndKatakanas: (ctx, recipe) =>
     recipe.combineDecomposedHiraganasAndKatakanas
       ? insertHead(ctx, ["hira-kata-composition", { composeNonCombiningMarks: true }])

@@ -100,6 +100,15 @@ readonly class TransliterationRecipe
          */
         public bool $replaceMathematicalAlphanumerics = false,
         /**
+         * Replace roman numeral characters with their ASCII letter equivalents.
+         * @example
+         *   Input:  "Ⅲ" (Roman numeral III)
+         *   Output: "III"
+         *   Input:  "ⅻ" (Roman numeral xii)
+         *   Output: "xii"
+         */
+        public bool $replaceRomanNumerals = false,
+        /**
          * Combine decomposed hiraganas and katakanas into single counterparts.
          * @example
          *   Input:  "が" (か + ゙)
@@ -169,6 +178,7 @@ readonly class TransliterationRecipe
         $ctx = $this->applyReplaceSpaces($ctx);
         $ctx = $this->applyReplaceHyphens($ctx);
         $ctx = $this->applyReplaceMathematicalAlphanumerics($ctx);
+        $ctx = $this->applyReplaceRomanNumerals($ctx);
         $ctx = $this->applyCombineDecomposedHiraganasAndKatakanas($ctx);
         $ctx = $this->applyToFullwidth($ctx);
         $ctx = $this->applyHiraKata($ctx);
@@ -294,6 +304,14 @@ readonly class TransliterationRecipe
     {
         if ($this->replaceMathematicalAlphanumerics) {
             $ctx = $ctx->insertMiddle(['mathematical-alphanumerics', []], false);
+        }
+        return $ctx;
+    }
+
+    private function applyReplaceRomanNumerals(TransliteratorConfigListBuilder $ctx): TransliteratorConfigListBuilder
+    {
+        if ($this->replaceRomanNumerals) {
+            $ctx = $ctx->insertMiddle(['roman-numerals', []], false);
         }
         return $ctx;
     }
