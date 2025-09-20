@@ -295,7 +295,7 @@ JIS X 0201 specifies control sequences to render alphabets with diacritics by co
 
 ## Available Transliterators
 
-Yosina provides 14 specialized transliterators that can be used individually or combined through the recipe system:
+Yosina provides 15 specialized transliterators that can be used individually or combined through the recipe system:
 
 ### 1. **Circled or Squared** (`circled-or-squared`)
 Converts circled or squared characters to their plain equivalents.
@@ -360,6 +360,10 @@ Converts CJK radical characters to their corresponding ideographs.
 ### 14. **Spaces** (`spaces`)
 Normalizes various Unicode space characters to standard ASCII space.
 - Example: `A　B` (ideographic space) → `A B`
+
+### 15. **Roman Numerals** (`roman-numerals`)
+Converts Roman numerals to Arabic numerals.
+- Example: `Ⅰ Ⅱ Ⅲ` → `1 2 3`, `MCMXCIV` → `1994`
 
 ## Using Transliterators with Recipes
 

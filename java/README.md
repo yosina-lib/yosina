@@ -151,6 +151,10 @@ Converts CJK radical characters to their corresponding ideographs.
 Normalizes various Unicode space characters to standard ASCII space.
 - Example: `A　B` (ideographic space) → `A B`
 
+### 15. **Roman Numerals** (`roman-numerals`)
+Converts Roman numerals to Arabic numerals.
+- Example: `Ⅰ Ⅱ Ⅲ` → `1 2 3`, `MCMXCIV` → `1994`
+
 ## Building from Source
 
 Gradle 8.0 or higher is required to build the Java library.
