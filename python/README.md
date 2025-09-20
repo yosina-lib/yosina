@@ -138,8 +138,8 @@ Normalizes various Unicode space characters to standard ASCII space.
 - Example: `A　B` (ideographic space) → `A B`
 
 ### 15. **Roman Numerals** (`roman-numerals`)
-Converts Roman numerals to Arabic numerals.
-- Example: `Ⅰ Ⅱ Ⅲ` → `1 2 3`, `MCMXCIV` → `1994`
+Converts Unicode Roman numeral characters to their ASCII letter equivalents.
+- Example: `Ⅰ Ⅱ Ⅲ` → `I II III`, `ⅰ ⅱ ⅲ` → `i ii iii`
 
 ## Requirements
 
