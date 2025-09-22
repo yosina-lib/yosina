@@ -1908,8 +1908,8 @@ const circledOrSquaredData = <String, Map<String, dynamic>>{
     'emoji': false,
   },
   '\u{1f1ad}': {
-    'rendering': 'VOD',
-    'type': 'square',
+    'rendering': 'M',
+    'type': 'circle',
     'emoji': false,
   },
   '\u{1f1e6}': {

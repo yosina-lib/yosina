@@ -117,6 +117,20 @@ class HyphensTransliterator implements TransliteratorInterface
             'jisx0208_90_windows' => "\u{2225}",
             'jisx0208_verbatim' => "\u{2016}",
         ],
+        "\u{2032}" => [
+            'ascii' => "'",
+            'jisx0201' => "'",
+            'jisx0208_90' => "\u{2032}",
+            'jisx0208_90_windows' => "\u{2032}",
+            'jisx0208_verbatim' => "\u{2032}",
+        ],
+        "\u{2033}" => [
+            'ascii' => "\"",
+            'jisx0201' => "\"",
+            'jisx0208_90' => "\u{2033}",
+            'jisx0208_90_windows' => "\u{2033}",
+            'jisx0208_verbatim' => "\u{2033}",
+        ],
         "\u{203E}" => [
             'ascii' => null,
             'jisx0201' => "~",
@@ -262,20 +276,6 @@ class HyphensTransliterator implements TransliteratorInterface
             'jisx0201' => "-",
             'jisx0208_90' => "\u{2010}",
             'jisx0208_90_windows' => "\u{2010}",
-            'jisx0208_verbatim' => null,
-        ],
-        "\u{FF02}" => [
-            'ascii' => "\"",
-            'jisx0201' => "\"",
-            'jisx0208_90' => "\u{2033}",
-            'jisx0208_90_windows' => "\u{FF02}",
-            'jisx0208_verbatim' => null,
-        ],
-        "\u{FF07}" => [
-            'ascii' => "'",
-            'jisx0201' => "'",
-            'jisx0208_90' => "\u{2032}",
-            'jisx0208_90_windows' => "\u{FF07}",
             'jisx0208_verbatim' => null,
         ],
         "\u{FF0D}" => [

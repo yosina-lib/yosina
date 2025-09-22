@@ -402,7 +402,7 @@ const mappings: Mappings = {
   "\uD83C\uDDAA": ["SHV", "s", false],
   "\uD83C\uDDAB": ["UHD", "s", false],
   "\uD83C\uDDAC": ["VOD", "s", false],
-  "\uD83C\uDDAD": ["VOD", "s", false],
+  "\uD83C\uDDAD": ["M", "c", false],
   "\uD83C\uDDE6": ["A", "s", false],
   "\uD83C\uDDE7": ["B", "s", false],
   "\uD83C\uDDE8": ["C", "s", false],

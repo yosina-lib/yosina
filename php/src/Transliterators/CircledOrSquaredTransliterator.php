@@ -394,7 +394,7 @@ class CircledOrSquaredTransliterator implements TransliteratorInterface
         '🆪' => ['rendering' => "SHV", 'type' => "square", 'emoji' => false],
         '🆫' => ['rendering' => "UHD", 'type' => "square", 'emoji' => false],
         '🆬' => ['rendering' => "VOD", 'type' => "square", 'emoji' => false],
-        '🆭' => ['rendering' => "VOD", 'type' => "square", 'emoji' => false],
+        '🆭' => ['rendering' => "M", 'type' => "circle", 'emoji' => false],
         '🇦' => ['rendering' => "A", 'type' => "square", 'emoji' => false],
         '🇧' => ['rendering' => "B", 'type' => "square", 'emoji' => false],
         '🇨' => ['rendering' => "C", 'type' => "square", 'emoji' => false],

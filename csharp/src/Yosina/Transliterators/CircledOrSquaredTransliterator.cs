@@ -404,7 +404,7 @@ public class CircledOrSquaredTransliterator : ITransliterator
         [0x1F1AA] = new CircledOrSquaredData("SHV", CharType.Square, false),
         [0x1F1AB] = new CircledOrSquaredData("UHD", CharType.Square, false),
         [0x1F1AC] = new CircledOrSquaredData("VOD", CharType.Square, false),
-        [0x1F1AD] = new CircledOrSquaredData("VOD", CharType.Square, false),
+        [0x1F1AD] = new CircledOrSquaredData("M", CharType.Circle, false),
         [0x1F1E6] = new CircledOrSquaredData("A", CharType.Square, false),
         [0x1F1E7] = new CircledOrSquaredData("B", CharType.Square, false),
         [0x1F1E8] = new CircledOrSquaredData("C", CharType.Square, false),

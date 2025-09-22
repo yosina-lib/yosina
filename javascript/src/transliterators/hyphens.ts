@@ -133,6 +133,20 @@ const mappings: Mappings = {
     jisx0208_90_windows: "\u2225",
     jisx0208_verbatim: "\u2016",
   },
+  "\u2032": {
+    ascii: "'",
+    jisx0201: "'",
+    jisx0208_90: "\u2032",
+    jisx0208_90_windows: "\u2032",
+    jisx0208_verbatim: "\u2032",
+  },
+  "\u2033": {
+    ascii: '"',
+    jisx0201: '"',
+    jisx0208_90: "\u2033",
+    jisx0208_90_windows: "\u2033",
+    jisx0208_verbatim: "\u2033",
+  },
   "\u203E": {
     ascii: null,
     jisx0201: "~",
@@ -278,20 +292,6 @@ const mappings: Mappings = {
     jisx0201: "-",
     jisx0208_90: "\u2010",
     jisx0208_90_windows: "\u2010",
-    jisx0208_verbatim: null,
-  },
-  "\uFF02": {
-    ascii: '"',
-    jisx0201: '"',
-    jisx0208_90: "\u2033",
-    jisx0208_90_windows: "\uFF02",
-    jisx0208_verbatim: null,
-  },
-  "\uFF07": {
-    ascii: "'",
-    jisx0201: "'",
-    jisx0208_90: "\u2032",
-    jisx0208_90_windows: "\uFF07",
     jisx0208_verbatim: null,
   },
   "\uFF0D": {

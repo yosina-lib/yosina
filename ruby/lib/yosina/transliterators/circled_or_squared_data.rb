@@ -387,7 +387,7 @@ module Yosina
         "\u{1f1aa}" => { rendering: 'SHV', type: 's', emoji: false },
         "\u{1f1ab}" => { rendering: 'UHD', type: 's', emoji: false },
         "\u{1f1ac}" => { rendering: 'VOD', type: 's', emoji: false },
-        "\u{1f1ad}" => { rendering: 'VOD', type: 's', emoji: false },
+        "\u{1f1ad}" => { rendering: 'M', type: 'c', emoji: false },
         "\u{1f1e6}" => { rendering: 'A', type: 's', emoji: false },
         "\u{1f1e7}" => { rendering: 'B', type: 's', emoji: false },
         "\u{1f1e8}" => { rendering: 'C', type: 's', emoji: false },

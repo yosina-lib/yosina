@@ -392,7 +392,7 @@ CIRCLED_OR_SQUARED_MAPPINGS: dict[str, tuple[str, Literal["c", "s"], bool]] = {
     "\U0001f1aa": ("SHV", "s", False),
     "\U0001f1ab": ("UHD", "s", False),
     "\U0001f1ac": ("VOD", "s", False),
-    "\U0001f1ad": ("VOD", "s", False),
+    "\U0001f1ad": ("M", "c", False),
     "\U0001f1e6": ("A", "s", False),
     "\U0001f1e7": ("B", "s", False),
     "\U0001f1e8": ("C", "s", False),
