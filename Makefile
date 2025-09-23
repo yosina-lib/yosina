@@ -247,7 +247,7 @@ codegen-java: $(JAVA_GENERATED)
 
 $(DART_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Dart code...$(NC)"
-	@cd dart && dart run codegen/generate.dart && dart format .
+	@cd dart && dart run codegen/generate.dart && dart fix --apply . && dart format .
 	@echo -e "$(GREEN)✓ Dart code generation complete$(NC)"
 
 .PHONY: codegen-dart
