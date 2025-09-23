@@ -556,7 +556,7 @@ publish-all: publish-csharp publish-dart publish-java publish-javascript publish
 .PHONY: publish-csharp
 publish-csharp:
 	@echo -e "$(BLUE)Publishing C# package to NuGet...$(NC)"
-	@cd csharp && dotnet pack -c Release src/Yosina/Yosina.csproj && dotnet nuget push bin/Release/Yosina.*.nupkg --source https://api.nuget.org/v3/index.json --api-key $(NUGET_API_KEY)
+	@cd csharp && rm -rf src/Yosina/bin && dotnet pack -c Release src/Yosina/Yosina.csproj && dotnet nuget push src/Yosina/bin/Release/Yosina.*.nupkg --source https://api.nuget.org/v3/index.json --api-key $(NUGET_API_KEY)
 
 .PHONY: publish-dart
 publish-dart:
@@ -571,7 +571,7 @@ publish-java:
 .PHONY: publish-javascript
 publish-javascript:
 	@echo -e "$(BLUE)Publishing JavaScript package to npm...$(NC)"
-	@cd javascript && npm publish
+	@cd javascript && npm run build && npm publish
 
 .PHONY: publish-python
 publish-python:
