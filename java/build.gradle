@@ -52,7 +52,7 @@ mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
 
-    coordinates("io.yosina", "yosina", "0.1.0")
+    coordinates("io.yosina", "yosina", version)
     configure(new JavaLibrary(new JavadocJar.None(), true))
 
     pom {
