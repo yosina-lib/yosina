@@ -576,12 +576,12 @@ publish-javascript:
 .PHONY: publish-python
 publish-python:
 	@echo -e "$(BLUE)Publishing Python package to PyPI...$(NC)"
-	@cd python && uv build && uv publish
+	@cd python && rm -rf dist && uv build && uv publish
 
 .PHONY: publish-ruby
 publish-ruby:
 	@echo -e "$(BLUE)Publishing Ruby gem to RubyGems...$(NC)"
-	@cd ruby && gem build yosina.gemspec && gem push yosina-*.gem
+	@cd ruby && rm -f *.gem && gem build yosina.gemspec && gem push yosina-*.gem
 
 .PHONY: publish-rust
 publish-rust:
