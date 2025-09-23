@@ -7,7 +7,7 @@
 | JavaScript/TypeScript | [npm ![@yosina-lib/yosina](https://img.shields.io/npm/v/@yosina-lib/yosina) ](https://www.npmjs.com/package/@yosina-lib/yosina) | `npm install @yosina-lib/yosina` |
 | Python | [PyPI ![yosina](https://img.shields.io/pypi/v/yosina)](https://pypi.org/project/yosina/) | `pip install yosina` |
 | Rust | [crates.io ![yosina](https://img.shields.io/crates/v/yosina)](https://crates.io/crates/yosina) | `cargo add yosina` |
-| Java | [Maven Central ![yosina.io/yosina](https://img.shields.io/maven-central/v/yosina.io/yosina)](https://central.sonatype.com/artifact/io.yosina/yosina) | [クイックスタート](#java)を参照 |
+| Java | [Maven Central ![yosina.io/yosina](https://img.shields.io/maven-central/v/io.yosina/yosina)](https://central.sonatype.com/artifact/io.yosina/yosina) | [クイックスタート](#java)を参照 |
 | Ruby | [RubyGems ![yosina](https://img.shields.io/gem/v/yosina)](https://rubygems.org/gems/yosina) | `gem install yosina` |
 | Go | [Go Packages ![yosina](https://img.shields.io/badge/pkg.go.dev-reference-007d9c)](https://pkg.go.dev/github.com/yosina-lib/yosina/go) | `go get github.com/yosina-lib/yosina/go` ![github.com/yosina-lib/yosina/go](https://img.shields.io/badge/go.dev-reference-007d9c) |
 | PHP | [Packagist ![yosina-lib/yosina](https://img.shields.io/packagist/v/yosina-lib/yosina)](https://packagist.org/packages/yosina-lib/yosina) | `composer require yosina-lib/yosina` |
