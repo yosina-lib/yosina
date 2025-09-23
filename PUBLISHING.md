@@ -25,6 +25,7 @@ After updating versions, create and push a git tag:
 git add .
 git commit -m "Release version x.y.z"
 git tag -a vx.y.z -m "Release version x.y.z"
+git tag -a go/vx.y.z -m "Release version x.y.z"
 git push origin main --tags
 ```
 
@@ -114,7 +115,7 @@ The Java package is now configured for the new Maven Central publishing portal. 
 2. [ ] Run tests for all languages
 3. [ ] Update CHANGELOG if applicable
 4. [ ] Commit changes: `git commit -m "Release version x.y.z"`
-5. [ ] Create git tag: `git tag -a vx.y.z -m "Release version x.y.z"`
+5. [ ] Create git tag: `git tag -a vx.y.z -m "Release version x.y.z"` `git tag -a go/vx.y.z -m "Release version x.y.z"`
 6. [ ] Push changes and tags: `git push origin main --tags`
 7. [ ] Publish packages: `make publish-all`
 8. [ ] Verify packages are available on respective repositories
