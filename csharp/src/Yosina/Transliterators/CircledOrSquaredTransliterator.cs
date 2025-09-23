@@ -586,7 +586,7 @@ public class CircledOrSquaredTransliterator : ITransliterator
 
                 // Get template
                 string template = data.Type == CharType.Circle ? this.options.TemplateForCircled : this.options.TemplateForSquared;
-                var replacement = template.Replace("?", data.Rendering);
+                var replacement = template.Replace("?", data.Rendering, StringComparison.Ordinal);
 
                 if (string.IsNullOrEmpty(replacement))
                 {
