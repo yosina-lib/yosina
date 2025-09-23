@@ -59,14 +59,10 @@ wheels = [
 
 [[package]]
 name = "yosina"
-version = "0.1.0"
+version = "0.2.0"
 source = { directory = "../../python" }
-dependencies = [
-    { name = "typing-extensions" },
-]
 
 [package.metadata]
-requires-dist = [{ name = "typing-extensions", specifier = ">=4.0.0" }]
 
 [package.metadata.requires-dev]
 dev = [

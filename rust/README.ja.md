@@ -12,7 +12,7 @@ Yosinaは、日本語テキスト処理でよく必要とされる様々なテ�
 
 ```toml
 [dependencies]
-yosina = "0.1.0"
+yosina = "0.2.0"
 ```
 
 ## 使用方法

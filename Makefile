@@ -526,19 +526,26 @@ update-version:
 	@sed -i.bak 's/"version": "[^"]*"/"version": "$(VERSION)"/' javascript/package.json && rm javascript/package.json.bak
 	@sed -i.bak 's/"version": "[^"]*"/"version": "$(VERSION)"/' php/composer.json && rm php/composer.json.bak
 	@sed -i.bak 's/^version = ".*"/version = "$(VERSION)"/' python/pyproject.toml && rm python/pyproject.toml.bak
-	@sed -i.bak 's/VERSION = .*/VERSION = "$(VERSION)"/' ruby/lib/yosina/version.rb && rm ruby/lib/yosina/version.rb.bak
+	@sed -i.bak "s/VERSION = .*/VERSION = '$(VERSION)'/" ruby/lib/yosina/version.rb && rm ruby/lib/yosina/version.rb.bak
 	@sed -i.bak 's/^version = ".*"/version = "$(VERSION)"/' rust/Cargo.toml && rm rust/Cargo.toml.bak
 	@sed -i.bak "s/version = '[^']*'/version = '$(VERSION)'/" java/build.gradle && rm java/build.gradle.bak
 	@# Update README files
-	@sed -i.bak 's/yosina = "[^"]*"/yosina = "$(VERSION)"/' README.md && rm README.md.bak
-	@sed -i.bak 's/yosina = "[^"]*"/yosina = "$(VERSION)"/' README.ja.md && rm README.ja.md.bak
-	@sed -i.bak "s/yosina-java:[^']*'/yosina-java:$(VERSION)'/" README.md && rm README.md.bak
-	@sed -i.bak "s/yosina-java:[^']*'/yosina-java:$(VERSION)'/" README.ja.md && rm README.ja.md.bak
+	@sed -i.bak 's/\(yosina = \)"[^"]*"/\1"$(VERSION)"/' README.md README.ja.md && rm README.md.bak README.ja.md.bak
+	@sed -i.bak "s/\(io.yosina:yosina:\)[^']*'/\1$(VERSION)'/" README.md README.ja.md && rm README.md.bak README.ja.md.bak
+	@sed -i.bak "s/\(from: \)\"[^\"]*\"/\1\"$(VERSION)\"/" README.md README.ja.md && rm README.md.bak README.ja.md.bak
 	@# Update language-specific README files
 	@sed -i.bak 's/yosina: \^[0-9.]*/yosina: ^$(VERSION)/' dart/README.md dart/README.ja.md && rm dart/README.md.bak dart/README.ja.md.bak
-	@sed -i.bak "s/yosina-java:[^']*'/yosina-java:$(VERSION)'/" java/README.md java/README.ja.md && rm java/README.md.bak java/README.ja.md.bak
+	@sed -i.bak "s/\(io.yosina:yosina:\)[^']*'/\1$(VERSION)'/" java/README.md java/README.ja.md && rm java/README.md.bak java/README.ja.md.bak
 	@sed -i.bak 's/yosina = "[^"]*"/yosina = "$(VERSION)"/' rust/README.md rust/README.ja.md && rm rust/README.md.bak rust/README.ja.md.bak
 	@sed -i.bak 's/from: "[^"]*"/from: "$(VERSION)"/' swift/README.md && rm swift/README.md.bak
+	@cd javascript && npm update @yosina-lib/yosina
+	@cd python && uv lock
+	@cd rust && cargo update
+	@cd rust/fuzz && cargo update
+	@cd examples/ruby && bundle update
+	@cd examples/python && uv lock
+	@cd examples/javascript/node-cjs && npm update @yosina-lib/yosina
+	@cd examples/javascript/node-esm && npm update @yosina-lib/yosina
 	@echo -e "$(GREEN)✓ Version updated to $(VERSION)$(NC)"
 
 # Publishing targets

@@ -1,6 +1,6 @@
 [package]
 name = "yosina"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Moriyoshi Koizumi <mozo@mozo.jp>"]
 description = "Japanese text transliteration library"
