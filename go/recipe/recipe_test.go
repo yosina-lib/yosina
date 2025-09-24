@@ -473,6 +473,26 @@ func TestConfigurationOrdering(t *testing.T) {
 	assert.True(t, kanjiPos >= 0, "kanji-old-new should be present")
 }
 
+func TestToFullwidthMustComeBeforeHiraKata(t *testing.T) {
+	recipe := NewTransliterationRecipe()
+	recipe.ToFullwidth = Yes
+	recipe.HiraKata = KataToHira
+
+	configs, err := recipe.BuildTransliteratorConfigs()
+	require.NoError(t, err)
+
+	assert.Equal(t, 2, len(configs))
+	assert.Equal(t, "jisx0201-and-alike", configs[0].Name)
+	assert.Equal(t, "hira-kata", configs[1].Name)
+
+	// Test the actual transliteration works correctly
+	transliterator, err := MakeTransliterator(recipe)
+	require.NoError(t, err)
+
+	result := transliterator("ｶﾀｶﾅ")
+	assert.Equal(t, "かたかな", result)
+}
+
 // Helper functions
 func containsConfig(configs []TransliteratorConfig, name string) bool {
 	for _, config := range configs {

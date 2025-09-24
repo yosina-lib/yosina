@@ -427,4 +427,18 @@ describe("Functional Integration", () => {
     // Emoji characters should not be processed
     expect(fromChars(transliterator(buildCharArray("🆘")))).toBe("🆘");
   });
+
+  it("to_fullwidth must come before hira-kata", async () => {
+    const configs = buildTransliteratorConfigsFromRecipe({
+      toFullwidth: true,
+      hiraKata: "kata-to-hira",
+    });
+
+    expect(configs).toHaveLength(2);
+    expect(configs[0][0]).toBe("jisx0201-and-alike");
+    expect(configs[1][0]).toBe("hira-kata");
+
+    const transliterator = await makeChainedTransliterator(configs);
+    expect(fromChars(transliterator(buildCharArray("ｶﾀｶﾅ")))).toBe("かたかな");
+  });
 });

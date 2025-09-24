@@ -282,7 +282,7 @@ const transliteratorAppliers: {
 } = {
   kanjiOldNew: (ctx, recipe) =>
     recipe.kanjiOldNew ? insertMiddle(removeIVSSVS(ctx, false, recipe.charset), ["kanji-old-new", {}]) : ctx,
-  hiraKata: (ctx, recipe) => (recipe.hiraKata ? insertMiddle(ctx, ["hira-kata", { mode: recipe.hiraKata }]) : ctx),
+  hiraKata: (ctx, recipe) => (recipe.hiraKata ? insertTail(ctx, ["hira-kata", { mode: recipe.hiraKata }]) : ctx),
   replaceJapaneseIterationMarks: (ctx, recipe) => {
     if (!recipe.replaceJapaneseIterationMarks) return ctx;
     // Insert HiraKataComposition at head to ensure composed forms

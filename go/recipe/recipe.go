@@ -323,7 +323,7 @@ func (r *TransliterationRecipe) applyHiraKata(ctx *transliteratorConfigListBuild
 	default:
 		return
 	}
-	ctx.insertMiddle(TransliteratorConfig{
+	ctx.insertTail(TransliteratorConfig{
 		Name:    "hira-kata",
 		Options: &hira_kata.Options{Mode: mode},
 	}, false)

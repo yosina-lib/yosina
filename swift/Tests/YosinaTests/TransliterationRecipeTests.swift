@@ -473,4 +473,32 @@ final class TransliterationRecipeTests: XCTestCase {
         let ivsSvsTransliterators = config.compactMap { if case .ivsSvsBase = $0 { return $0 } else { return nil } }
         XCTAssertEqual(ivsSvsTransliterators.count, 2)
     }
+
+    func testToFullwidthMustComeBeforeHiraKata() throws {
+        let recipe = TransliterationRecipe(
+            hiraKata: .kataToHira,
+            toFullwidth: .enabled,
+        )
+        let config = try recipe.buildTransliteratorConfig()
+
+        XCTAssertEqual(config.count, 2)
+
+        // Check first config is jisx0201-and-alike
+        if case .jisx0201AndAlike = config[0] {
+            // correct
+        } else {
+            XCTFail("Expected jisx0201-and-alike as first config")
+        }
+
+        // Check second config is hira-kata
+        if case .hiraKata = config[1] {
+            // correct
+        } else {
+            XCTFail("Expected hira-kata as second config")
+        }
+
+        // Test the actual transliteration works correctly
+        let transliterator = try recipe.makeTransliterator()
+        XCTAssertEqual(transliterator.transliterate("ｶﾀｶﾅ"), "かたかな")
+    }
 }

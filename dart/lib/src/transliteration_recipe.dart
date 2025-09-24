@@ -374,7 +374,7 @@ class TransliterationRecipe {
   static void _applyHiraKata(
       _TransliteratorConfigListBuilder ctx, String? hiraKata) {
     if (hiraKata != null) {
-      ctx.insertMiddle(
+      ctx.insertTail(
         TransliteratorConfig('hiraKata', {'mode': hiraKata}),
         forceReplace: false,
       );

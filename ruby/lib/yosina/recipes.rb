@@ -241,7 +241,7 @@ module Yosina
 
     def apply_hira_kata(ctx)
       if @hira_kata
-        ctx.insert_middle([:hira_kata, { mode: @hira_kata }])
+        ctx.insert_tail([:hira_kata, { mode: @hira_kata }])
       else
         ctx
       end

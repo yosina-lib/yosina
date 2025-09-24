@@ -339,7 +339,7 @@ public struct TransliterationRecipe: TransliteratorFactory {
     private func applyHiraKata(to builder: TransliteratorConfigListBuilder) {
         if let hiraKata = hiraKata {
             let options = HiraKataTransliterator.Options(mode: hiraKata)
-            builder.insertMiddle(.hiraKata(options: options), forceReplace: false)
+            builder.insertTail(.hiraKata(options: options), forceReplace: false)
         }
     }
 

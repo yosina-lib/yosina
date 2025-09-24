@@ -399,3 +399,19 @@ class TestFunctionalIntegration:
 
         # Emoji characters should not be processed
         assert transliterator("🆘") == "🆘"  # Should remain unchanged
+
+    def test_to_fullwidth_must_come_before_hira_kata(self):
+        """Test that to_fullwidth comes before hira_kata in config order."""
+        recipe = TransliterationRecipe(
+            to_fullwidth=True,
+            hira_kata="kata-to-hira",
+        )
+        configs = build_transliterator_configs_from_recipe(recipe)
+
+        assert len(configs) == 2
+        assert configs[0][0] == "jisx0201-and-alike"
+        assert configs[1][0] == "hira-kata"
+
+        # Test the actual transliteration works correctly
+        transliterator = make_transliterator(recipe)
+        assert transliterator("ｶﾀｶﾅ") == "かたかな"

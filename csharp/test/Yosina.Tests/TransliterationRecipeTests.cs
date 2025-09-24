@@ -476,5 +476,25 @@ public static class TransliterationRecipeTests
             // Emoji characters should not be processed
             Assert.Equal("🆘", transliterator("🆘"));
         }
+
+        [Fact]
+        public void ToFullwidth_MustComeBeforeHiraKata()
+        {
+            var recipe = new TransliterationRecipe
+            {
+                ToFullwidth = TransliterationRecipe.ToFullwidthOptions.Enabled,
+                HiraKata = Yosina.Transliterators.HiraKataTransliterator.Mode.KataToHira,
+            };
+
+            var configs = recipe.BuildTransliteratorConfigs();
+
+            Assert.Equal(2, configs.Count);
+            Assert.Equal("jisx0201-and-alike", configs[0].Name);
+            Assert.Equal("hira-kata", configs[1].Name);
+
+            // Test the actual transliteration works correctly
+            var transliterator = Entrypoint.MakeTransliterator(recipe);
+            Assert.Equal("かたかな", transliterator("ｶﾀｶﾅ"));
+        }
     }
 }
