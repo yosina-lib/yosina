@@ -36,44 +36,44 @@ public static class HyphensTransliteratorGenerator
         mappingSections.Add(FormatMappingsSection(Mapping.ASCII, asciiEntries));
 
         // JISX0201 mappings
-        var jisX0201Entries = records
+        var jisx0201Entries = records
             .Where(r => r.Jisx0201 != null && r.Jisx0201.Length > 0)
             .Select(r =>
             {
                 var targetArray = FormatCodePointArrayFromInts(r.Jisx0201!);
                 return FormatArrayMappingEntry(r.Code, targetArray);
             });
-        mappingSections.Add(FormatMappingsSection(Mapping.JISX0201, jisX0201Entries));
+        mappingSections.Add(FormatMappingsSection(Mapping.JISX0201, jisx0201Entries));
 
         // JISX0208_90 mappings
-        var jisX0208Entries = records
+        var jisx0208Entries = records
             .Where(r => r.Jisx02081978 != null && r.Jisx02081978.Length > 0)
             .Select(r =>
             {
                 var targetArray = FormatCodePointArrayFromInts(r.Jisx02081978!);
                 return FormatArrayMappingEntry(r.Code, targetArray);
             });
-        mappingSections.Add(FormatMappingsSection(Mapping.JISX0208_90, jisX0208Entries));
+        mappingSections.Add(FormatMappingsSection(Mapping.JISX0208_90, jisx0208Entries));
 
         // JISX0208_90_WINDOWS mappings
-        var jisX0208WindowsEntries = records
+        var jisx0208WindowsEntries = records
             .Where(r => r.Jisx02081978Windows != null && r.Jisx02081978Windows.Length > 0)
             .Select(r =>
             {
                 var targetArray = FormatCodePointArrayFromInts(r.Jisx02081978Windows!);
                 return FormatArrayMappingEntry(r.Code, targetArray);
             });
-        mappingSections.Add(FormatMappingsSection(Mapping.JISX0208_90_WINDOWS, jisX0208WindowsEntries));
+        mappingSections.Add(FormatMappingsSection(Mapping.JISX0208_90_WINDOWS, jisx0208WindowsEntries));
 
         // JISX0208_VERBATIM mappings
-        var jisX0208VerbatimEntries = records
+        var jisx0208VerbatimEntries = records
             .Where(r => r.Jisx0208Verbatim != null)
             .Select(r =>
             {
                 var targetArray = FormatCodePointArrayFromInts(new[] { r.Jisx0208Verbatim!.Value });
                 return FormatArrayMappingEntry(r.Code, targetArray);
             });
-        mappingSections.Add(FormatMappingsSection(Mapping.JISX0208_VERBATIM, jisX0208VerbatimEntries));
+        mappingSections.Add(FormatMappingsSection(Mapping.JISX0208_VERBATIM, jisx0208VerbatimEntries));
 
         var mappingsData = string.Join("\n", mappingSections);
 

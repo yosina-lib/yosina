@@ -123,7 +123,7 @@ Handles Ideographic and Standardized Variation Selectors.
 Expands iteration marks by repeating the preceding character.
 - Example: `時々` → `時時`, `いすゞ` → `いすず`
 
-### 9. **JIS X 0201 and Alike** (`jisX0201AndAlike`)
+### 9. **JIS X 0201 and Alike** (`jisx0201AndAlike`)
 Handles half-width/full-width character conversion.
 - Options: `fullwidthToHalfwidth`, `convertGL` (alphanumerics/symbols), `convertGR` (katakana), `u005cAsYenSign`
 - Example: `ABC123` → `ＡＢＣ１２３`, `ｶﾀｶﾅ` → `カタカナ`

@@ -193,7 +193,7 @@ void main() {
         final configs = recipe.buildTransliteratorConfigs();
 
         expect(configs.length, equals(1));
-        expect(configs[0].name, equals('jisX0201AndAlike'));
+        expect(configs[0].name, equals('jisx0201AndAlike'));
         expect(configs[0].options['fullwidthToHalfwidth'], isFalse);
         expect(configs[0].options['u005cAsYenSign'], isFalse);
       });
@@ -205,7 +205,7 @@ void main() {
         final configs = recipe.buildTransliteratorConfigs();
 
         expect(configs.length, equals(1));
-        expect(configs[0].name, equals('jisX0201AndAlike'));
+        expect(configs[0].name, equals('jisx0201AndAlike'));
         expect(configs[0].options['fullwidthToHalfwidth'], isFalse);
         expect(configs[0].options['u005cAsYenSign'], isTrue);
       });
@@ -217,7 +217,7 @@ void main() {
         final configs = recipe.buildTransliteratorConfigs();
 
         expect(configs.length, equals(1));
-        expect(configs[0].name, equals('jisX0201AndAlike'));
+        expect(configs[0].name, equals('jisx0201AndAlike'));
         expect(configs[0].options['fullwidthToHalfwidth'], isTrue);
         expect(configs[0].options['convertGL'], isTrue);
         expect(configs[0].options['convertGR'], isFalse);
@@ -230,7 +230,7 @@ void main() {
         final configs = recipe.buildTransliteratorConfigs();
 
         expect(configs.length, equals(1));
-        expect(configs[0].name, equals('jisX0201AndAlike'));
+        expect(configs[0].name, equals('jisx0201AndAlike'));
         expect(configs[0].options['fullwidthToHalfwidth'], isTrue);
         expect(configs[0].options['convertGL'], isTrue);
         expect(configs[0].options['convertGR'], isTrue);
@@ -352,14 +352,14 @@ void main() {
           'spaces',
           'hyphens',
           'mathematicalAlphanumerics',
-          'jisX0201AndAlike',
+          'jisx0201AndAlike',
         };
 
         final actualNames = names.toSet();
         expect(actualNames, equals(expectedNames));
 
         // Verify tail section exists (but don't assume order due to insert method)
-        expect(names, contains('jisX0201AndAlike'));
+        expect(names, contains('jisx0201AndAlike'));
         expect(names.where((name) => name == 'ivsSvsBase').length,
             equals(2)); // appears twice
       });
@@ -398,7 +398,7 @@ void main() {
           'spaces',
           'hyphens',
           'mathematicalAlphanumerics',
-          'jisX0201AndAlike',
+          'jisx0201AndAlike',
         };
 
         final actualNames = configs.map((c) => c.name).toSet();
@@ -413,7 +413,7 @@ void main() {
         expect(circledConfig.options['includeEmojis'], isFalse);
 
         final jisx0201Config =
-            configs.firstWhere((c) => c.name == 'jisX0201AndAlike');
+            configs.firstWhere((c) => c.name == 'jisx0201AndAlike');
         expect(jisx0201Config.options['convertGR'], isTrue);
 
         // Count ivs-svs-base occurrences
@@ -561,7 +561,7 @@ void main() {
       final configs = recipe.buildTransliteratorConfigs();
 
       expect(configs.length, equals(2));
-      expect(configs[0].name, equals('jisX0201AndAlike'));
+      expect(configs[0].name, equals('jisx0201AndAlike'));
       expect(configs[1].name, equals('hiraKata'));
 
       // Test the actual transliteration works correctly

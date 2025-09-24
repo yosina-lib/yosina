@@ -112,7 +112,7 @@ class TransliteratorRegistry {
                     options['dropSelectorsAltogether'] as bool? ?? false,
               ))
       ..register(
-          'jisX0201AndAlike',
+          'jisx0201AndAlike',
           (options) => Jisx0201AndAlikeTransliterator(
                 fullwidthToHalfwidth:
                     options['fullwidthToHalfwidth'] as bool? ?? true,

@@ -131,7 +131,7 @@ void main() {
         'Width',
         [
           {
-            'name': 'jisX0201AndAlike',
+            'name': 'jisx0201AndAlike',
             'options': {
               'u005cAsYenSign': false,
             },
