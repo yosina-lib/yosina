@@ -491,7 +491,7 @@ class TransliterationRecipe {
       _TransliteratorConfigListBuilder ctx, ToFullwidthOptions options) {
     if (options.isEnabled) {
       ctx.insertTail(
-        TransliteratorConfig('jisX0201AndAlike', {
+        TransliteratorConfig('jisx0201AndAlike', {
           'fullwidthToHalfwidth': false,
           'u005cAsYenSign': options.isU005cAsYenSign,
         }),
@@ -504,7 +504,7 @@ class TransliterationRecipe {
       _TransliteratorConfigListBuilder ctx, ToHalfwidthOptions options) {
     if (options.isEnabled) {
       ctx.insertTail(
-        TransliteratorConfig('jisX0201AndAlike', {
+        TransliteratorConfig('jisx0201AndAlike', {
           'fullwidthToHalfwidth': true,
           'convertGL': true,
           'convertGR': options.isHankakuKana,

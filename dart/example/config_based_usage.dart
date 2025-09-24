@@ -15,7 +15,7 @@ void main() {
         'replaceProlongedMarksFollowingAlnums': true,
       },
     },
-    {'name': 'jisX0201AndAlike'},
+    {'name': 'jisx0201AndAlike'},
   ]);
 
   print('--- Configuration-based Transliteration ---');
@@ -71,7 +71,7 @@ void main() {
   // JIS X 0201 conversion only
   final jisx0201Only = Transliterator.withMap([
     {
-      'name': 'jisX0201AndAlike',
+      'name': 'jisx0201AndAlike',
       'options': {
         'fullwidthToHalfwidth': false,
       },
