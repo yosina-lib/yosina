@@ -81,7 +81,7 @@ String result = transliterator.apply("some japanese text");
 
 ```gradle
 dependencies {
-    implementation 'io.yosina:yosina:0.2.0'
+    implementation 'io.yosina:yosina:1.0.0'
 }
 ```
 
