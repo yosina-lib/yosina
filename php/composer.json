@@ -12,13 +12,15 @@
     ],
     "homepage": "https://yosina.io/",
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.2",
+        "ext-mbstring": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.0",
-        "phpstan/phpstan": "^1.10",
         "friendsofphp/php-cs-fixer": "^3.13",
-        "phpdocumentor/phpdocumentor": "^3.4"
+        "phpdocumentor/phpdocumentor": "^3.4",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^10.0",
+        "shipmonk/composer-dependency-analyser": "^1.8"
     },
     "autoload": {
         "psr-4": {
@@ -35,7 +37,8 @@
         "analyse": "phpstan analyse src tests --level=max --memory-limit=1024m",
         "cs-fix": "php-cs-fixer fix",
         "cs-check": "php-cs-fixer fix --dry-run --diff",
-        "docs": "phpdoc -d src -t docs"
+        "docs": "phpdoc -d src -t docs",
+        "composer-dependency-analyser": "composer-dependency-analyser"
     },
     "config": {
         "sort-packages": true,
