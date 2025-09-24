@@ -741,6 +741,41 @@ fn test_roman_numerals_functional() {
 
     for (input, expected) in test_cases {
         let result = transliterator(input).unwrap();
-        assert_eq!(result, expected, "Failed for input '{}'", input);
+        assert_eq!(result, expected, "Failed for input '{input}'");
     }
+}
+
+#[test]
+fn test_to_fullwidth_must_come_before_hira_kata() {
+    use yosina::recipes::HiraKataOptions;
+
+    let recipe = TransliterationRecipe {
+        to_fullwidth: ToFullWidthOptions::Yes {
+            u005c_as_yen_sign: true,
+        },
+        hira_kata: HiraKataOptions::KataToHira,
+        ..Default::default()
+    };
+
+    let configs = recipe.build().unwrap();
+
+    assert_eq!(configs.len(), 2);
+
+    // Check the order of configs
+    match &configs[0] {
+        yosina::transliterators::TransliteratorConfig::Jisx0201AndAlike {
+            fullwidth_to_halfwidth: _,
+            options: _,
+        } => {}
+        _ => panic!("Expected jisx0201-and-alike as first config"),
+    }
+
+    match &configs[1] {
+        yosina::transliterators::TransliteratorConfig::HiraKata(_) => {}
+        _ => panic!("Expected hira-kata as second config"),
+    }
+
+    // Test the actual transliteration works correctly
+    let transliterator = make_transliterator(&recipe).unwrap();
+    assert_eq!(transliterator("ｶﾀｶﾅ").unwrap(), "かたかな");
 }

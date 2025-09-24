@@ -290,7 +290,7 @@ class _TransliteratorConfigListBuilder:
     ) -> _TransliteratorConfigListBuilder:
         ctx = self
         if recipe.hira_kata:
-            ctx = ctx.insert_middle(("hira-kata", {"mode": recipe.hira_kata}))
+            ctx = ctx.insert_tail(("hira-kata", {"mode": recipe.hira_kata}))
         return ctx
 
     def apply_replace_japanese_iteration_marks(

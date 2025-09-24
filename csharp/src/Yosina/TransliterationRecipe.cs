@@ -585,7 +585,7 @@ public record class TransliterationRecipe
         if (this.HiraKata is HiraKataMode hiraKata)
         {
             var options = new HiraKataTransliterator.Options { Mode = hiraKata };
-            ctx = ctx.InsertMiddle(new TransliteratorConfig("hira-kata", options), false);
+            ctx = ctx.InsertTail(new TransliteratorConfig("hira-kata", options), false);
         }
 
         return ctx;

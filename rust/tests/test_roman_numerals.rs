@@ -79,7 +79,7 @@ const EDGE_TEST_CASES: &[(&str, &str, &str)] = &[
 fn test_uppercase_roman_numerals() {
     for (input, expected, description) in UPPERCASE_TEST_CASES {
         let result = test_transliterate(input);
-        assert_eq!(result, *expected, "Failed for test case: {}", description);
+        assert_eq!(result, *expected, "Failed for test case: {description}");
     }
 }
 
@@ -87,7 +87,7 @@ fn test_uppercase_roman_numerals() {
 fn test_lowercase_roman_numerals() {
     for (input, expected, description) in LOWERCASE_TEST_CASES {
         let result = test_transliterate(input);
-        assert_eq!(result, *expected, "Failed for test case: {}", description);
+        assert_eq!(result, *expected, "Failed for test case: {description}");
     }
 }
 
@@ -95,7 +95,7 @@ fn test_lowercase_roman_numerals() {
 fn test_mixed_text() {
     for (input, expected, description) in MIXED_TEXT_TEST_CASES {
         let result = test_transliterate(input);
-        assert_eq!(result, *expected, "Failed for test case: {}", description);
+        assert_eq!(result, *expected, "Failed for test case: {description}");
     }
 }
 
@@ -103,6 +103,6 @@ fn test_mixed_text() {
 fn test_edge_cases() {
     for (input, expected, description) in EDGE_TEST_CASES {
         let result = test_transliterate(input);
-        assert_eq!(result, *expected, "Failed for test case: {}", description);
+        assert_eq!(result, *expected, "Failed for test case: {description}");
     }
 }

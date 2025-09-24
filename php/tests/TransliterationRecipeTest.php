@@ -426,4 +426,22 @@ class TransliterationRecipeTest extends TestCase
         // Emoji characters should not be processed
         $this->assertEquals('🆘', $transliterator('🆘'));
     }
+
+    public function testToFullwidthMustComeBeforeHiraKata(): void
+    {
+        $recipe = new TransliterationRecipe(
+            toFullwidth: true,
+            hiraKata: 'kata-to-hira'
+        );
+        
+        $configs = $recipe->buildTransliteratorConfigs();
+        
+        $this->assertCount(2, $configs);
+        $this->assertEquals('jisx0201-and-alike', $configs[0][0]);
+        $this->assertEquals('hira-kata', $configs[1][0]);
+        
+        // Test the actual transliteration works correctly
+        $transliterator = Yosina::makeTransliterator($recipe);
+        $this->assertEquals('かたかな', $transliterator('ｶﾀｶﾅ'));
+    }
 }

@@ -536,6 +536,22 @@ public class TransliterationRecipeTest {
             // Emoji characters should not be processed
             assertEquals("🆘", transliterator.apply("🆘"));
         }
+
+        @Test
+        public void testToFullwidthMustComeBeforeHiraKata() {
+            recipe.withToFullwidth(TransliterationRecipe.ToFullwidthOptions.ENABLED)
+                    .withHiraKata("kata-to-hira");
+
+            List<Yosina.TransliteratorConfig> configs = recipe.buildTransliteratorConfigs();
+
+            assertEquals(2, configs.size());
+            assertEquals("jisx0201-and-alike", configs.get(0).getName());
+            assertEquals("hira-kata", configs.get(1).getName());
+
+            // Test the actual transliteration works correctly
+            Function<String, String> transliterator = Yosina.makeTransliteratorFromRecipe(recipe);
+            assertEquals("かたかな", transliterator.apply("ｶﾀｶﾅ"));
+        }
     }
 
     // Helper methods

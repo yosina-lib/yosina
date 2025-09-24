@@ -448,7 +448,7 @@ impl TransliterationRecipe {
     ) {
         match &self.hira_kata {
             HiraKataOptions::HiraToKata => {
-                builder = builder.insert_middle(
+                builder = builder.insert_tail(
                     TransliteratorConfig::HiraKata(
                         crate::transliterators::HiraKataTransliteratorOptions {
                             mode: crate::transliterators::HiraKataMode::HiraToKata,
@@ -458,7 +458,7 @@ impl TransliterationRecipe {
                 );
             }
             HiraKataOptions::KataToHira => {
-                builder = builder.insert_middle(
+                builder = builder.insert_tail(
                     TransliteratorConfig::HiraKata(
                         crate::transliterators::HiraKataTransliteratorOptions {
                             mode: crate::transliterators::HiraKataMode::KataToHira,

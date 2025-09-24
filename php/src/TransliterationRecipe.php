@@ -218,7 +218,7 @@ readonly class TransliterationRecipe
     private function applyHiraKata(TransliteratorConfigListBuilder $ctx): TransliteratorConfigListBuilder
     {
         if ($this->hiraKata !== null) {
-            $ctx = $ctx->insertMiddle(['hira-kata', ['mode' => $this->hiraKata]], false);
+            $ctx = $ctx->insertTail(['hira-kata', ['mode' => $this->hiraKata]], false);
         }
         return $ctx;
     }

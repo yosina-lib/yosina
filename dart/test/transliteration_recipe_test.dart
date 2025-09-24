@@ -551,5 +551,25 @@ void main() {
         expect(excludeEmojis.includeEmojis, isFalse);
       });
     });
+
+    test('toFullwidth must come before hiraKata', () {
+      final recipe = TransliterationRecipe(
+        toFullwidth: const ToFullwidthOptions.enabled(),
+        hiraKata: 'kata-to-hira',
+      );
+
+      final configs = recipe.buildTransliteratorConfigs();
+
+      expect(configs.length, equals(2));
+      expect(configs[0].name, equals('jisX0201AndAlike'));
+      expect(configs[1].name, equals('hiraKata'));
+
+      // Test the actual transliteration works correctly
+      final transliterator = Transliterator.withRecipe(recipe);
+      final input = Chars.fromString('ｶﾀｶﾅ');
+      final output = transliterator(input).toList();
+      final result = output.map((c) => c.c).join();
+      expect(result, equals('かたかな'));
+    });
   });
 }

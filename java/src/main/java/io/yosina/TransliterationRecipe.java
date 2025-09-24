@@ -841,7 +841,7 @@ public class TransliterationRecipe {
                             : io.yosina.transliterators.HiraKataTransliterator.Options.Mode
                                     .KATA_TO_HIRA;
             ctx =
-                    ctx.insertMiddle(
+                    ctx.insertTail(
                             new Yosina.TransliteratorConfig(
                                     "hira-kata",
                                     Optional.of(

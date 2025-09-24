@@ -6,6 +6,7 @@ import (
 	yosina "github.com/yosina-lib/yosina/go"
 	"github.com/yosina-lib/yosina/go/transliterators/circled_or_squared"
 	"github.com/yosina-lib/yosina/go/transliterators/combined"
+	"github.com/yosina-lib/yosina/go/transliterators/hira_kata"
 	"github.com/yosina-lib/yosina/go/transliterators/hira_kata_composition"
 	"github.com/yosina-lib/yosina/go/transliterators/hyphens"
 	"github.com/yosina-lib/yosina/go/transliterators/ideographic_annotations"
@@ -136,6 +137,17 @@ func createTransliteratorFromConfig(config TransliteratorConfig) (yosina.Transli
 		}
 		return yosina.TransliteratorFunc(func(input yosina.CharIterator) (yosina.CharIterator, error) {
 			return prolonged_sound_marks.Transliterate(input, options), nil
+		}), nil
+
+	case "hira-kata":
+		var options hira_kata.Options
+		if config.Options != nil {
+			if opts, ok := config.Options.(*hira_kata.Options); ok {
+				options = *opts
+			}
+		}
+		return yosina.TransliteratorFunc(func(input yosina.CharIterator) (yosina.CharIterator, error) {
+			return hira_kata.Transliterate(input, options), nil
 		}), nil
 
 	case "hira-kata-composition":

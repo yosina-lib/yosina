@@ -380,6 +380,23 @@ class TestFunctionalIntegration < Minitest::Test
     # Emoji characters should not be processed
     assert_equal "\u{1f198}", transliterator.call("\u{1f198}")  # Should remain unchanged
   end
+
+  def test_to_fullwidth_must_come_before_hira_kata
+    recipe = Yosina::TransliterationRecipe.new(
+      to_fullwidth: true,
+      hira_kata: 'kata-to-hira'
+    )
+
+    configs = recipe.build_transliterator_configs
+
+    assert_equal 2, configs.length
+    assert_equal :jisx0201_and_alike, configs[0][0]
+    assert_equal :hira_kata, configs[1][0]
+
+    # Test the actual transliteration works correctly
+    transliterator = Yosina.make_transliterator(recipe)
+    assert_equal 'かたかな', transliterator.call('ｶﾀｶﾅ')
+  end
 end
 
 # Shared helper module
