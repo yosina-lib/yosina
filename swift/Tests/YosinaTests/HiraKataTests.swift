@@ -15,6 +15,7 @@ final class HiraKataTests: XCTestCase {
 
         XCTAssertEqual(transliterator.transliterate("ぁぃぅぇぉっゃゅょ"), "ァィゥェォッャュョ")
         XCTAssertEqual(transliterator.transliterate("ゎゕゖ"), "ヮヵヶ")
+        XCTAssertEqual(transliterator.transliterate("\u{1B132}\u{1B150}\u{1B151}\u{1B152}"), "\u{1B155}\u{1B164}\u{1B165}\u{1B166}")
     }
 
     func testHiraToKataMixedText() {
@@ -52,6 +53,7 @@ final class HiraKataTests: XCTestCase {
 
         XCTAssertEqual(transliterator.transliterate("ァィゥェォッャュョ"), "ぁぃぅぇぉっゃゅょ")
         XCTAssertEqual(transliterator.transliterate("ヮヵヶ"), "ゎゕゖ")
+        XCTAssertEqual(transliterator.transliterate("\u{1B155}\u{1B164}\u{1B165}\u{1B166}"), "\u{1B132}\u{1B150}\u{1B151}\u{1B152}")
     }
 
     func testKataToHiraMixedText() {

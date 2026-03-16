@@ -185,6 +185,10 @@ internal static class HiraKataTable
         "ゎ", "ヮ", "",
         "ゕ", "ヵ", "",
         "ゖ", "ヶ", "",
+        "\uD82C\uDD32", "\uD82C\uDD55", "",
+        "\uD82C\uDD50", "\uD82C\uDD64", "",
+        "\uD82C\uDD51", "\uD82C\uDD65", "",
+        "\uD82C\uDD52", "\uD82C\uDD66", "",
     });
 #pragma warning restore SA1122 // Use string.Empty for empty strings
 

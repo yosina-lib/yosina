@@ -36,12 +36,22 @@ class TestHiraKata < Minitest::Test
 
   def test_hira_to_kata_small
     transliterator = Yosina::Transliterators::HiraKata.call(mode: :hira_to_kata)
-    
+
     input = 'ぁぃぅぇぉっゃゅょ'
     chars = Yosina::Chars.build_char_array(input)
     result = transliterator.call(chars).map(&:c).join
-    
+
     assert_equal 'ァィゥェォッャュョ', result
+  end
+
+  def test_hira_to_kata_small_kana_extension
+    transliterator = Yosina::Transliterators::HiraKata.call(mode: :hira_to_kata)
+
+    input = "\u{1B132}\u{1B150}\u{1B151}\u{1B152}"
+    chars = Yosina::Chars.build_char_array(input)
+    result = transliterator.call(chars).map(&:c).join
+
+    assert_equal "\u{1B155}\u{1B164}\u{1B165}\u{1B166}", result
   end
 
   def test_hira_to_kata_mixed
@@ -96,12 +106,22 @@ class TestHiraKata < Minitest::Test
 
   def test_kata_to_hira_small
     transliterator = Yosina::Transliterators::HiraKata.call(mode: :kata_to_hira)
-    
+
     input = 'ァィゥェォッャュョ'
     chars = Yosina::Chars.build_char_array(input)
     result = transliterator.call(chars).map(&:c).join
-    
+
     assert_equal 'ぁぃぅぇぉっゃゅょ', result
+  end
+
+  def test_kata_to_hira_small_kana_extension
+    transliterator = Yosina::Transliterators::HiraKata.call(mode: :kata_to_hira)
+
+    input = "\u{1B155}\u{1B164}\u{1B165}\u{1B166}"
+    chars = Yosina::Chars.build_char_array(input)
+    result = transliterator.call(chars).map(&:c).join
+
+    assert_equal "\u{1B132}\u{1B150}\u{1B151}\u{1B152}", result
   end
 
   def test_kata_to_hira_mixed

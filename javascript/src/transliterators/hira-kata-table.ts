@@ -62,6 +62,10 @@ export const hiraganaKatakanaSmallTable: [string, string, string?][] = [
   ["\u{308e}", "\u{30ee}", undefined], // ゎ, ヮ
   ["\u{3095}", "\u{30f5}", undefined], // ゕ, ヵ
   ["\u{3096}", "\u{30f6}", undefined], // ゖ, ヶ
+  ["\u{1b132}", "\u{1b155}", undefined], // 𛄲 (small こ), 𛅕 (small コ)
+  ["\u{1b150}", "\u{1b164}", undefined], // 𛅐 (small ゐ), 𛅤 (small ヰ)
+  ["\u{1b151}", "\u{1b165}", undefined], // 𛅑 (small ゑ), 𛅥 (small ヱ)
+  ["\u{1b152}", "\u{1b166}", undefined], // 𛅒 (small を), 𛅦 (small ヲ)
 ];
 
 export const voicedCharacters: [string, string][] = hiraganaKatakanaTable.flatMap(([hiraganaTable, katakanaTable]) => [

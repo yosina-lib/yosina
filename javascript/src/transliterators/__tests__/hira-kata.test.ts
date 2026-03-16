@@ -34,6 +34,13 @@ describe("hira-kata", () => {
       expect(result).toBe(expected);
     });
 
+    test("should convert small kana extension hiragana to katakana", () => {
+      const input = "\u{1b132}\u{1b150}\u{1b151}\u{1b152}";
+      const expected = "\u{1b155}\u{1b164}\u{1b165}\u{1b166}";
+      const result = fromChars(transliterator(buildCharArray(input)));
+      expect(result).toBe(expected);
+    });
+
     test("should preserve non-hiragana characters", () => {
       const input = "あいうえお123ABCアイウエオ";
       const expected = "アイウエオ123ABCアイウエオ";
@@ -76,6 +83,13 @@ describe("hira-kata", () => {
     test("should convert small katakana to hiragana", () => {
       const input = "ァィゥェォッャュョ";
       const expected = "ぁぃぅぇぉっゃゅょ";
+      const result = fromChars(transliterator(buildCharArray(input)));
+      expect(result).toBe(expected);
+    });
+
+    test("should convert small kana extension katakana to hiragana", () => {
+      const input = "\u{1b155}\u{1b164}\u{1b165}\u{1b166}";
+      const expected = "\u{1b132}\u{1b150}\u{1b151}\u{1b152}";
       const result = fromChars(transliterator(buildCharArray(input)));
       expect(result).toBe(expected);
     });

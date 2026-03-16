@@ -218,6 +218,24 @@ mod tests {
     }
 
     #[test]
+    fn test_hira_to_kata_small_kana_extension() {
+        let options = HiraKataTransliteratorOptions {
+            mode: Mode::HiraToKata,
+        };
+        let transliterator = HiraKataTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("\u{1b132}\u{1b150}\u{1b151}\u{1b152}");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(
+            from_chars(result.iter().cloned()),
+            "\u{1b155}\u{1b164}\u{1b165}\u{1b166}"
+        );
+    }
+
+    #[test]
     fn test_hira_to_kata_mixed() {
         let options = HiraKataTransliteratorOptions {
             mode: Mode::HiraToKata,
@@ -338,6 +356,24 @@ mod tests {
             .transliterate(&mut pool, &input_chars)
             .unwrap();
         assert_eq!(from_chars(result.iter().cloned()), "ぁぃぅぇぉっゃゅょ");
+    }
+
+    #[test]
+    fn test_kata_to_hira_small_kana_extension() {
+        let options = HiraKataTransliteratorOptions {
+            mode: Mode::KataToHira,
+        };
+        let transliterator = HiraKataTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("\u{1b155}\u{1b164}\u{1b165}\u{1b166}");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(
+            from_chars(result.iter().cloned()),
+            "\u{1b132}\u{1b150}\u{1b151}\u{1b152}"
+        );
     }
 
     #[test]

@@ -906,6 +906,26 @@ pub static HIRAGANA_KATAKANA_SMALL_TABLE: &[SmallKanaEntry] = &[
         katakana: "ヶ",
         halfwidth: None,
     },
+    SmallKanaEntry {
+        hiragana: "\u{1b132}",
+        katakana: "\u{1b155}",
+        halfwidth: None,
+    },
+    SmallKanaEntry {
+        hiragana: "\u{1b150}",
+        katakana: "\u{1b164}",
+        halfwidth: None,
+    },
+    SmallKanaEntry {
+        hiragana: "\u{1b151}",
+        katakana: "\u{1b165}",
+        halfwidth: None,
+    },
+    SmallKanaEntry {
+        hiragana: "\u{1b152}",
+        katakana: "\u{1b166}",
+        halfwidth: None,
+    },
 ];
 
 /// Generate voiced character mappings
