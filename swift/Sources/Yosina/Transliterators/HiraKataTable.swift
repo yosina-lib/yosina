@@ -117,6 +117,10 @@ enum HiraKataTable {
         SmallKanaEntry("ゎ", "ヮ", ""),
         SmallKanaEntry("ゕ", "ヵ", ""),
         SmallKanaEntry("ゖ", "ヶ", ""),
+        SmallKanaEntry("\u{1B132}", "\u{1B155}", ""),
+        SmallKanaEntry("\u{1B150}", "\u{1B164}", ""),
+        SmallKanaEntry("\u{1B151}", "\u{1B165}", ""),
+        SmallKanaEntry("\u{1B152}", "\u{1B166}", ""),
     ]
 
     /// Generate voiced characters table for HiraKataCompositionTransliterator

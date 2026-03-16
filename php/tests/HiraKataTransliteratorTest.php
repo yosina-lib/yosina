@@ -25,9 +25,10 @@ class HiraKataTransliteratorTest extends TestCase
     public function testHiraToKataSmallCharacters(): void
     {
         $transliterator = new HiraKataTransliterator(['mode' => HiraKataTransliterator::MODE_HIRA_TO_KATA]);
-        
+
         $this->assertEquals("ァィゥェォッャュョ", $this->processString($transliterator, "ぁぃぅぇぉっゃゅょ"));
         $this->assertEquals("ヮヵヶ", $this->processString($transliterator, "ゎゕゖ"));
+        $this->assertEquals("\u{1B155}\u{1B164}\u{1B165}\u{1B166}", $this->processString($transliterator, "\u{1B132}\u{1B150}\u{1B151}\u{1B152}"));
     }
 
     public function testHiraToKataMixedText(): void
@@ -67,9 +68,10 @@ class HiraKataTransliteratorTest extends TestCase
     public function testKataToHiraSmallCharacters(): void
     {
         $transliterator = new HiraKataTransliterator(['mode' => HiraKataTransliterator::MODE_KATA_TO_HIRA]);
-        
+
         $this->assertEquals("ぁぃぅぇぉっゃゅょ", $this->processString($transliterator, "ァィゥェォッャュョ"));
         $this->assertEquals("ゎゕゖ", $this->processString($transliterator, "ヮヵヶ"));
+        $this->assertEquals("\u{1B132}\u{1B150}\u{1B151}\u{1B152}", $this->processString($transliterator, "\u{1B155}\u{1B164}\u{1B165}\u{1B166}"));
     }
 
     public function testKataToHiraMixedText(): void

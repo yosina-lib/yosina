@@ -97,6 +97,10 @@ class HiraKataTable {
     ('ゎ', 'ヮ', ''),
     ('ゕ', 'ヵ', ''),
     ('ゖ', 'ヶ', ''),
+    ('\u{1B132}', '\u{1B155}', ''),
+    ('\u{1B150}', '\u{1B164}', ''),
+    ('\u{1B151}', '\u{1B165}', ''),
+    ('\u{1B152}', '\u{1B166}', ''),
   ];
 
   /// Generates a map of base characters to their voiced equivalents.

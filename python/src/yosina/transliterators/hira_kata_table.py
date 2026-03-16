@@ -78,6 +78,10 @@ HIRAGANA_KATAKANA_SMALL_TABLE: list[tuple[str, str, str | None]] = [
     ("\u308e", "\u30ee", None),  # ゎ, ヮ
     ("\u3095", "\u30f5", None),  # ゕ, ヵ
     ("\u3096", "\u30f6", None),  # ゖ, ヶ
+    ("\U0001b132", "\U0001b155", None),  # 𛄲 (small こ), 𛅕 (small コ)
+    ("\U0001b150", "\U0001b164", None),  # 𛅐 (small ゐ), 𛅤 (small ヰ)
+    ("\U0001b151", "\U0001b165", None),  # 𛅑 (small ゑ), 𛅥 (small ヱ)
+    ("\U0001b152", "\U0001b166", None),  # 𛅒 (small を), 𛅦 (small ヲ)
 ]
 
 

@@ -54,6 +54,11 @@ func TestHiraToKata(t *testing.T) {
 			input:    "ゐゑ",
 			expected: "ヰヱ",
 		},
+		{
+			name:     "small kana extension",
+			input:    "\U0001B132\U0001B150\U0001B151\U0001B152",
+			expected: "\U0001B155\U0001B164\U0001B165\U0001B166",
+		},
 	}
 
 	for _, tt := range tests {
@@ -126,6 +131,11 @@ func TestKataToHira(t *testing.T) {
 			name:     "small wa, ka, ke",
 			input:    "ヮヵヶ",
 			expected: "ゎゕゖ",
+		},
+		{
+			name:     "small kana extension",
+			input:    "\U0001B155\U0001B164\U0001B165\U0001B166",
+			expected: "\U0001B132\U0001B150\U0001B151\U0001B152",
 		},
 	}
 

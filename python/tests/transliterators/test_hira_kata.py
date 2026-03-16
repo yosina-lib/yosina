@@ -39,6 +39,14 @@ class TestHiraToKata:
         result = "".join(char.c for char in transliterator(chars))
         assert result == "ァィゥェォッャュョ"
 
+    def test_small_kana_extension(self) -> None:
+        """Test small kana extension hiragana conversion."""
+        transliterator = Transliterator(mode="hira-to-kata")
+        input_text = "\U0001b132\U0001b150\U0001b151\U0001b152"
+        chars = build_char_list(input_text)
+        result = "".join(char.c for char in transliterator(chars))
+        assert result == "\U0001b155\U0001b164\U0001b165\U0001b166"
+
     def test_mixed(self) -> None:
         """Test mixed text conversion."""
         transliterator = Transliterator(mode="hira-to-kata")
@@ -90,6 +98,14 @@ class TestKataToHira:
         chars = build_char_list(input_text)
         result = "".join(char.c for char in transliterator(chars))
         assert result == "ぁぃぅぇぉっゃゅょ"
+
+    def test_small_kana_extension(self) -> None:
+        """Test small kana extension katakana conversion."""
+        transliterator = Transliterator(mode="kata-to-hira")
+        input_text = "\U0001b155\U0001b164\U0001b165\U0001b166"
+        chars = build_char_list(input_text)
+        result = "".join(char.c for char in transliterator(chars))
+        assert result == "\U0001b132\U0001b150\U0001b151\U0001b152"
 
     def test_mixed(self) -> None:
         """Test mixed text conversion."""

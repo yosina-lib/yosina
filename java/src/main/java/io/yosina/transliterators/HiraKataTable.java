@@ -179,7 +179,11 @@ public final class HiraKataTable {
                         "ょ", "ョ", "ｮ",
                         "ゎ", "ヮ", "",
                         "ゕ", "ヵ", "",
-                        "ゖ", "ヶ", ""
+                        "ゖ", "ヶ", "",
+                        "\uD82C\uDD32", "\uD82C\uDD55", "",
+                        "\uD82C\uDD50", "\uD82C\uDD64", "",
+                        "\uD82C\uDD51", "\uD82C\uDD65", "",
+                        "\uD82C\uDD52", "\uD82C\uDD66", ""
                     });
 
     // Private constructor to prevent instantiation

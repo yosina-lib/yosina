@@ -35,7 +35,10 @@ class HiraKataTransliteratorTest {
                     Arguments.of("ぱぴぷぺぽ", "パピプペポ"),
                     Arguments.of("ぁぃぅぇぉっゃゅょ", "ァィゥェォッャュョ"),
                     Arguments.of("あいうえお123ABCアイウエオ", "アイウエオ123ABCアイウエオ"),
-                    Arguments.of("こんにちは、世界！", "コンニチハ、世界！"));
+                    Arguments.of("こんにちは、世界！", "コンニチハ、世界！"),
+                    Arguments.of(
+                            "\uD82C\uDD32\uD82C\uDD50\uD82C\uDD51\uD82C\uDD52",
+                            "\uD82C\uDD55\uD82C\uDD64\uD82C\uDD65\uD82C\uDD66"));
         }
     }
 
@@ -63,8 +66,10 @@ class HiraKataTransliteratorTest {
                     Arguments.of("アイウエオ123ABCあいうえお", "あいうえお123ABCあいうえお"),
                     Arguments.of("コンニチハ、世界！", "こんにちは、世界！"),
                     Arguments.of("ヴ", "ゔ"),
-                    Arguments.of("ヷヸヹヺ", "ヷヸヹヺ") // Special katakana remain unchanged
-                    );
+                    Arguments.of("ヷヸヹヺ", "ヷヸヹヺ"), // Special katakana remain unchanged
+                    Arguments.of(
+                            "\uD82C\uDD55\uD82C\uDD64\uD82C\uDD65\uD82C\uDD66",
+                            "\uD82C\uDD32\uD82C\uDD50\uD82C\uDD51\uD82C\uDD52"));
         }
     }
 

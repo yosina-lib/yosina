@@ -15,6 +15,7 @@ public class HiraKataTransliteratorTest
         [InlineData("ぁぃぅぇぉっゃゅょ", "ァィゥェォッャュョ")]
         [InlineData("あいうえお123ABCアイウエオ", "アイウエオ123ABCアイウエオ")]
         [InlineData("こんにちは、世界！", "コンニチハ、世界！")]
+        [InlineData("\uD82C\uDD32\uD82C\uDD50\uD82C\uDD51\uD82C\uDD52", "\uD82C\uDD55\uD82C\uDD64\uD82C\uDD65\uD82C\uDD66")]
         public void TestHiraToKataConversion(string input, string expected)
         {
             var transliterator = new HiraKataTransliterator(new HiraKataTransliterator.Options
@@ -38,6 +39,7 @@ public class HiraKataTransliteratorTest
         [InlineData("コンニチハ、世界！", "こんにちは、世界！")]
         [InlineData("ヴ", "ゔ")]
         [InlineData("ヷヸヹヺ", "ヷヸヹヺ")] // Special katakana remain unchanged
+        [InlineData("\uD82C\uDD55\uD82C\uDD64\uD82C\uDD65\uD82C\uDD66", "\uD82C\uDD32\uD82C\uDD50\uD82C\uDD51\uD82C\uDD52")]
         public void TestKataToHiraConversion(string input, string expected)
         {
             var transliterator = new HiraKataTransliterator(new HiraKataTransliterator.Options
