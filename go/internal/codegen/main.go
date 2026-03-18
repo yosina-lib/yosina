@@ -22,6 +22,8 @@ type DatasetSourceDefs struct {
 	Combined                  string
 	CircledOrSquared          string
 	RomanNumerals             string
+	ArchaicHirakatas          string
+	SmallHirakatas            string
 }
 
 type SimpleDataset struct {
@@ -90,6 +92,16 @@ var sources = DatasetSourceDefs{
 	Combined:                  "combined-chars.json",
 	CircledOrSquared:          "circled-or-squared.json",
 	RomanNumerals:             "roman-numerals.json",
+	ArchaicHirakatas:          "archaic-hirakatas.json",
+	SmallHirakatas:            "small-hirakatas.json",
+}
+
+func (sd *SimpleDataset) ArchaicHirakatas() (map[data.UCodepoint]data.UCodepoint, error) {
+	return loadSimpleData(filepath.Join(sd.dataRoot, sd.defs.ArchaicHirakatas))
+}
+
+func (sd *SimpleDataset) SmallHirakatas() (map[data.UCodepoint]data.UCodepoint, error) {
+	return loadSimpleData(filepath.Join(sd.dataRoot, sd.defs.SmallHirakatas))
 }
 
 func (sd *SimpleDataset) KanjiOldNew() (map[data.UCodepointTuple]data.UCodepointTuple, error) {
@@ -138,6 +150,8 @@ func renderSimpleTransliterators(outputDir string, em *emitter.Emitter, dataset 
 		"radicals":                   dataset.Radicals,
 		"mathematical_alphanumerics": dataset.MathematicalAlphanumerics,
 		"ideographic_annotations":    dataset.IdeographicAnnotations,
+		"archaic_hirakatas":          dataset.ArchaicHirakatas,
+		"small_hirakatas":            dataset.SmallHirakatas,
 	}
 
 	for name, fn := range targets {

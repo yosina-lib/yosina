@@ -58,6 +58,18 @@ class YosinaCodeGenerator {
         'Replace old-style kanji with modern equivalents.',
         'kanji-old-new-form.json'
       ),
+      (
+        'archaic_hirakatas',
+        'ArchaicHirakatas',
+        'Replaces archaic kana (hentaigana) with their modern equivalents.',
+        'archaic-hirakatas.json'
+      ),
+      (
+        'small_hirakatas',
+        'SmallHirakatas',
+        'Replaces small hiragana/katakana with their ordinary-sized equivalents.',
+        'small-hirakatas.json'
+      ),
     ];
 
     for (final (identifier, className, description, dataFile)
@@ -580,6 +592,8 @@ ${buffer.toString()}
       ('mathematicalAlphanumerics', 'MathematicalAlphanumericsTransliterator'),
       ('ideographicAnnotations', 'IdeographicAnnotationsTransliterator'),
       ('kanjiOldNew', 'KanjiOldNewTransliterator'),
+      ('archaicHirakatas', 'ArchaicHirakatasTransliterator'),
+      ('smallHirakatas', 'SmallHirakatasTransliterator'),
       ('combined', 'CombinedTransliterator'),
       ('romanNumerals', 'RomanNumeralsTransliterator'),
     ];

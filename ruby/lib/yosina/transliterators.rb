@@ -15,6 +15,9 @@ require_relative 'transliterators/jisx0201_and_alike'
 require_relative 'transliterators/circled_or_squared'
 require_relative 'transliterators/combined'
 require_relative 'transliterators/japanese_iteration_marks'
+require_relative 'transliterators/archaic_hirakatas'
+require_relative 'transliterators/small_hirakatas'
+require_relative 'transliterators/historical_hirakatas'
 
 module Yosina
   # Registry for transliterator factories
@@ -34,7 +37,10 @@ module Yosina
       jisx0201_and_alike: Transliterators::Jisx0201AndAlike,
       combined: Transliterators::Combined,
       circled_or_squared: CircledOrSquared,
-      japanese_iteration_marks: Transliterators::JapaneseIterationMarks
+      japanese_iteration_marks: Transliterators::JapaneseIterationMarks,
+      archaic_hirakatas: Transliterators::ArchaicHirakatas,
+      small_hirakatas: Transliterators::SmallHirakatas,
+      historical_hirakatas: Transliterators::HistoricalHirakatas
     }.freeze
 
     # Get a transliterator factory by name

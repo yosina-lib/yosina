@@ -32,7 +32,9 @@ def main
     kanji_old_new: 'kanji-old-new-form.json',
     combined: 'combined-chars.json',
     circled_or_squared: 'circled-or-squared.json',
-    roman_numerals: 'roman-numerals.json'
+    roman_numerals: 'roman-numerals.json',
+    archaic_hirakatas: 'archaic-hirakatas.json',
+    small_hirakatas: 'small-hirakatas.json'
   )
 
   # Load the dataset
@@ -64,6 +66,16 @@ def main
       'kanji_old_new',
       'Replace old-style kanji with modern equivalents',
       dataset.kanji_old_new
+    ],
+    [
+      'archaic_hirakatas',
+      'Replaces archaic kana (hentaigana) with their modern equivalents.',
+      dataset.archaic_hirakatas
+    ],
+    [
+      'small_hirakatas',
+      'Replaces small hiragana/katakana with their ordinary-sized equivalents.',
+      dataset.small_hirakatas
     ]
   ]
 

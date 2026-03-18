@@ -8,6 +8,7 @@ import (
 	"github.com/yosina-lib/yosina/go/transliterators/combined"
 	"github.com/yosina-lib/yosina/go/transliterators/hira_kata"
 	"github.com/yosina-lib/yosina/go/transliterators/hira_kata_composition"
+	"github.com/yosina-lib/yosina/go/transliterators/historical_hirakatas"
 	"github.com/yosina-lib/yosina/go/transliterators/hyphens"
 	"github.com/yosina-lib/yosina/go/transliterators/ideographic_annotations"
 	"github.com/yosina-lib/yosina/go/transliterators/ivs_svs_base"
@@ -192,6 +193,17 @@ func createTransliteratorFromConfig(config TransliteratorConfig) (yosina.Transli
 		}
 		return yosina.TransliteratorFunc(func(input yosina.CharIterator) (yosina.CharIterator, error) {
 			return japanese_iteration_marks.Transliterate(input, options), nil
+		}), nil
+
+	case "historical-hirakatas":
+		options := historical_hirakatas.DefaultOptions()
+		if config.Options != nil {
+			if opts, ok := config.Options.(*historical_hirakatas.Options); ok {
+				options = *opts
+			}
+		}
+		return yosina.TransliteratorFunc(func(input yosina.CharIterator) (yosina.CharIterator, error) {
+			return historical_hirakatas.Transliterate(input, options), nil
 		}), nil
 
 	default:

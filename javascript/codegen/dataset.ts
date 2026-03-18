@@ -49,6 +49,8 @@ export type Dataset = {
   combined: [string, string[]][];
   circledOrSquared: [string, CircledOrSquaredRecord][];
   romanNumerals: [string, string[]][];
+  archaicHirakatas: [string, string][];
+  smallHirakatas: [string, string][];
 };
 
 export type DatasetSourceDefs = Record<keyof Dataset, string>;

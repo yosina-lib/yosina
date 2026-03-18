@@ -18,9 +18,9 @@ var offsets = [3]int{
 
 	0,
 
-	606548,
+	606564,
 
-	1105958,
+	1106134,
 }
 
 var mappings [3]*mph.CHD

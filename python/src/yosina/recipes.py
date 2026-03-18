@@ -135,6 +135,42 @@ class TransliterationRecipe:
         Output: "ix"
     """
 
+    replace_archaic_hirakatas: bool = False
+    """Replace archaic kana (hentaigana) with modern equivalents.
+
+    Example:
+        Input:  "\U0001b001" (U+1B001, hentaigana E)
+        Output: "え"
+    """
+
+    replace_small_hirakatas: bool = False
+    """Replace small hiragana/katakana with their ordinary-sized equivalents.
+
+    Example:
+        Input:  "ぁぃぅ"
+        Output: "あいう"
+        Input:  "ァィゥ"
+        Output: "アイウ"
+    """
+
+    convert_historical_hirakatas: Literal["simple", "decompose"] | None = None
+    """Convert historical hiragana/katakana (ゐ, ゑ, ヰ, ヱ, ヷ, ヸ, ヹ, ヺ) to modern equivalents.
+
+    - "simple": Convert hiragana/katakana to single-character modern equivalents;
+      voiced characters are left unchanged.
+    - "decompose": Convert all historical kana to multi-character decomposed forms.
+
+    Example:
+        Input:  "ゐた" (with "simple")
+        Output: "いた"
+        Input:  "ヰスキー" (with "simple")
+        Output: "イスキー"
+        Input:  "ゐた" (with "decompose")
+        Output: "うぃた"
+        Input:  "ヷイオリン" (with "decompose")
+        Output: "ヴァイオリン"
+    """
+
     combine_decomposed_hiraganas_and_katakanas: bool = False
     """Combine decomposed hiraganas and katakanas into single counterparts.
 
@@ -403,6 +439,43 @@ class _TransliteratorConfigListBuilder:
             ctx = ctx.insert_middle(("roman-numerals", {}))
         return ctx
 
+    def apply_replace_archaic_hirakatas(
+        self,
+        recipe: TransliterationRecipe,
+    ) -> _TransliteratorConfigListBuilder:
+        ctx = self
+        if recipe.replace_archaic_hirakatas:
+            ctx = ctx.insert_middle(("archaic-hirakatas", {}))
+        return ctx
+
+    def apply_replace_small_hirakatas(
+        self,
+        recipe: TransliterationRecipe,
+    ) -> _TransliteratorConfigListBuilder:
+        ctx = self
+        if recipe.replace_small_hirakatas:
+            ctx = ctx.insert_middle(("small-hirakatas", {}))
+        return ctx
+
+    def apply_convert_historical_hirakatas(
+        self,
+        recipe: TransliterationRecipe,
+    ) -> _TransliteratorConfigListBuilder:
+        ctx = self
+        if recipe.convert_historical_hirakatas is not None:
+            mode = recipe.convert_historical_hirakatas
+            ctx = ctx.insert_middle(
+                (
+                    "historical-hirakatas",
+                    {
+                        "hiraganas": mode,
+                        "katakanas": mode,
+                        "voiced_katakanas": "decompose" if mode == "decompose" else "skip",
+                    },
+                )
+            )
+        return ctx
+
     def apply_combine_decomposed_hiraganas_and_katakanas(
         self,
         recipe: TransliterationRecipe,
@@ -497,6 +570,9 @@ def build_transliterator_configs_from_recipe(
     ctx = ctx.apply_replace_hyphens(recipe)
     ctx = ctx.apply_replace_mathematical_alphanumerics(recipe)
     ctx = ctx.apply_replace_roman_numerals(recipe)
+    ctx = ctx.apply_replace_archaic_hirakatas(recipe)
+    ctx = ctx.apply_replace_small_hirakatas(recipe)
+    ctx = ctx.apply_convert_historical_hirakatas(recipe)
     ctx = ctx.apply_combine_decomposed_hiraganas_and_katakanas(recipe)
     ctx = ctx.apply_to_fullwidth(recipe)
     ctx = ctx.apply_hira_kata(recipe)

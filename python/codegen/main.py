@@ -49,6 +49,8 @@ def main() -> None:
         combined="combined-chars.json",
         circled_or_squared="circled-or-squared.json",
         roman_numerals="roman-numerals.json",
+        archaic_hirakatas="archaic-hirakatas.json",
+        small_hirakatas="small-hirakatas.json",
     )
 
     # Load the dataset
@@ -80,6 +82,16 @@ def main() -> None:
             "kanji_old_new",
             "Replace old-style kanji with modern equivalents.",
             dataset.kanji_old_new,
+        ),
+        (
+            "archaic_hirakatas",
+            "Replace archaic kana (hentaigana) with modern equivalents.",
+            dataset.archaic_hirakatas,
+        ),
+        (
+            "small_hirakatas",
+            "Replace small hiragana/katakana with ordinary-sized equivalents.",
+            dataset.small_hirakatas,
         ),
     ]
 

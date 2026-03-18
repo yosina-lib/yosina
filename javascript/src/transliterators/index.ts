@@ -1,8 +1,10 @@
 import type { TransliteratorFactory } from "../types.js";
+import type { default as ArchaicHirakatasTF } from "./archaic-hirakatas.js";
 import type { default as CircledOrSquaredTF } from "./circled-or-squared.js";
 import type { default as CombinedCharsTF } from "./combined.js";
 import type { default as HiraKataTF } from "./hira-kata.js";
 import type { default as HiraKataCompositionTF } from "./hira-kata-composition.js";
+import type { default as HistoricalHirakatasTF } from "./historical-hirakatas.js";
 import type { default as HyphensTF } from "./hyphens.js";
 import type { default as IdeographicAnnotationsTF } from "./ideographic-annotations.js";
 import type { default as IVSSVSBaseTF } from "./ivs-svs-base.js";
@@ -13,6 +15,7 @@ import type { default as mathematicalAlphanumericsTF } from "./mathematical-alph
 import type { default as ProlongedSoundMarksTF } from "./prolonged-sound-marks.js";
 import type { default as RadicalsTF } from "./radicals.js";
 import type { default as RomanNumeralsTF } from "./roman-numerals.js";
+import type { default as SmallHirakatasTF } from "./small-hirakatas.js";
 import type { default as SpacesTF } from "./spaces.js";
 
 type TransliteratorModule = {
@@ -34,7 +37,10 @@ export type TransliteratorConfig =
   | ["roman-numerals", Parameters<typeof RomanNumeralsTF>[0]]
   | ["spaces", Parameters<typeof SpacesTF>[0]]
   | ["combined", Parameters<typeof CombinedCharsTF>[0]]
-  | ["circled-or-squared", Parameters<typeof CircledOrSquaredTF>[0]];
+  | ["circled-or-squared", Parameters<typeof CircledOrSquaredTF>[0]]
+  | ["archaic-hirakatas", Parameters<typeof ArchaicHirakatasTF>[0]]
+  | ["small-hirakatas", Parameters<typeof SmallHirakatasTF>[0]]
+  | ["historical-hirakatas", Parameters<typeof HistoricalHirakatasTF>[0]];
 
 export const supportedTransliterators = [
   "hira-kata-composition",
@@ -52,6 +58,9 @@ export const supportedTransliterators = [
   "spaces",
   "combined",
   "circled-or-squared",
+  "archaic-hirakatas",
+  "small-hirakatas",
+  "historical-hirakatas",
 ] as const;
 
 const esInteropDynImportShim = <T extends { [key: string]: unknown }>(

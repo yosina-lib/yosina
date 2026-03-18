@@ -74,6 +74,8 @@ struct CodeGenerator {
         try generateCircledOrSquaredTransliterator()
         try generateIvsSvsBaseTransliterator()
         try generateRomanNumeralsTransliterator()
+        try generateArchaicHirakatasTransliterator()
+        try generateSmallHirakatasTransliterator()
 
         print("Code generation completed successfully!")
     }
@@ -412,6 +414,22 @@ extension CodeGenerator {
         let data = try loadSimpleJSONData("ideographic-annotation-marks.json")
         try generateSimpleMappingInner(
             className: "IdeographicAnnotationsTransliterator", mappings: data
+        )
+    }
+
+    /// Replaces archaic kana (hentaigana) with their modern equivalents.
+    func generateArchaicHirakatasTransliterator() throws {
+        let data = try loadSimpleJSONData("archaic-hirakatas.json")
+        try generateSimpleMappingInner(
+            className: "ArchaicHirakatasTransliterator", mappings: data
+        )
+    }
+
+    /// Replaces small hiragana/katakana with their ordinary-sized equivalents.
+    func generateSmallHirakatasTransliterator() throws {
+        let data = try loadSimpleJSONData("small-hirakatas.json")
+        try generateSimpleMappingInner(
+            className: "SmallHirakatasTransliterator", mappings: data
         )
     }
 

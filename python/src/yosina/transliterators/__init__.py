@@ -4,10 +4,12 @@ from typing import Any, Literal
 
 from ..types import TransliteratorFactory
 from . import (
+    archaic_hirakatas,
     circled_or_squared,
     combined,
     hira_kata,
     hira_kata_composition,
+    historical_hirakatas,
     hyphens,
     ideographic_annotations,
     ivs_svs_base,
@@ -18,14 +20,17 @@ from . import (
     prolonged_sound_marks,
     radicals,
     roman_numerals,
+    small_hirakatas,
     spaces,
 )
 
 __all__ = [
+    "archaic_hirakatas",
     "circled_or_squared",
     "combined",
     "hira_kata",
     "hira_kata_composition",
+    "historical_hirakatas",
     "hyphens",
     "ideographic_annotations",
     "ivs_svs_base",
@@ -36,6 +41,7 @@ __all__ = [
     "prolonged_sound_marks",
     "radicals",
     "roman_numerals",
+    "small_hirakatas",
     "spaces",
     "TRANSLITERATORS",
     "TransliteratorConfig",
@@ -43,10 +49,12 @@ __all__ = [
 ]
 
 TransliteratorIdentifier = Literal[
+    "archaic-hirakatas",
     "circled-or-squared",
     "combined",
     "hira-kata",
     "hira-kata-composition",
+    "historical-hirakatas",
     "hyphens",
     "ideographic-annotations",
     "ivs-svs-base",
@@ -57,6 +65,7 @@ TransliteratorIdentifier = Literal[
     "prolonged-sound-marks",
     "radicals",
     "roman-numerals",
+    "small-hirakatas",
     "spaces",
 ]
 
@@ -64,10 +73,12 @@ TransliteratorIdentifier = Literal[
 TransliteratorConfig = tuple[TransliteratorIdentifier, dict[str, Any]]
 
 _TRANSLITERATOR_MODULES = {
+    "archaic-hirakatas": archaic_hirakatas,
     "circled-or-squared": circled_or_squared,
     "combined": combined,
     "hira-kata": hira_kata,
     "hira-kata-composition": hira_kata_composition,
+    "historical-hirakatas": historical_hirakatas,
     "hyphens": hyphens,
     "ideographic-annotations": ideographic_annotations,
     "ivs-svs-base": ivs_svs_base,
@@ -78,6 +89,7 @@ _TRANSLITERATOR_MODULES = {
     "prolonged-sound-marks": prolonged_sound_marks,
     "radicals": radicals,
     "roman-numerals": roman_numerals,
+    "small-hirakatas": small_hirakatas,
     "spaces": spaces,
 }
 

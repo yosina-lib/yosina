@@ -66,6 +66,14 @@ fn main() -> Result<(), anyhow::Error> {
         "roman_numerals".to_string(),
         "roman-numerals.json".to_string(),
     );
+    defs.insert(
+        "archaic_hirakatas".to_string(),
+        "archaic-hirakatas.json".to_string(),
+    );
+    defs.insert(
+        "small_hirakatas".to_string(),
+        "small-hirakatas.json".to_string(),
+    );
 
     // Load the dataset
     let dataset = Dataset::from_data_root(&data_root, &defs)?;
@@ -88,6 +96,16 @@ fn main() -> Result<(), anyhow::Error> {
         ),
         ("kanji_old_new", "KanjiOldNew", &dataset.kanji_old_new),
         ("combined", "Combined", &dataset.combined),
+        (
+            "archaic_hirakatas",
+            "ArchaicHirakatas",
+            &dataset.archaic_hirakatas,
+        ),
+        (
+            "small_hirakatas",
+            "SmallHirakatas",
+            &dataset.small_hirakatas,
+        ),
     ];
 
     for (name, module_name, data) in simple_transliterators {

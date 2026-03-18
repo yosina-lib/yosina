@@ -112,7 +112,7 @@ public struct IvsSvsBaseTransliterator: Transliterator {
                     data.withUnsafeBytes { bytes in
                         (
                             bytes.load(fromByteOffset: offset, as: Int32.self).bigEndian,
-                            bytes.load(fromByteOffset: offset + 4, as: Int32.self).bigEndian,
+                            bytes.load(fromByteOffset: offset + 4, as: Int32.self).bigEndian
                         )
                     }
                 )
@@ -127,7 +127,7 @@ public struct IvsSvsBaseTransliterator: Transliterator {
                 data.withUnsafeBytes { bytes in
                     (
                         bytes.load(fromByteOffset: offset + 8, as: Int32.self).bigEndian,
-                        bytes.load(fromByteOffset: offset + 12, as: Int32.self).bigEndian,
+                        bytes.load(fromByteOffset: offset + 12, as: Int32.self).bigEndian
                     )
                 }
             )
@@ -145,7 +145,7 @@ public struct IvsSvsBaseTransliterator: Transliterator {
                 ivs: ivs,
                 svs: svs,
                 base90: base90,
-                base2004: base2004,
+                base2004: base2004
             )
             if let base90 = base90 {
                 base90Mappings[base90] = record

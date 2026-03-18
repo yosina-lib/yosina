@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .loaders import (
+    load_archaic_hirakatas,
     load_circled_or_squared,
     load_combined,
     load_hyphens,
@@ -13,6 +14,7 @@ from .loaders import (
     load_mathematical_alphanumerics,
     load_radicals,
     load_roman_numerals,
+    load_small_hirakatas,
     load_spaces,
 )
 from .models import CircledOrSquaredRecord, HyphensRecord, IvsSvsBaseRecord, RomanNumeralsRecord
@@ -32,6 +34,8 @@ class DatasetSourceDefs:
     combined: str
     circled_or_squared: str
     roman_numerals: str
+    archaic_hirakatas: str
+    small_hirakatas: str
 
 
 @dataclass(frozen=True)
@@ -48,6 +52,8 @@ class Dataset:
     combined: list[tuple[str, list[str]]]
     circled_or_squared: list[tuple[str, CircledOrSquaredRecord]]
     roman_numerals: list[tuple[str, RomanNumeralsRecord]]
+    archaic_hirakatas: list[tuple[str, str]]
+    small_hirakatas: list[tuple[str, str]]
 
 
 def build_dataset_from_data_root(root: Path, defs: DatasetSourceDefs) -> Dataset:
@@ -71,4 +77,6 @@ def build_dataset_from_data_root(root: Path, defs: DatasetSourceDefs) -> Dataset
         combined=load_combined(root / defs.combined),
         circled_or_squared=load_circled_or_squared(root / defs.circled_or_squared),
         roman_numerals=load_roman_numerals(root / defs.roman_numerals),
+        archaic_hirakatas=load_archaic_hirakatas(root / defs.archaic_hirakatas),
+        small_hirakatas=load_small_hirakatas(root / defs.small_hirakatas),
     )

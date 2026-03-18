@@ -51,12 +51,15 @@ module Yosina
   end
 
   # Configuration recipe for building transliterator chains
+  # rubocop:disable Metrics/ClassLength
   class TransliterationRecipe
     attr_accessor :kanji_old_new, :hira_kata, :replace_japanese_iteration_marks,
                   :replace_suspicious_hyphens_to_prolonged_sound_marks,
                   :replace_combined_characters, :replace_circled_or_squared_characters,
                   :replace_ideographic_annotations, :replace_radicals, :replace_spaces,
                   :replace_hyphens, :replace_mathematical_alphanumerics, :replace_roman_numerals,
+                  :replace_archaic_hirakatas, :replace_small_hirakatas,
+                  :convert_historical_hirakatas,
                   :combine_decomposed_hiraganas_and_katakanas, :to_fullwidth, :to_halfwidth,
                   :remove_ivs_svs, :charset
 
@@ -161,6 +164,8 @@ module Yosina
                    replace_ideographic_annotations: false, replace_radicals: false,
                    replace_spaces: false, replace_hyphens: false,
                    replace_mathematical_alphanumerics: false, replace_roman_numerals: false,
+                   replace_archaic_hirakatas: false, replace_small_hirakatas: false,
+                   convert_historical_hirakatas: nil,
                    combine_decomposed_hiraganas_and_katakanas: false,
                    to_fullwidth: false, to_halfwidth: false, remove_ivs_svs: false,
                    charset: 'unijis_2004')
@@ -176,6 +181,9 @@ module Yosina
       @replace_hyphens = replace_hyphens
       @replace_mathematical_alphanumerics = replace_mathematical_alphanumerics
       @replace_roman_numerals = replace_roman_numerals
+      @replace_archaic_hirakatas = replace_archaic_hirakatas
+      @replace_small_hirakatas = replace_small_hirakatas
+      @convert_historical_hirakatas = convert_historical_hirakatas
       @combine_decomposed_hiraganas_and_katakanas = combine_decomposed_hiraganas_and_katakanas
       @to_fullwidth = to_fullwidth
       @to_halfwidth = to_halfwidth
@@ -208,6 +216,9 @@ module Yosina
       ctx = apply_replace_hyphens(ctx)
       ctx = apply_replace_mathematical_alphanumerics(ctx)
       ctx = apply_replace_roman_numerals(ctx)
+      ctx = apply_replace_archaic_hirakatas(ctx)
+      ctx = apply_replace_small_hirakatas(ctx)
+      ctx = apply_convert_historical_hirakatas(ctx)
       ctx = apply_combine_decomposed_hiraganas_and_katakanas(ctx)
       ctx = apply_to_fullwidth(ctx)
       ctx = apply_hira_kata(ctx)
@@ -329,6 +340,35 @@ module Yosina
       end
     end
 
+    def apply_replace_archaic_hirakatas(ctx)
+      if @replace_archaic_hirakatas
+        ctx.insert_middle([:archaic_hirakatas, {}])
+      else
+        ctx
+      end
+    end
+
+    def apply_replace_small_hirakatas(ctx)
+      if @replace_small_hirakatas
+        ctx.insert_middle([:small_hirakatas, {}])
+      else
+        ctx
+      end
+    end
+
+    def apply_convert_historical_hirakatas(ctx)
+      if @convert_historical_hirakatas
+        mode = @convert_historical_hirakatas
+        ctx.insert_middle([:historical_hirakatas, {
+                            hiraganas: mode,
+                            katakanas: mode,
+                            voiced_katakanas: mode == 'decompose' ? 'decompose' : 'skip'
+                          }])
+      else
+        ctx
+      end
+    end
+
     def apply_combine_decomposed_hiraganas_and_katakanas(ctx)
       if @combine_decomposed_hiraganas_and_katakanas
         ctx.insert_head([:hira_kata_composition, { compose_non_combining_marks: true }])
@@ -373,3 +413,4 @@ module Yosina
     recipe.build_transliterator_configs
   end
 end
+# rubocop:enable Metrics/ClassLength

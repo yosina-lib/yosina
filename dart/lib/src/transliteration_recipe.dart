@@ -1,6 +1,20 @@
 import 'transliterator.dart';
 import 'transliterators/charset.dart';
 
+/// Recipe-level mode for historical hiragana/katakana conversion.
+///
+/// Unlike the transliterator-level [ConversionMode], this enum does not include
+/// a "skip" value. Use `null` to indicate that the conversion should not be applied.
+enum HistoricalHirakatasRecipeMode {
+  /// Convert to the simple modern equivalent (e.g., ゐ -> い).
+  /// Voiced katakana characters are left unchanged.
+  simple,
+
+  /// Decompose into multiple modern characters (e.g., ゐ -> うぃ).
+  /// Voiced katakana characters are also decomposed.
+  decompose,
+}
+
 // MARK: - Option Classes
 
 /// Options for full-width conversion.
@@ -234,6 +248,9 @@ class TransliterationRecipe {
     this.replaceHyphens = const ReplaceHyphensOptions.disabled(),
     this.replaceMathematicalAlphanumerics = false,
     this.replaceRomanNumerals = false,
+    this.replaceArchaicHirakatas = false,
+    this.replaceSmallHirakatas = false,
+    this.convertHistoricalHirakatas,
     this.combineDecomposedHiraganasAndKatakanas = false,
     this.toFullwidth = const ToFullwidthOptions.disabled(),
     this.toHalfwidth = const ToHalfwidthOptions.disabled(),
@@ -288,6 +305,20 @@ class TransliterationRecipe {
   /// Whether to replace roman numeral characters.
   final bool replaceRomanNumerals;
 
+  /// Whether to replace archaic kana (hentaigana) with modern equivalents.
+  final bool replaceArchaicHirakatas;
+
+  /// Whether to replace small hiragana/katakana with ordinary-sized equivalents.
+  final bool replaceSmallHirakatas;
+
+  /// Conversion mode for historical hiragana/katakana characters (ゐ, ゑ, ヰ, ヱ, ヷ, ヸ, ヹ, ヺ).
+  ///
+  /// - [HistoricalHirakatasRecipeMode.simple]: Convert hiragana/katakana to single-character modern equivalents;
+  ///   voiced characters are left unchanged.
+  /// - [HistoricalHirakatasRecipeMode.decompose]: Convert all historical kana to multi-character decomposed forms.
+  /// - `null`: Leave unchanged (default).
+  final HistoricalHirakatasRecipeMode? convertHistoricalHirakatas;
+
   /// Whether to combine decomposed hiragana and katakana characters.
   final bool combineDecomposedHiraganasAndKatakanas;
 
@@ -324,6 +355,9 @@ class TransliterationRecipe {
     _applyReplaceMathematicalAlphanumerics(
         builder, replaceMathematicalAlphanumerics);
     _applyReplaceRomanNumerals(builder, replaceRomanNumerals);
+    _applyReplaceArchaicHirakatas(builder, replaceArchaicHirakatas);
+    _applyReplaceSmallHirakatas(builder, replaceSmallHirakatas);
+    _applyHistoricalHirakatas(builder, convertHistoricalHirakatas);
     _applyCombineDecomposedHiraganasAndKatakanas(
         builder, combineDecomposedHiraganasAndKatakanas);
     _applyToFullwidth(builder, toFullwidth);
@@ -470,6 +504,44 @@ class TransliterationRecipe {
     if (replace) {
       ctx.insertMiddle(
         const TransliteratorConfig('romanNumerals'),
+        forceReplace: false,
+      );
+    }
+  }
+
+  static void _applyReplaceArchaicHirakatas(
+      _TransliteratorConfigListBuilder ctx, bool replace) {
+    if (replace) {
+      ctx.insertMiddle(
+        const TransliteratorConfig('archaicHirakatas'),
+        forceReplace: false,
+      );
+    }
+  }
+
+  static void _applyReplaceSmallHirakatas(
+      _TransliteratorConfigListBuilder ctx, bool replace) {
+    if (replace) {
+      ctx.insertMiddle(
+        const TransliteratorConfig('smallHirakatas'),
+        forceReplace: false,
+      );
+    }
+  }
+
+  static void _applyHistoricalHirakatas(_TransliteratorConfigListBuilder ctx,
+      HistoricalHirakatasRecipeMode? convertHistoricalHirakatas) {
+    if (convertHistoricalHirakatas != null) {
+      final voicedMode =
+          convertHistoricalHirakatas == HistoricalHirakatasRecipeMode.decompose
+              ? 'decompose'
+              : 'skip';
+      ctx.insertMiddle(
+        TransliteratorConfig('historicalHirakatas', {
+          'hiraganas': convertHistoricalHirakatas.name,
+          'katakanas': convertHistoricalHirakatas.name,
+          'voicedKatakanas': voicedMode,
+        }),
         forceReplace: false,
       );
     }

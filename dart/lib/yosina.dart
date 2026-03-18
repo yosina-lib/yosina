@@ -11,6 +11,7 @@ export 'src/transliterator_registry.dart';
 export 'src/transliterators/charset.dart';
 export 'src/transliterators/hira_kata_composition_transliterator.dart';
 export 'src/transliterators/hira_kata_transliterator.dart';
+export 'src/transliterators/historical_hirakatas_transliterator.dart';
 // Export generated transliterators
 export 'src/transliterators/ivs_svs_base_transliterator.dart';
 export 'src/transliterators/jisx0201_and_alike_transliterator.dart';
