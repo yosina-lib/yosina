@@ -13,7 +13,7 @@ import java.util.Map;
 /** Generates the combined transliterator that maps single characters to arrays of characters. */
 public class CombinedTransliteratorGenerator implements TransliteratorGenerator {
     private static final String COMBINED_TRANSLITERATOR_TEMPLATE =
-            """
+"""
 package io.yosina.transliterators;
 
 import java.nio.ByteBuffer;

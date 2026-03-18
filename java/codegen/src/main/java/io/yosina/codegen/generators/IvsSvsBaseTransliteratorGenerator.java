@@ -11,7 +11,7 @@ import java.util.List;
 /** Generates the IVS/SVS base transliterator. */
 public class IvsSvsBaseTransliteratorGenerator implements TransliteratorGenerator {
     private static final String IVS_SVS_BASE_TRANSLITERATOR_TEMPLATE =
-            """
+"""
 package io.yosina.transliterators;
 
 import java.nio.ByteBuffer;

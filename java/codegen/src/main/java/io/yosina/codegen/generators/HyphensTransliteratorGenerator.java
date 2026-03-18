@@ -9,7 +9,7 @@ import java.util.List;
 /** Generates the hyphens transliterator. */
 public class HyphensTransliteratorGenerator implements TransliteratorGenerator {
     private static final String HYPHENS_TRANSLITERATOR_TEMPLATE =
-            """
+"""
 package io.yosina.transliterators;
 
 import java.util.List;
