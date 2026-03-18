@@ -5,7 +5,7 @@ plugins {
     id 'java-library'
     id "com.vanniktech.maven.publish" version "0.34.0"
     id 'signing'
-    id 'com.diffplug.spotless' version '6.25.0'
+    id 'com.diffplug.spotless' version '8.3.0'
 }
 
 group = 'io.yosina'
@@ -32,7 +32,7 @@ dependencies {
 spotless {
     java {
         target 'src/**/*.java', 'codegen/src/**/*.java'
-        googleJavaFormat('1.22.0').aosp().reflowLongStrings()
+        googleJavaFormat('1.28.0').aosp().reflowLongStrings()
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()

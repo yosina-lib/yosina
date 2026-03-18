@@ -14,7 +14,7 @@ import java.util.Map;
 /** Generates the circled-or-squared transliterator. */
 public class CircledOrSquaredTransliteratorGenerator implements TransliteratorGenerator {
     private static final String CIRCLED_OR_SQUARED_TRANSLITERATOR_TEMPLATE =
-            """
+"""
 package io.yosina.transliterators;
 
 import java.nio.ByteBuffer;
