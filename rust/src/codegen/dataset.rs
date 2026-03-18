@@ -16,6 +16,8 @@ pub struct Dataset {
     pub combined: Vec<(String, String)>,
     pub circled_or_squared: Vec<(String, CircledOrSquaredRecord)>,
     pub roman_numerals: Vec<(String, RomanNumeralsRecord)>,
+    pub archaic_hirakatas: Vec<(String, String)>,
+    pub small_hirakatas: Vec<(String, String)>,
 }
 
 pub type DatasetSourceDefs = BTreeMap<String, String>;
@@ -34,6 +36,8 @@ impl Dataset {
         let combined = load_combined(&root.join(&defs["combined"]))?;
         let circled_or_squared = load_circled_or_squared(&root.join(&defs["circled_or_squared"]))?;
         let roman_numerals = load_roman_numerals(&root.join(&defs["roman_numerals"]))?;
+        let archaic_hirakatas = load_archaic_hirakatas(&root.join(&defs["archaic_hirakatas"]))?;
+        let small_hirakatas = load_small_hirakatas(&root.join(&defs["small_hirakatas"]))?;
 
         Ok(Dataset {
             spaces,
@@ -46,6 +50,8 @@ impl Dataset {
             combined,
             circled_or_squared,
             roman_numerals,
+            archaic_hirakatas,
+            small_hirakatas,
         })
     }
 }

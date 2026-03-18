@@ -477,7 +477,7 @@ final class TransliterationRecipeTests: XCTestCase {
     func testToFullwidthMustComeBeforeHiraKata() throws {
         let recipe = TransliterationRecipe(
             hiraKata: .kataToHira,
-            toFullwidth: .enabled,
+            toFullwidth: .enabled
         )
         let config = try recipe.buildTransliteratorConfig()
 

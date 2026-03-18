@@ -3,12 +3,16 @@ use serde::{Deserialize, Serialize};
 use super::transliterator::{Transliterator, TransliteratorFactory, TransliteratorFactoryError};
 
 #[cfg(not(feature = "codegen"))]
+mod archaic_hirakatas;
+#[cfg(not(feature = "codegen"))]
 mod circled_or_squared;
 #[cfg(not(feature = "codegen"))]
 mod combined;
 mod hira_kata;
 mod hira_kata_composition;
 mod hira_kata_table;
+#[cfg(not(feature = "codegen"))]
+mod historical_hirakatas;
 #[cfg(not(feature = "codegen"))]
 mod hyphens;
 #[cfg(not(feature = "codegen"))]
@@ -27,6 +31,8 @@ mod radicals;
 #[cfg(not(feature = "codegen"))]
 mod roman_numerals;
 mod simple;
+#[cfg(not(feature = "codegen"))]
+mod small_hirakatas;
 #[cfg(not(feature = "codegen"))]
 mod spaces;
 
@@ -53,12 +59,22 @@ pub use prolonged_sound_marks::{
 pub use simple::SimpleTransliterator;
 
 #[cfg(not(feature = "codegen"))]
+pub use archaic_hirakatas::{
+    ArchaicHirakatasTransliterator, ArchaicHirakatasTransliteratorFactory,
+};
+#[cfg(not(feature = "codegen"))]
 pub use circled_or_squared::{
     CircledOrSquaredTransliterator, CircledOrSquaredTransliteratorFactory,
     CircledOrSquaredTransliteratorOptions,
 };
 #[cfg(not(feature = "codegen"))]
 pub use combined::{CombinedTransliterator, CombinedTransliteratorFactory};
+#[cfg(not(feature = "codegen"))]
+pub use historical_hirakatas::{
+    HistoricalHiraganaMode, HistoricalHirakatasTransliterator,
+    HistoricalHirakatasTransliteratorFactory, HistoricalHirakatasTransliteratorOptions,
+    HistoricalKatakanaMode, VoicedHistoricalKanaMode,
+};
 #[cfg(not(feature = "codegen"))]
 pub use hyphens::{
     HyphensTransliterationVariant, HyphensTransliterator, HyphensTransliteratorOptions,
@@ -79,6 +95,8 @@ pub use mathematical_alphanumerics::{
 pub use radicals::{RadicalsTransliterator, RadicalsTransliteratorFactory};
 #[cfg(not(feature = "codegen"))]
 pub use roman_numerals::{RomanNumeralsTransliterator, RomanNumeralsTransliteratorFactory};
+#[cfg(not(feature = "codegen"))]
+pub use small_hirakatas::{SmallHirakatasTransliterator, SmallHirakatasTransliteratorFactory};
 #[cfg(not(feature = "codegen"))]
 pub use spaces::{SpacesTransliterator, SpacesTransliteratorFactory};
 
@@ -137,6 +155,15 @@ pub enum TransliteratorConfig {
     #[cfg(not(feature = "codegen"))]
     #[serde(rename = "circled-or-squared")]
     CircledOrSquared(crate::transliterators::CircledOrSquaredTransliteratorOptions),
+    #[cfg(not(feature = "codegen"))]
+    #[serde(rename = "archaic-hirakatas")]
+    ArchaicHirakatas,
+    #[cfg(not(feature = "codegen"))]
+    #[serde(rename = "historical-hirakatas")]
+    HistoricalHirakatas(HistoricalHirakatasTransliteratorOptions),
+    #[cfg(not(feature = "codegen"))]
+    #[serde(rename = "small-hirakatas")]
+    SmallHirakatas,
 }
 
 impl TransliteratorFactory for TransliteratorConfig {
@@ -187,6 +214,15 @@ impl TransliteratorFactory for TransliteratorConfig {
                 crate::transliterators::CircledOrSquaredTransliteratorFactory::new(options.clone())
                     .new_transliterator()
             }
+            #[cfg(not(feature = "codegen"))]
+            ArchaicHirakatas => ArchaicHirakatasTransliteratorFactory::new().new_transliterator(),
+            #[cfg(not(feature = "codegen"))]
+            HistoricalHirakatas(options) => {
+                HistoricalHirakatasTransliteratorFactory::with_options(options.clone())
+                    .new_transliterator()
+            }
+            #[cfg(not(feature = "codegen"))]
+            SmallHirakatas => SmallHirakatasTransliteratorFactory::new().new_transliterator(),
         }
     }
 }

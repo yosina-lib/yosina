@@ -33,6 +33,8 @@ class YosinaCodeGenerator
             ['mathematical-alphanumerics', 'MathematicalAlphanumerics', 'Replace mathematical alphanumeric symbols with plain characters.', 'mathematical-alphanumerics.json'],
             ['ideographic-annotations', 'IdeographicAnnotations', 'Replace ideographic annotation marks used in traditional translation.', 'ideographic-annotation-marks.json'],
             ['kanji-old-new', 'KanjiOldNew', 'Replace old-style kanji with modern equivalents.', 'kanji-old-new-form.json'],
+            ['archaic-hirakatas', 'ArchaicHirakatas', 'Replaces archaic kana (hentaigana) with their modern equivalents.', 'archaic-hirakatas.json'],
+            ['small-hirakatas', 'SmallHirakatas', 'Replaces small hiragana/katakana with their ordinary-sized equivalents.', 'small-hirakatas.json'],
         ];
 
         foreach ($transliterators as [$identifier, $className, $description, $dataFile]) {

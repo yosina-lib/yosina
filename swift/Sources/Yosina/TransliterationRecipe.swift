@@ -116,6 +116,16 @@ public struct ReplaceCircledOrSquaredCharactersOptions {
     }
 }
 
+/// Mode for converting historical hiragana and katakana characters at the recipe level.
+public enum ConvertHistoricalHirakatasMode {
+    /// Replace with the modern single-character equivalent.
+    /// Hiraganas and katakanas use `.simple`, voiced katakanas are skipped.
+    case simple
+    /// Decompose into multiple modern characters.
+    /// All categories (hiraganas, katakanas, voiced katakanas) use `.decompose`.
+    case decompose
+}
+
 // MARK: - TransliterationRecipe
 
 /// Configuration recipe for building transliterator chains.
@@ -227,6 +237,20 @@ public struct TransliterationRecipe: TransliteratorFactory {
     /// Output: "ixx"
     public var replaceRomanNumerals: Bool = false
 
+    /// Replace archaic kana (hentaigana) with their modern equivalents.
+    ///
+    /// Example:
+    /// Input:  "𛀁"
+    /// Output: "え"
+    public var replaceArchaicHirakatas: Bool = false
+
+    /// Replace small hiragana/katakana with their ordinary-sized equivalents.
+    ///
+    /// Example:
+    /// Input:  "ァィゥ"
+    /// Output: "アイウ"
+    public var replaceSmallHirakatas: Bool = false
+
     /// Combine decomposed hiraganas and katakanas into single counterparts.
     ///
     /// Example:
@@ -264,6 +288,14 @@ public struct TransliterationRecipe: TransliteratorFactory {
     /// Output: "辻"
     public var removeIvsSvs: RemoveIvsSvsOptions = .disabled
 
+    /// Convert historical hiragana and katakana characters to their modern equivalents.
+    ///
+    /// Example:
+    /// Input:  "ゐ" (historical hiragana wi)
+    /// Output: "い" (modern hiragana i, with simple mode)
+    /// Output: "うぃ" (decomposed, with decompose mode)
+    public var convertHistoricalHirakatas: ConvertHistoricalHirakatasMode?
+
     /// Character set for IVS/SVS operations.
     public var charset: IvsSvsBaseTransliterator.Charset = .unijis2004
 
@@ -296,6 +328,9 @@ public struct TransliterationRecipe: TransliteratorFactory {
         applyReplaceHyphens(to: builder)
         applyReplaceMathematicalAlphanumerics(to: builder)
         applyReplaceRomanNumerals(to: builder)
+        applyReplaceArchaicHirakatas(to: builder)
+        applyReplaceSmallHirakatas(to: builder)
+        applyConvertHistoricalHirakatas(to: builder)
         applyCombineDecomposedHiraganasAndKatakanas(to: builder)
         applyToFullwidth(to: builder)
         applyHiraKata(to: builder)
@@ -402,6 +437,18 @@ public struct TransliterationRecipe: TransliteratorFactory {
         }
     }
 
+    private func applyReplaceArchaicHirakatas(to builder: TransliteratorConfigListBuilder) {
+        if replaceArchaicHirakatas {
+            builder.insertMiddle(.archaicHirakatas, forceReplace: false)
+        }
+    }
+
+    private func applyReplaceSmallHirakatas(to builder: TransliteratorConfigListBuilder) {
+        if replaceSmallHirakatas {
+            builder.insertMiddle(.smallHirakatas, forceReplace: false)
+        }
+    }
+
     private func applyCombineDecomposedHiraganasAndKatakanas(to builder: TransliteratorConfigListBuilder) {
         if combineDecomposedHiraganasAndKatakanas {
             var options = HiraKataCompositionTransliterator.Options()
@@ -426,6 +473,27 @@ public struct TransliterationRecipe: TransliteratorFactory {
             options.convertGL = true
             options.convertGR = toHalfwidth.isHankakuKana
             builder.insertTail(.jisx0201AndAlike(options: options), forceReplace: false)
+        }
+    }
+
+    private func applyConvertHistoricalHirakatas(to builder: TransliteratorConfigListBuilder) {
+        if let mode = convertHistoricalHirakatas {
+            let options: HistoricalHirakatasTransliterator.Options
+            switch mode {
+            case .simple:
+                options = HistoricalHirakatasTransliterator.Options(
+                    hiraganas: .simple,
+                    katakanas: .simple,
+                    voicedKatakanas: .skip
+                )
+            case .decompose:
+                options = HistoricalHirakatasTransliterator.Options(
+                    hiraganas: .decompose,
+                    katakanas: .decompose,
+                    voicedKatakanas: .decompose
+                )
+            }
+            builder.insertMiddle(.historicalHirakatas(options: options), forceReplace: false)
         }
     }
 
@@ -537,6 +605,12 @@ public extension TransliterationRecipe {
         return recipe
     }
 
+    func withConvertHistoricalHirakatas(_ value: ConvertHistoricalHirakatasMode?) -> TransliterationRecipe {
+        var recipe = self
+        recipe.convertHistoricalHirakatas = value
+        return recipe
+    }
+
     func withCharset(_ value: IvsSvsBaseTransliterator.Charset) -> TransliterationRecipe {
         var recipe = self
         recipe.charset = value
@@ -622,6 +696,8 @@ class TransliteratorConfigListBuilder {
              (.hiraKata, .hiraKata),
              (.japaneseIterationMarks, .japaneseIterationMarks):
             return true
+        case let (.historicalHirakatas(options: lhsOpts), .historicalHirakatas(options: rhsOpts)):
+            return lhsOpts == rhsOpts
         case (.custom, .custom):
             return false // Custom transliterators are never considered equal
         default:

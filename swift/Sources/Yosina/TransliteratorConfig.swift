@@ -14,6 +14,9 @@ public enum TransliteratorConfig: TransliteratorFactory {
     case jisx0201AndAlike(options: Jisx0201AndAlikeTransliterator.Options = Jisx0201AndAlikeTransliterator.Options())
     case ivsSvsBase(options: IvsSvsBaseTransliterator.Options = IvsSvsBaseTransliterator.Options())
     case japaneseIterationMarks(options: JapaneseIterationMarksTransliterator.Options = JapaneseIterationMarksTransliterator.Options())
+    case archaicHirakatas
+    case smallHirakatas
+    case historicalHirakatas(options: HistoricalHirakatasTransliterator.Options = HistoricalHirakatasTransliterator.Options())
     case custom(Transliterator)
 
     public func makeTransliterator() -> Transliterator {
@@ -48,6 +51,12 @@ public enum TransliteratorConfig: TransliteratorFactory {
             return IvsSvsBaseTransliterator(options: options)
         case let .japaneseIterationMarks(options):
             return JapaneseIterationMarksTransliterator(options: options)
+        case .archaicHirakatas:
+            return ArchaicHirakatasTransliterator()
+        case .smallHirakatas:
+            return SmallHirakatasTransliterator()
+        case let .historicalHirakatas(options):
+            return HistoricalHirakatasTransliterator(options: options)
         case let .custom(transliterator):
             return transliterator
         }

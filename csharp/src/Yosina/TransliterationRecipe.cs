@@ -4,7 +4,10 @@ using System.Runtime.InteropServices;
 using Yosina.Transliterators;
 using Charset = Yosina.Transliterators.IvsSvsBaseTransliterator.Charset;
 using HiraKataMode = Yosina.Transliterators.HiraKataTransliterator.Mode;
+using HistoricalHiraganaMode = Yosina.Transliterators.HistoricalHirakatasTransliterator.ConversionMode;
+using HistoricalKatakanaMode = Yosina.Transliterators.HistoricalHirakatasTransliterator.ConversionMode;
 using Mapping = Yosina.Transliterators.HyphensTransliterator.Mapping;
+using VoicedHistoricalKanaMode = Yosina.Transliterators.HistoricalHirakatasTransliterator.VoicedConversionMode;
 
 namespace Yosina;
 /// <summary>
@@ -150,6 +153,25 @@ public record class TransliterationRecipe
             this.enabled = enabled;
             this.includeEmojis = includeEmojis;
         }
+    }
+
+    /// <summary>Mode for converting historical hiragana/katakana characters.</summary>
+    public enum HistoricalHirakatasMode
+    {
+        /// <summary>Not applied.</summary>
+        None,
+
+        /// <summary>
+        /// Replace hiraganas and katakanas with their single-character modern equivalents.
+        /// Voiced katakanas are left unchanged.
+        /// </summary>
+        Simple,
+
+        /// <summary>
+        /// Decompose all historical kana (including voiced katakanas) into
+        /// multi-character modern equivalents.
+        /// </summary>
+        Decompose,
     }
 
     // Recipe properties with default values
@@ -315,6 +337,30 @@ public record class TransliterationRecipe
     public bool ReplaceRomanNumerals { get; init; }
 
     /// <summary>
+    /// Gets a value indicating whether archaic kana (hentaigana) should be replaced with modern equivalents.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// // Input:  "𛀁"
+    /// // Output: "え"
+    /// var recipe = new TransliterationRecipe { ReplaceArchaicHirakatas = true };
+    /// </code>
+    /// </example>
+    public bool ReplaceArchaicHirakatas { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether small hiragana/katakana should be replaced with ordinary-sized equivalents.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// // Input:  "ァィゥ"
+    /// // Output: "アイウ"
+    /// var recipe = new TransliterationRecipe { ReplaceSmallHirakatas = true };
+    /// </code>
+    /// </example>
+    public bool ReplaceSmallHirakatas { get; init; }
+
+    /// <summary>
     /// Gets a value indicating whether combine decomposed hiraganas and katakanas into single counterparts.
     /// </summary>
     /// <example>
@@ -327,6 +373,21 @@ public record class TransliterationRecipe
     /// </code>
     /// </example>
     public bool CombineDecomposedHiraganasAndKatakanas { get; init; }
+
+    /// <summary>
+    /// Gets historical hirakatas conversion options. Converts historical hiragana/katakana characters
+    /// to their modern equivalents.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// // Input:  "ゐゑ" (historical hiragana)
+    /// // Output: "いえ" (modern hiragana, simple mode)
+    /// // Input:  "ヰヱ" (historical katakana)
+    /// // Output: "イエ" (modern katakana, simple mode)
+    /// var recipe = new TransliterationRecipe { HistoricalHirakatas = TransliterationRecipe.HistoricalHirakatasMode.Simple };
+    /// </code>
+    /// </example>
+    public HistoricalHirakatasMode HistoricalHirakatas { get; init; } = HistoricalHirakatasMode.None;
 
     /// <summary>
     /// Gets replace half-width characters to fullwidth equivalents.
@@ -404,6 +465,9 @@ public record class TransliterationRecipe
         ctx = this.ApplyReplaceHyphens(ctx);
         ctx = this.ApplyReplaceMathematicalAlphanumerics(ctx);
         ctx = this.ApplyReplaceRomanNumerals(ctx);
+        ctx = this.ApplyReplaceArchaicHirakatas(ctx);
+        ctx = this.ApplyReplaceSmallHirakatas(ctx);
+        ctx = this.ApplyHistoricalHirakatas(ctx);
         ctx = this.ApplyCombineDecomposedHiraganasAndKatakanas(ctx);
         ctx = this.ApplyToFullwidth(ctx);
         ctx = this.ApplyHiraKata(ctx);
@@ -513,6 +577,26 @@ public record class TransliterationRecipe
         return ctx;
     }
 
+    private TransliteratorConfigListBuilder ApplyReplaceArchaicHirakatas(TransliteratorConfigListBuilder ctx)
+    {
+        if (this.ReplaceArchaicHirakatas)
+        {
+            ctx = ctx.InsertMiddle(new TransliteratorConfig("archaic-hirakatas"), false);
+        }
+
+        return ctx;
+    }
+
+    private TransliteratorConfigListBuilder ApplyReplaceSmallHirakatas(TransliteratorConfigListBuilder ctx)
+    {
+        if (this.ReplaceSmallHirakatas)
+        {
+            ctx = ctx.InsertMiddle(new TransliteratorConfig("small-hirakatas"), false);
+        }
+
+        return ctx;
+    }
+
     private TransliteratorConfigListBuilder ApplyCombineDecomposedHiraganasAndKatakanas(TransliteratorConfigListBuilder ctx)
     {
         if (this.CombineDecomposedHiraganasAndKatakanas)
@@ -586,6 +670,32 @@ public record class TransliterationRecipe
         {
             var options = new HiraKataTransliterator.Options { Mode = hiraKata };
             ctx = ctx.InsertTail(new TransliteratorConfig("hira-kata", options), false);
+        }
+
+        return ctx;
+    }
+
+    private TransliteratorConfigListBuilder ApplyHistoricalHirakatas(TransliteratorConfigListBuilder ctx)
+    {
+        if (this.HistoricalHirakatas != HistoricalHirakatasMode.None)
+        {
+            var options = this.HistoricalHirakatas switch
+            {
+                HistoricalHirakatasMode.Simple => new HistoricalHirakatasTransliterator.Options
+                {
+                    Hiraganas = HistoricalHiraganaMode.Simple,
+                    Katakanas = HistoricalKatakanaMode.Simple,
+                    VoicedKatakanas = VoicedHistoricalKanaMode.Skip,
+                },
+                HistoricalHirakatasMode.Decompose => new HistoricalHirakatasTransliterator.Options
+                {
+                    Hiraganas = HistoricalHiraganaMode.Decompose,
+                    Katakanas = HistoricalKatakanaMode.Decompose,
+                    VoicedKatakanas = VoicedHistoricalKanaMode.Decompose,
+                },
+                _ => throw new InvalidOperationException($"Unexpected mode: {this.HistoricalHirakatas}"),
+            };
+            ctx = ctx.InsertMiddle(new TransliteratorConfig("historical-hirakatas", options), false);
         }
 
         return ctx;

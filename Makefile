@@ -21,7 +21,9 @@ DATA_FILES := \
 	$(DATA_DIR)/ivs-svs-base-mappings.json \
 	$(DATA_DIR)/combined-chars.json \
 	$(DATA_DIR)/circled-or-squared.json \
-	$(DATA_DIR)/roman-numerals.json
+	$(DATA_DIR)/roman-numerals.json \
+	$(DATA_DIR)/archaic-hirakatas.json \
+	$(DATA_DIR)/small-hirakatas.json
 
 # Generated files for each language
 GO_GENERATED := \
@@ -34,7 +36,9 @@ GO_GENERATED := \
 	go/transliterators/ivs_svs_base/impl.go \
 	go/transliterators/combined/impl.go \
 	go/transliterators/circled_or_squared/impl.go \
-	go/transliterators/roman_numerals/impl.go
+	go/transliterators/roman_numerals/impl.go \
+	go/transliterators/archaic_hirakatas/impl.go \
+	go/transliterators/small_hirakatas/impl.go
 
 JAVASCRIPT_GENERATED := \
 	javascript/src/transliterators/spaces.ts \
@@ -46,7 +50,9 @@ JAVASCRIPT_GENERATED := \
 	javascript/src/transliterators/ivs-svs-base.ts \
 	javascript/src/transliterators/combined.ts \
 	javascript/src/transliterators/circled-or-squared.ts \
-	javascript/src/transliterators/roman-numerals.ts
+	javascript/src/transliterators/roman-numerals.ts \
+	javascript/src/transliterators/archaic-hirakatas.ts \
+	javascript/src/transliterators/small-hirakatas.ts
 
 PYTHON_GENERATED := \
 	python/src/yosina/transliterators/spaces.py \
@@ -58,7 +64,9 @@ PYTHON_GENERATED := \
 	python/src/yosina/transliterators/ivs_svs_base_data.py \
 	python/src/yosina/transliterators/combined.py \
 	python/src/yosina/transliterators/circled_or_squared.py \
-	python/src/yosina/transliterators/roman_numerals.py
+	python/src/yosina/transliterators/roman_numerals.py \
+	python/src/yosina/transliterators/archaic_hirakatas.py \
+	python/src/yosina/transliterators/small_hirakatas.py
 
 RUBY_GENERATED := \
 	ruby/lib/yosina/transliterators/spaces.rb \
@@ -70,7 +78,9 @@ RUBY_GENERATED := \
 	ruby/lib/yosina/transliterators/ivs_svs_base_data.rb \
 	ruby/lib/yosina/transliterators/combined.rb \
 	ruby/lib/yosina/transliterators/circled_or_squared.rb \
-	ruby/lib/yosina/transliterators/roman_numerals.rb
+	ruby/lib/yosina/transliterators/roman_numerals.rb \
+	ruby/lib/yosina/transliterators/archaic_hirakatas.rb \
+	ruby/lib/yosina/transliterators/small_hirakatas.rb
 
 RUST_GENERATED := \
 	rust/src/transliterators/spaces.rs \
@@ -83,7 +93,9 @@ RUST_GENERATED := \
 	rust/src/transliterators/combined.rs \
 	rust/src/transliterators/circled_or_squared_data.rs \
 	rust/src/transliterators/roman_numerals.rs \
-	rust/src/transliterators/roman_numerals_data.rs
+	rust/src/transliterators/roman_numerals_data.rs \
+	rust/src/transliterators/archaic_hirakatas.rs \
+	rust/src/transliterators/small_hirakatas.rs
 
 PHP_GENERATED := \
 	php/src/Transliterators/SpacesTransliterator.php \
@@ -95,7 +107,9 @@ PHP_GENERATED := \
 	php/src/Transliterators/ivs_svs_base.data \
 	php/src/Transliterators/CombinedTransliterator.php \
 	php/src/Transliterators/CircledOrSquaredTransliterator.php \
-	php/src/Transliterators/RomanNumeralsTransliterator.php
+	php/src/Transliterators/RomanNumeralsTransliterator.php \
+	php/src/Transliterators/ArchaicHirakatasTransliterator.php \
+	php/src/Transliterators/SmallHirakatasTransliterator.php
 
 CSHARP_GENERATED := \
 	csharp/src/Yosina/Transliterators/SpacesTransliterator.cs \
@@ -107,28 +121,34 @@ CSHARP_GENERATED := \
 	csharp/src/Yosina/Transliterators/ivs_svs_base.data \
 	csharp/src/Yosina/Transliterators/CombinedTransliterator.cs \
 	csharp/src/Yosina/Transliterators/CircledOrSquaredTransliterator.cs \
-	csharp/src/Yosina/Transliterators/RomanNumeralsTransliterator.cs
+	csharp/src/Yosina/Transliterators/RomanNumeralsTransliterator.cs \
+	csharp/src/Yosina/Transliterators/ArchaicHirakatasTransliterator.cs \
+	csharp/src/Yosina/Transliterators/SmallHirakatasTransliterator.cs
 
 JAVA_GENERATED := \
-	java/src/main/java/lib/yosina/transliterators/SpacesTransliterator.java \
-	java/src/main/java/lib/yosina/transliterators/RadicalsTransliterator.java \
-	java/src/main/java/lib/yosina/transliterators/MathematicalAlphanumericsTransliterator.java \
-	java/src/main/java/lib/yosina/transliterators/IdeographicAnnotationsTransliterator.java \
-	java/src/main/java/lib/yosina/transliterators/KanjiOldNewTransliterator.java \
-	java/src/main/java/lib/yosina/transliterators/HyphensTransliterator.java \
-	java/src/main/java/lib/yosina/transliterators/IvsSvsBaseTransliterator.java \
-	java/src/main/java/lib/yosina/transliterators/Combined.java \
-	java/src/main/java/lib/yosina/transliterators/CircledOrSquared.java \
-	java/src/main/java/lib/yosina/transliterators/RomanNumeralsTransliterator.java \
-	java/src/main/resources/lib/yosina/transliterators/spaces.data \
-	java/src/main/resources/lib/yosina/transliterators/radicals.data \
-	java/src/main/resources/lib/yosina/transliterators/mathematical_alphanumerics.data \
-	java/src/main/resources/lib/yosina/transliterators/ideographic_annotations.data \
-	java/src/main/resources/lib/yosina/transliterators/kanji_old_new.data \
-	java/src/main/resources/lib/yosina/transliterators/ivs_svs_base.data \
-	java/src/main/resources/lib/yosina/transliterators/combined.data \
-	java/src/main/resources/lib/yosina/transliterators/circled_or_squared.data \
-	java/src/main/resources/lib/yosina/transliterators/roman_numerals.data
+	java/src/main/java/io/yosina/transliterators/SpacesTransliterator.java \
+	java/src/main/java/io/yosina/transliterators/RadicalsTransliterator.java \
+	java/src/main/java/io/yosina/transliterators/MathematicalAlphanumericsTransliterator.java \
+	java/src/main/java/io/yosina/transliterators/IdeographicAnnotationsTransliterator.java \
+	java/src/main/java/io/yosina/transliterators/KanjiOldNewTransliterator.java \
+	java/src/main/java/io/yosina/transliterators/HyphensTransliterator.java \
+	java/src/main/java/io/yosina/transliterators/IvsSvsBaseTransliterator.java \
+	java/src/main/java/io/yosina/transliterators/Combined.java \
+	java/src/main/java/io/yosina/transliterators/CircledOrSquared.java \
+	java/src/main/java/io/yosina/transliterators/RomanNumeralsTransliterator.java \
+	java/src/main/resources/io/yosina/transliterators/spaces.data \
+	java/src/main/resources/io/yosina/transliterators/radicals.data \
+	java/src/main/resources/io/yosina/transliterators/mathematical_alphanumerics.data \
+	java/src/main/resources/io/yosina/transliterators/ideographic_annotations.data \
+	java/src/main/resources/io/yosina/transliterators/kanji_old_new.data \
+	java/src/main/resources/io/yosina/transliterators/ivs_svs_base.data \
+	java/src/main/resources/io/yosina/transliterators/combined.data \
+	java/src/main/resources/io/yosina/transliterators/circled_or_squared.data \
+	java/src/main/resources/io/yosina/transliterators/roman_numerals.data \
+	java/src/main/java/io/yosina/transliterators/ArchaicHirakatasTransliterator.java \
+	java/src/main/java/io/yosina/transliterators/SmallHirakatasTransliterator.java \
+	java/src/main/resources/io/yosina/transliterators/archaic_hirakatas.data \
+	java/src/main/resources/io/yosina/transliterators/small_hirakatas.data
 
 DART_GENERATED := \
 	dart/lib/src/transliterators/spaces_transliterator.dart \
@@ -140,7 +160,9 @@ DART_GENERATED := \
 	dart/lib/src/transliterators/ivs_svs_base.data \
 	dart/lib/src/transliterators/combined_transliterator.dart \
 	dart/lib/src/transliterators/circled_or_squared_data.dart \
-	dart/lib/src/transliterators/roman_numerals_transliterator.dart
+	dart/lib/src/transliterators/roman_numerals_transliterator.dart \
+	dart/lib/src/transliterators/archaic_hirakatas_transliterator.dart \
+	dart/lib/src/transliterators/small_hirakatas_transliterator.dart
 
 SWIFT_GENERATED := \
 	swift/Sources/Yosina/Transliterators/SpacesTransliterator.swift \
@@ -153,6 +175,8 @@ SWIFT_GENERATED := \
 	swift/Sources/Yosina/Transliterators/CombinedTransliterator.swift \
 	swift/Sources/Yosina/Transliterators/CircledOrSquaredTransliterator.swift \
 	swift/Sources/Yosina/Transliterators/RomanNumeralsTransliterator.swift \
+	swift/Sources/Yosina/Transliterators/ArchaicHirakatasTransliterator.swift \
+	swift/Sources/Yosina/Transliterators/SmallHirakatasTransliterator.swift \
 
 # Colors for output
 RED := \033[0;31m

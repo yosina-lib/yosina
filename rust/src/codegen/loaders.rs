@@ -63,3 +63,13 @@ pub fn load_roman_numerals(
     let content = load_file(path)?;
     parse_roman_numerals_records(&content)
 }
+
+pub fn load_archaic_hirakatas(path: &Path) -> Result<Vec<(String, String)>, anyhow::Error> {
+    let content = load_file(path)?;
+    parse_simple_transliteration_records(&content)
+}
+
+pub fn load_small_hirakatas(path: &Path) -> Result<Vec<(String, String)>, anyhow::Error> {
+    let content = load_file(path)?;
+    parse_simple_transliteration_records(&content)
+}

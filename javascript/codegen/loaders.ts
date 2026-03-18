@@ -23,6 +23,8 @@ export default {
   radicals: loadSimpleTransliterationRecords,
   mathematicalAlphanumerics: loadSimpleTransliterationRecords,
   ideographicAnnotations: loadSimpleTransliterationRecords,
+  archaicHirakatas: loadSimpleTransliterationRecords,
+  smallHirakatas: loadSimpleTransliterationRecords,
   hyphens: async (path: string) => {
     const f = await fs.open(path);
     try {

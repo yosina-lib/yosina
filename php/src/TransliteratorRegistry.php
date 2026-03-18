@@ -19,6 +19,9 @@ use Yosina\Transliterators\CircledOrSquaredTransliterator;
 use Yosina\Transliterators\CombinedTransliterator;
 use Yosina\Transliterators\RomanNumeralsTransliterator;
 use Yosina\Transliterators\JapaneseIterationMarksTransliterator;
+use Yosina\Transliterators\ArchaicHirakatasTransliterator;
+use Yosina\Transliterators\SmallHirakatasTransliterator;
+use Yosina\Transliterators\HistoricalHirakatasTransliterator;
 
 class TransliteratorRegistry
 {
@@ -38,6 +41,9 @@ class TransliteratorRegistry
         'combined',
         'roman-numerals',
         'japanese-iteration-marks',
+        'archaic-hirakatas',
+        'small-hirakatas',
+        'historical-hirakatas',
     ];
 
     /** @var array<string, class-string<TransliteratorInterface>> */
@@ -57,6 +63,9 @@ class TransliteratorRegistry
         'combined' => CombinedTransliterator::class,
         'roman-numerals' => RomanNumeralsTransliterator::class,
         'japanese-iteration-marks' => JapaneseIterationMarksTransliterator::class,
+        'archaic-hirakatas' => ArchaicHirakatasTransliterator::class,
+        'small-hirakatas' => SmallHirakatasTransliterator::class,
+        'historical-hirakatas' => HistoricalHirakatasTransliterator::class,
     ];
 
     public static function getTransliteratorFactory(string $name): TransliteratorFactoryInterface

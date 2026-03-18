@@ -118,6 +118,32 @@ readonly class TransliterationRecipe
          */
         public bool $combineDecomposedHiraganasAndKatakanas = false,
         /**
+         * Replace archaic kana (hentaigana) with their modern equivalents.
+         * @example
+         *   Input:  archaic kana character
+         *   Output: modern kana equivalent
+         */
+        public bool $archaicHirakatas = false,
+        /**
+         * Replace small hiragana/katakana with their ordinary-sized equivalents.
+         * @example
+         *   Input:  "ぁ" (small a)
+         *   Output: "あ" (normal a)
+         */
+        public bool $smallHirakatas = false,
+        /**
+         * Convert historical hiragana/katakana characters to their modern equivalents.
+         * - false: not applied
+         * - 'simple': simple replacement (hiraganas=simple, katakanas=simple, voicedKatakanas=skip)
+         * - 'decompose': decompose into component sounds (hiraganas=decompose, katakanas=decompose, voicedKatakanas=decompose)
+         * @example
+         *   Input:  "ゐ" (historical wi)
+         *   Output: "い" (modern i, simple mode)
+         *   Output: "うぃ" (decomposed, decompose mode)
+         * @var false|'simple'|'decompose'
+         */
+        public false|string $historicalHirakatas = false,
+        /**
          * Replace half-width characters to fullwidth equivalents. Specify "u005c-as-yen-sign" to treat backslash (U+005C) as yen sign in JIS X 0201.
          * @example
          *   Input:  "ABC123"
@@ -179,6 +205,9 @@ readonly class TransliterationRecipe
         $ctx = $this->applyReplaceHyphens($ctx);
         $ctx = $this->applyReplaceMathematicalAlphanumerics($ctx);
         $ctx = $this->applyReplaceRomanNumerals($ctx);
+        $ctx = $this->applyArchaicHirakatas($ctx);
+        $ctx = $this->applySmallHirakatas($ctx);
+        $ctx = $this->applyHistoricalHirakatas($ctx);
         $ctx = $this->applyCombineDecomposedHiraganasAndKatakanas($ctx);
         $ctx = $this->applyToFullwidth($ctx);
         $ctx = $this->applyHiraKata($ctx);
@@ -322,6 +351,34 @@ readonly class TransliterationRecipe
             $ctx = $ctx->insertHead(['hira-kata-composition', [
                 'decompose' => true,
             ]], false);
+        }
+        return $ctx;
+    }
+
+    private function applyArchaicHirakatas(TransliteratorConfigListBuilder $ctx): TransliteratorConfigListBuilder
+    {
+        if ($this->archaicHirakatas) {
+            $ctx = $ctx->insertMiddle(['archaic-hirakatas', []], false);
+        }
+        return $ctx;
+    }
+
+    private function applySmallHirakatas(TransliteratorConfigListBuilder $ctx): TransliteratorConfigListBuilder
+    {
+        if ($this->smallHirakatas) {
+            $ctx = $ctx->insertMiddle(['small-hirakatas', []], false);
+        }
+        return $ctx;
+    }
+
+    private function applyHistoricalHirakatas(TransliteratorConfigListBuilder $ctx): TransliteratorConfigListBuilder
+    {
+        if ($this->historicalHirakatas !== false) {
+            $options = match ($this->historicalHirakatas) {
+                'simple' => ['hiraganas' => 'simple', 'katakanas' => 'simple', 'voicedKatakanas' => 'skip'],
+                'decompose' => ['hiraganas' => 'decompose', 'katakanas' => 'decompose', 'voicedKatakanas' => 'decompose'],
+            };
+            $ctx = $ctx->insertMiddle(['historical-hirakatas', $options], false);
         }
         return $ctx;
     }

@@ -24,6 +24,8 @@ __all__ = [
     "load_combined",
     "load_circled_or_squared",
     "load_roman_numerals",
+    "load_archaic_hirakatas",
+    "load_small_hirakatas",
 ]
 
 
@@ -90,3 +92,15 @@ def load_roman_numerals(path: Path) -> list[tuple[str, RomanNumeralsRecord]]:
     """Load roman numerals character mappings."""
     content = load_file(path)
     return parse_roman_numerals_records(content)
+
+
+def load_archaic_hirakatas(path: Path) -> list[tuple[str, str]]:
+    """Load archaic kana (hentaigana) to modern equivalent mappings."""
+    content = load_file(path)
+    return parse_simple_transliteration_records(content)
+
+
+def load_small_hirakatas(path: Path) -> list[tuple[str, str]]:
+    """Load small hiragana/katakana to ordinary-sized equivalent mappings."""
+    content = load_file(path)
+    return parse_simple_transliteration_records(content)

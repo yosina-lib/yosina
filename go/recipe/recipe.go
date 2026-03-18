@@ -6,6 +6,7 @@ import (
 
 	"github.com/yosina-lib/yosina/go/transliterators/hira_kata"
 	"github.com/yosina-lib/yosina/go/transliterators/hira_kata_composition"
+	"github.com/yosina-lib/yosina/go/transliterators/historical_hirakatas"
 	"github.com/yosina-lib/yosina/go/transliterators/hyphens"
 	"github.com/yosina-lib/yosina/go/transliterators/ivs_svs_base"
 	"github.com/yosina-lib/yosina/go/transliterators/jisx0201_and_alike"
@@ -30,6 +31,17 @@ const (
 	ExcludeEmojis
 	HiraToKata
 	KataToHira
+)
+
+// ConvertHistoricalHirakatasMode specifies how historical hiragana/katakana should be converted.
+type ConvertHistoricalHirakatasMode string
+
+const (
+	// ConvertHistoricalHirakatasSimple converts hiragana/katakana with simple replacements;
+	// voiced characters are left unchanged.
+	ConvertHistoricalHirakatasSimple ConvertHistoricalHirakatasMode = "simple"
+	// ConvertHistoricalHirakatasDecompose converts all historical kana to multi-character decomposed forms.
+	ConvertHistoricalHirakatasDecompose ConvertHistoricalHirakatasMode = "decompose"
 )
 
 // ReplaceHyphensOption represents hyphen replacement options
@@ -139,6 +151,24 @@ type TransliterationRecipe struct {
 	//   Input:  "ⅰ ⅱ ⅲ ⅳ"
 	//   Output: "i ii iii iv"
 	ReplaceRomanNumerals bool
+
+	// ReplaceArchaicHirakatas replaces archaic kana (hentaigana) with their modern equivalents.
+	// Example:
+	//   Input:  "𛀁"
+	//   Output: "え"
+	ReplaceArchaicHirakatas bool
+
+	// ReplaceSmallHirakatas replaces small hiragana/katakana with their ordinary-sized equivalents.
+	// Example:
+	//   Input:  "ァィゥ"
+	//   Output: "アイウ"
+	ReplaceSmallHirakatas bool
+
+	// ConvertHistoricalHirakatas converts historical hiragana/katakana characters to modern equivalents.
+	// Set to a pointer to Simple or Decompose to enable; nil to disable.
+	// Simple: converts hiragana/katakana with simple replacements; voiced characters left unchanged.
+	// Decompose: converts all historical kana to multi-character decomposed forms.
+	ConvertHistoricalHirakatas *ConvertHistoricalHirakatasMode
 
 	// CombineDecomposedHiraganasAndKatakanas combines decomposed hiraganas and katakanas
 	// Example:
@@ -296,6 +326,9 @@ func (r *TransliterationRecipe) BuildTransliteratorConfigs() ([]TransliteratorCo
 	r.applyReplaceHyphens(ctx)
 	r.applyReplaceMathematicalAlphanumerics(ctx)
 	r.applyReplaceRomanNumerals(ctx)
+	r.applyReplaceArchaicHirakatas(ctx)
+	r.applyReplaceSmallHirakatas(ctx)
+	r.applyConvertHistoricalHirakatas(ctx)
 	r.applyCombineDecomposedHiraganasAndKatakanas(ctx)
 	r.applyToFullwidth(ctx)
 	r.applyHiraKata(ctx)
@@ -430,6 +463,18 @@ func (r *TransliterationRecipe) applyReplaceRomanNumerals(ctx *transliteratorCon
 	}
 }
 
+func (r *TransliterationRecipe) applyReplaceArchaicHirakatas(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceArchaicHirakatas {
+		ctx.insertMiddle(TransliteratorConfig{Name: "archaic-hirakatas"}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyReplaceSmallHirakatas(ctx *transliteratorConfigListBuilder) {
+	if r.ReplaceSmallHirakatas {
+		ctx.insertMiddle(TransliteratorConfig{Name: "small-hirakatas"}, false)
+	}
+}
+
 func (r *TransliterationRecipe) applyCombineDecomposedHiraganasAndKatakanas(ctx *transliteratorConfigListBuilder) {
 	if r.CombineDecomposedHiraganasAndKatakanas {
 		ctx.insertHead(TransliteratorConfig{
@@ -465,6 +510,29 @@ func (r *TransliterationRecipe) applyToHalfwidth(ctx *transliteratorConfigListBu
 				FullwidthToHalfwidth: true,
 				ConvertGL:            true,
 				ConvertGR:            convertGR,
+			},
+		}, false)
+	}
+}
+
+func (r *TransliterationRecipe) applyConvertHistoricalHirakatas(ctx *transliteratorConfigListBuilder) {
+	if r.ConvertHistoricalHirakatas != nil {
+		var mode historical_hirakatas.ConversionMode
+		var voicedMode historical_hirakatas.ConversionMode
+		switch *r.ConvertHistoricalHirakatas {
+		case ConvertHistoricalHirakatasSimple:
+			mode = historical_hirakatas.Simple
+			voicedMode = historical_hirakatas.Skip
+		case ConvertHistoricalHirakatasDecompose:
+			mode = historical_hirakatas.Decompose
+			voicedMode = historical_hirakatas.Decompose
+		}
+		ctx.insertMiddle(TransliteratorConfig{
+			Name: "historical-hirakatas",
+			Options: &historical_hirakatas.Options{
+				Hiraganas:       mode,
+				Katakanas:       mode,
+				VoicedKatakanas: voicedMode,
 			},
 		}, false)
 	}

@@ -1,4 +1,5 @@
 import * as intrinsics from "./intrinsics.js";
+
 import type { Mapping } from "./transliterators/hyphens.js";
 import type { TransliteratorConfig } from "./transliterators/index.js";
 import type { Charset } from "./transliterators/ivs-svs-base.js";
@@ -176,6 +177,39 @@ export type TransliterationRecipe = {
    */
   removeIVSSVS?: boolean | "drop-all-selectors";
   /**
+   * Replace archaic kana (hentaigana) characters with their modern hiragana/katakana equivalents.
+   * @example
+   * ```js
+   * // Input:  "𛀁" (U+1B001, hentaigana E)
+   * // Output: "え"
+   * ```
+   */
+  replaceArchaicHirakatas?: boolean;
+  /**
+   * Replace small hiragana/katakana with their ordinary-sized equivalents.
+   * @example
+   * ```js
+   * // Input:  "ぁぃぅ"
+   * // Output: "あいう"
+   * // Input:  "ァィゥ"
+   * // Output: "アイウ"
+   * ```
+   */
+  replaceSmallHirakatas?: boolean;
+  /**
+   * Convert historical hiragana/katakana (ゐ, ゑ, ヰ, ヱ, ヷ, ヸ, ヹ, ヺ) to modern equivalents.
+   * - `"simple"`: Convert hiragana/katakana to single-character modern equivalents; voiced characters are left unchanged.
+   * - `"decompose"`: Convert all historical kana to multi-character decomposed forms.
+   * @example
+   * ```js
+   * // Input:  "ゐた" (with "simple")
+   * // Output: "いた"
+   * // Input:  "ヷイオリン" (with "decompose")
+   * // Output: "ヴァイオリン"
+   * ```
+   */
+  convertHistoricalHirakatas?: "simple" | "decompose";
+  /**
    * Charset assumed during IVS/SVS transliteration. The default is `"unijis_2004"`.
    */
   charset?: Charset;
@@ -194,6 +228,9 @@ const applicationOrder: TransliterationRecipeKeys[] = [
   "replaceHyphens",
   "replaceMathematicalAlphanumerics",
   "replaceRomanNumerals",
+  "replaceArchaicHirakatas",
+  "replaceSmallHirakatas",
+  "convertHistoricalHirakatas",
   "combineDecomposedHiraganasAndKatakanas",
   "toFullwidth",
   "hiraKata",
@@ -348,6 +385,24 @@ const transliteratorAppliers: {
           { fullwidthToHalfwidth: false, u005cAsYenSign: recipe.toFullwidth === "u005c-as-yen-sign" },
         ])
       : ctx;
+  },
+  replaceArchaicHirakatas: (ctx, recipe) =>
+    recipe.replaceArchaicHirakatas ? insertMiddle(ctx, ["archaic-hirakatas", {}]) : ctx,
+  replaceSmallHirakatas: (ctx, recipe) =>
+    recipe.replaceSmallHirakatas ? insertMiddle(ctx, ["small-hirakatas", {}]) : ctx,
+  convertHistoricalHirakatas: (ctx, recipe) => {
+    if (recipe.convertHistoricalHirakatas) {
+      const mode = recipe.convertHistoricalHirakatas;
+      return insertMiddle(ctx, [
+        "historical-hirakatas",
+        {
+          hiraganas: mode,
+          katakanas: mode,
+          voicedKatakanas: mode === "decompose" ? "decompose" : "skip",
+        },
+      ]);
+    }
+    return ctx;
   },
   removeIVSSVS: (ctx, recipe) =>
     recipe.removeIVSSVS ? removeIVSSVS(ctx, recipe.removeIVSSVS === "drop-all-selectors", recipe.charset) : ctx,

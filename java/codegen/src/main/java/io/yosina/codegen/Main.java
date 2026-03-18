@@ -43,6 +43,10 @@ public class Main {
                 dataRoot,
                 "ideographic_annotations",
                 "ideographic-annotation-marks.json");
+        generateSimpleTransliterator(
+                generator, dataRoot, "archaic_hirakatas", "archaic-hirakatas.json");
+        generateSimpleTransliterator(
+                generator, dataRoot, "small_hirakatas", "small-hirakatas.json");
 
         // Generate complex transliterators
         generateHyphensTransliterator(generator, dataRoot);

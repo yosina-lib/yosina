@@ -5,6 +5,7 @@ import 'transliterators/charset.dart';
 import 'transliterators/circled_or_squared_transliterator.dart';
 import 'transliterators/hira_kata_composition_transliterator.dart';
 import 'transliterators/hira_kata_transliterator.dart';
+import 'transliterators/historical_hirakatas_transliterator.dart';
 import 'transliterators/hyphens_transliterator.dart';
 import 'transliterators/ivs_svs_base_transliterator.dart';
 import 'transliterators/japanese_iteration_marks_transliterator.dart';
@@ -147,11 +148,50 @@ class TransliteratorRegistry {
                         false,
               ))
       ..register('japaneseIterationMarks',
-          (options) => JapaneseIterationMarksTransliterator());
+          (options) => JapaneseIterationMarksTransliterator())
+      ..register(
+          'historicalHirakatas',
+          (options) => HistoricalHirakatasTransliterator(
+                hiraganas: _parseConversionMode(
+                    options['hiraganas'] as String?, ConversionMode.simple),
+                katakanas: _parseConversionMode(
+                    options['katakanas'] as String?, ConversionMode.simple),
+                voicedKatakanas: _parseVoicedConversionMode(
+                    options['voicedKatakanas'] as String?,
+                    VoicedConversionMode.skip),
+              ));
 
     // Register generated transliterators
     registerGeneratedTransliterators(registry);
 
     return registry;
+  }
+
+  static ConversionMode _parseConversionMode(
+      String? value, ConversionMode defaultValue) {
+    if (value == null) return defaultValue;
+    switch (value) {
+      case 'simple':
+        return ConversionMode.simple;
+      case 'decompose':
+        return ConversionMode.decompose;
+      case 'skip':
+        return ConversionMode.skip;
+      default:
+        throw ArgumentError('Unknown ConversionMode: $value');
+    }
+  }
+
+  static VoicedConversionMode _parseVoicedConversionMode(
+      String? value, VoicedConversionMode defaultValue) {
+    if (value == null) return defaultValue;
+    switch (value) {
+      case 'decompose':
+        return VoicedConversionMode.decompose;
+      case 'skip':
+        return VoicedConversionMode.skip;
+      default:
+        throw ArgumentError('Unknown VoicedConversionMode: $value');
+    }
   }
 }

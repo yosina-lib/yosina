@@ -55,6 +55,20 @@ internal static class Program
                 "ideographic-annotation-marks.json",
                 "Replace ideographic annotation marks used in traditional translation.");
 
+            GenerateSimpleTransliterator(
+                dataRoot,
+                destRoot,
+                "archaic_hirakatas",
+                "archaic-hirakatas.json",
+                "Replaces archaic kana (hentaigana) with their modern equivalents.");
+
+            GenerateSimpleTransliterator(
+                dataRoot,
+                destRoot,
+                "small_hirakatas",
+                "small-hirakatas.json",
+                "Replaces small hiragana/katakana with their ordinary-sized equivalents.");
+
             // Generate kanji old-new transliterator
             GenerateKanjiOldNewTransliterator(dataRoot, destRoot);
 
@@ -350,11 +364,15 @@ internal static class Program
         var code = CombinedTransliteratorGenerator.Generate(mappings);
 
         // Replace class name and description
-        code = code.Replace("CombinedTransliterator", "RomanNumeralsTransliterator");
+        code = code.Replace(
+            "CombinedTransliterator",
+            "RomanNumeralsTransliterator",
+            StringComparison.Ordinal);
         code = code.Replace(
             "Replace single characters with arrays of characters.",
-            "Replace roman numeral characters with their ASCII letter equivalents.");
-        code = code.Replace("combined", "roman-numerals");
+            "Replace roman numeral characters with their ASCII letter equivalents.",
+            StringComparison.Ordinal);
+        code = code.Replace("combined", "roman-numerals", StringComparison.Ordinal);
 
         var outputPath = Path.Combine(destRoot, "RomanNumeralsTransliterator.cs");
         File.WriteAllText(outputPath, code);

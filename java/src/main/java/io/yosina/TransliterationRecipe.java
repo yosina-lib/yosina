@@ -2,6 +2,7 @@ package io.yosina;
 
 import io.yosina.transliterators.CircledOrSquaredTransliterator;
 import io.yosina.transliterators.HiraKataCompositionTransliterator;
+import io.yosina.transliterators.HistoricalHirakatasTransliterator;
 import io.yosina.transliterators.HyphensTransliterator;
 import io.yosina.transliterators.HyphensTransliterator.Mapping;
 import io.yosina.transliterators.IvsSvsBaseTransliterator;
@@ -223,6 +224,24 @@ public class TransliterationRecipe {
         }
     }
 
+    /** Mode for converting historical hiragana and katakana characters. */
+    public enum ConvertHistoricalHirakatasMode {
+        /** Not applied. */
+        DISABLED,
+
+        /**
+         * Replace hiraganas and katakanas with their single-character modern equivalents. Voiced
+         * katakanas are left unchanged.
+         */
+        SIMPLE,
+
+        /**
+         * Decompose all historical kana (including voiced katakanas) into multi-character modern
+         * equivalents.
+         */
+        DECOMPOSE,
+    }
+
     // Recipe fields with default values
     private boolean kanjiOldNew = false;
     private String hiraKata = null;
@@ -237,7 +256,11 @@ public class TransliterationRecipe {
     private ReplaceHyphensOptions replaceHyphens = ReplaceHyphensOptions.DISABLED;
     private boolean replaceMathematicalAlphanumerics = false;
     private boolean replaceRomanNumerals = false;
+    private boolean replaceArchaicHirakatas = false;
+    private boolean replaceSmallHirakatas = false;
     private boolean combineDecomposedHiraganasAndKatakanas = false;
+    private ConvertHistoricalHirakatasMode convertHistoricalHirakatas =
+            ConvertHistoricalHirakatasMode.DISABLED;
     private ToFullwidthOptions toFullwidth = ToFullwidthOptions.DISABLED;
     private ToHalfwidthOptions toHalfwidth = ToHalfwidthOptions.DISABLED;
     private RemoveIvsSvsOptions removeIvsSvs = RemoveIvsSvsOptions.DISABLED;
@@ -505,6 +528,28 @@ public class TransliterationRecipe {
     }
 
     /**
+     * Enables or disables replacement of archaic kana (hentaigana) with modern equivalents.
+     *
+     * @param replace true to enable replacement, false to disable
+     * @return this recipe instance for method chaining
+     */
+    public TransliterationRecipe withReplaceArchaicHirakatas(boolean replace) {
+        this.replaceArchaicHirakatas = replace;
+        return this;
+    }
+
+    /**
+     * Enables or disables replacement of small hiragana/katakana with ordinary-sized equivalents.
+     *
+     * @param replace true to enable replacement, false to disable
+     * @return this recipe instance for method chaining
+     */
+    public TransliterationRecipe withReplaceSmallHirakatas(boolean replace) {
+        this.replaceSmallHirakatas = replace;
+        return this;
+    }
+
+    /**
      * Enables or disables combination of decomposed hiragana and katakana characters.
      *
      * <p>Example usage:
@@ -523,6 +568,29 @@ public class TransliterationRecipe {
      */
     public TransliterationRecipe withCombineDecomposedHiraganasAndKatakanas(boolean combine) {
         this.combineDecomposedHiraganasAndKatakanas = combine;
+        return this;
+    }
+
+    /**
+     * Sets the historical hiragana/katakana conversion options.
+     *
+     * <p>Example usage:
+     *
+     * <pre>{@code
+     * // Input:  "ゐゑ" (historical hiragana)
+     * // Output: "いえ" (modern equivalents, with SIMPLE)
+     * // Output: "うぃうぇ" (decomposed, with DECOMPOSE)
+     * TransliterationRecipe recipe = new TransliterationRecipe()
+     *     .withConvertHistoricalHirakatas(
+     *         ConvertHistoricalHirakatasMode.SIMPLE);
+     * }</pre>
+     *
+     * @param mode the conversion mode
+     * @return this recipe instance for method chaining
+     */
+    public TransliterationRecipe withConvertHistoricalHirakatas(
+            ConvertHistoricalHirakatasMode mode) {
+        this.convertHistoricalHirakatas = mode;
         return this;
     }
 
@@ -713,12 +781,39 @@ public class TransliterationRecipe {
     }
 
     /**
+     * Checks if replacement of archaic kana (hentaigana) is enabled.
+     *
+     * @return true if replacement is enabled, false otherwise
+     */
+    public boolean isReplaceArchaicHirakatas() {
+        return replaceArchaicHirakatas;
+    }
+
+    /**
+     * Checks if replacement of small hiragana/katakana is enabled.
+     *
+     * @return true if replacement is enabled, false otherwise
+     */
+    public boolean isReplaceSmallHirakatas() {
+        return replaceSmallHirakatas;
+    }
+
+    /**
      * Checks if combination of decomposed hiragana and katakana characters is enabled.
      *
      * @return true if combination is enabled, false otherwise
      */
     public boolean isCombineDecomposedHiraganasAndKatakanas() {
         return combineDecomposedHiraganasAndKatakanas;
+    }
+
+    /**
+     * Gets the current historical hiragana/katakana conversion options.
+     *
+     * @return the conversion options
+     */
+    public ConvertHistoricalHirakatasMode getConvertHistoricalHirakatas() {
+        return convertHistoricalHirakatas;
     }
 
     /**
@@ -788,6 +883,9 @@ public class TransliterationRecipe {
         ctx = applyReplaceHyphens(ctx);
         ctx = applyReplaceMathematicalAlphanumerics(ctx);
         ctx = applyReplaceRomanNumerals(ctx);
+        ctx = applyReplaceArchaicHirakatas(ctx);
+        ctx = applyReplaceSmallHirakatas(ctx);
+        ctx = applyConvertHistoricalHirakatas(ctx);
         ctx = applyCombineDecomposedHiraganasAndKatakanas(ctx);
         ctx = applyToFullwidth(ctx);
         ctx = applyHiraKata(ctx);
@@ -946,6 +1044,22 @@ public class TransliterationRecipe {
         return ctx;
     }
 
+    private TransliteratorConfigListBuilder applyReplaceArchaicHirakatas(
+            TransliteratorConfigListBuilder ctx) {
+        if (replaceArchaicHirakatas) {
+            ctx = ctx.insertMiddle(new Yosina.TransliteratorConfig("archaic-hirakatas"), false);
+        }
+        return ctx;
+    }
+
+    private TransliteratorConfigListBuilder applyReplaceSmallHirakatas(
+            TransliteratorConfigListBuilder ctx) {
+        if (replaceSmallHirakatas) {
+            ctx = ctx.insertMiddle(new Yosina.TransliteratorConfig("small-hirakatas"), false);
+        }
+        return ctx;
+    }
+
     private TransliteratorConfigListBuilder applyCombineDecomposedHiraganasAndKatakanas(
             TransliteratorConfigListBuilder ctx) {
         if (combineDecomposedHiraganasAndKatakanas) {
@@ -955,6 +1069,37 @@ public class TransliterationRecipe {
                                     "hira-kata-composition",
                                     Optional.of(
                                             new HiraKataCompositionTransliterator.Options(true))),
+                            false);
+        }
+        return ctx;
+    }
+
+    private TransliteratorConfigListBuilder applyConvertHistoricalHirakatas(
+            TransliteratorConfigListBuilder ctx) {
+        if (convertHistoricalHirakatas != ConvertHistoricalHirakatasMode.DISABLED) {
+            final HistoricalHirakatasTransliterator.Options options;
+            switch (convertHistoricalHirakatas) {
+                case SIMPLE:
+                    options =
+                            new HistoricalHirakatasTransliterator.Options(
+                                    HistoricalHirakatasTransliterator.ConversionMode.SIMPLE,
+                                    HistoricalHirakatasTransliterator.ConversionMode.SIMPLE,
+                                    HistoricalHirakatasTransliterator.ConversionMode.SKIP);
+                    break;
+                case DECOMPOSE:
+                    options =
+                            new HistoricalHirakatasTransliterator.Options(
+                                    HistoricalHirakatasTransliterator.ConversionMode.DECOMPOSE,
+                                    HistoricalHirakatasTransliterator.ConversionMode.DECOMPOSE,
+                                    HistoricalHirakatasTransliterator.ConversionMode.DECOMPOSE);
+                    break;
+                default:
+                    return ctx;
+            }
+            ctx =
+                    ctx.insertMiddle(
+                            new Yosina.TransliteratorConfig(
+                                    "historical-hirakatas", Optional.of(options)),
                             false);
         }
         return ctx;

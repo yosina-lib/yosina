@@ -23,7 +23,9 @@ type SimpleTransliteratorName =
   | "radicals"
   | "mathematicalAlphanumerics"
   | "ideographicAnnotations"
-  | "kanjiOldNew";
+  | "kanjiOldNew"
+  | "archaicHirakatas"
+  | "smallHirakatas";
 
 type TransliteratorTemplates = {
   [key in
@@ -98,6 +100,8 @@ const templateDir = path.join(dirname, "_templates");
     combined: "combined-chars.json",
     circledOrSquared: "circled-or-squared.json",
     romanNumerals: "roman-numerals.json",
+    archaicHirakatas: "archaic-hirakatas.json",
+    smallHirakatas: "small-hirakatas.json",
   });
 
   const templates = await readTemplates(templateDir, {
@@ -125,11 +129,28 @@ const templateDir = path.join(dirname, "_templates");
         "This module implements a transliterator that replaces old forms of kanji with their new forms.",
       functionDescription: "Replace old forms of kanji with their new forms.",
     },
+    archaicHirakatas: {
+      moduleDescription:
+        "This module implements a transliterator that replaces archaic kana (hentaigana) with their modern equivalents.",
+      functionDescription: "Replaces archaic kana (hentaigana) with their modern equivalents.",
+    },
+    smallHirakatas: {
+      moduleDescription:
+        "This module implements a transliterator that replaces small hiragana/katakana with their ordinary-sized equivalents.",
+      functionDescription: "Replaces small hiragana/katakana with their ordinary-sized equivalents.",
+    },
   });
 
   await Promise.all([
     ...(
-      ["spaces", "radicals", "mathematicalAlphanumerics", "ideographicAnnotations"] satisfies (keyof typeof dataset)[]
+      [
+        "spaces",
+        "radicals",
+        "mathematicalAlphanumerics",
+        "ideographicAnnotations",
+        "archaicHirakatas",
+        "smallHirakatas",
+      ] satisfies (keyof typeof dataset)[]
     ).map((kind) =>
       fs.writeFile(
         path.join(destRoot, `${kind.replace(/[A-Z]/g, (m) => `-${m[0].toLowerCase()}`)}.ts`),

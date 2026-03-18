@@ -27,6 +27,9 @@ public class TransliteratorFactoryDiscoveryTests
             "circled-or-squared",
             "combined",
             "japanese-iteration-marks",
+            "historical-hirakatas",
+            "small-hirakatas",
+            "archaic-hirakatas",
         };
 
         foreach (var expectedName in expectedNames)

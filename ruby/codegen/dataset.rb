@@ -14,6 +14,8 @@ DatasetSourceDefs = Struct.new(
   :combined,
   :circled_or_squared,
   :roman_numerals,
+  :archaic_hirakatas,
+  :small_hirakatas,
   keyword_init: true
 )
 
@@ -29,6 +31,8 @@ Dataset = Struct.new(
   :combined,
   :circled_or_squared,
   :roman_numerals,
+  :archaic_hirakatas,
+  :small_hirakatas,
   keyword_init: true
 )
 
@@ -241,6 +245,8 @@ def build_dataset_from_data_root(data_root, defs)
     kanji_old_new: load_kanji_old_new_data(data_root / defs.kanji_old_new),
     combined: load_combined_data(data_root / defs.combined),
     circled_or_squared: load_circled_or_squared_data(data_root / defs.circled_or_squared),
-    roman_numerals: load_roman_numerals_data(data_root / defs.roman_numerals)
+    roman_numerals: load_roman_numerals_data(data_root / defs.roman_numerals),
+    archaic_hirakatas: load_simple_data(data_root / defs.archaic_hirakatas),
+    small_hirakatas: load_simple_data(data_root / defs.small_hirakatas)
   )
 end

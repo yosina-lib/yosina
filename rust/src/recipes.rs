@@ -3,8 +3,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::transliterator::{Transliterator, TransliteratorFactory, TransliteratorFactoryError};
 use crate::transliterators::{
-    Charset, HyphensTransliterationVariant, IvsSvsBaseMode, IvsSvsBaseTransliteratorOptions,
-    TransliteratorConfig,
+    Charset, HistoricalHiraganaMode, HistoricalHirakatasTransliteratorOptions,
+    HistoricalKatakanaMode, HyphensTransliterationVariant, IvsSvsBaseMode,
+    IvsSvsBaseTransliteratorOptions, TransliteratorConfig, VoicedHistoricalKanaMode,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -155,6 +156,13 @@ pub enum ReplaceHyphensOptions {
     Yes {
         precedence: Vec<HyphensTransliterationVariant>,
     },
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ReplaceHistoricalHirakatasMode {
+    Simple,
+    Decompose,
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
@@ -308,6 +316,21 @@ pub struct TransliterationRecipe {
     /// ```
     #[serde(default)]
     pub replace_roman_numerals: bool,
+    /// Replaces archaic kana (hentaigana) with their modern equivalents.
+    #[serde(default)]
+    pub replace_archaic_hirakatas: bool,
+    /// Replaces small hiragana/katakana with their ordinary-sized equivalents.
+    #[serde(default)]
+    pub replace_small_hirakatas: bool,
+    /// Replaces historical hiragana/katakana characters with their modern equivalents.
+    ///
+    /// # Example
+    /// ```text
+    /// Input:  "ゐゑヰヱ"
+    /// Output: "いえイエ" (with Simple mode)
+    /// ```
+    #[serde(default)]
+    pub replace_historical_hirakatas: Option<ReplaceHistoricalHirakatasMode>,
     /// Combine decomposed hiraganas and katakanas into single counterparts.
     ///
     /// # Example
@@ -612,6 +635,62 @@ impl TransliterationRecipe {
         (builder, None)
     }
 
+    fn apply_replace_archaic_hirakatas(
+        &self,
+        mut builder: TransliteratorConfigBuilder,
+    ) -> (
+        TransliteratorConfigBuilder,
+        Option<TransliterationRecipeError>,
+    ) {
+        if self.replace_archaic_hirakatas {
+            builder = builder.insert_middle(TransliteratorConfig::ArchaicHirakatas, false);
+        }
+        (builder, None)
+    }
+
+    fn apply_replace_small_hirakatas(
+        &self,
+        mut builder: TransliteratorConfigBuilder,
+    ) -> (
+        TransliteratorConfigBuilder,
+        Option<TransliterationRecipeError>,
+    ) {
+        if self.replace_small_hirakatas {
+            builder = builder.insert_middle(TransliteratorConfig::SmallHirakatas, false);
+        }
+        (builder, None)
+    }
+
+    fn apply_replace_historical_hirakatas(
+        &self,
+        mut builder: TransliteratorConfigBuilder,
+    ) -> (
+        TransliteratorConfigBuilder,
+        Option<TransliterationRecipeError>,
+    ) {
+        if let Some(mode) = &self.replace_historical_hirakatas {
+            let options = match mode {
+                ReplaceHistoricalHirakatasMode::Simple => {
+                    HistoricalHirakatasTransliteratorOptions {
+                        hiraganas: HistoricalHiraganaMode::Simple,
+                        katakanas: HistoricalKatakanaMode::Simple,
+                        voiced_katakanas: VoicedHistoricalKanaMode::Skip,
+                    }
+                }
+                ReplaceHistoricalHirakatasMode::Decompose => {
+                    HistoricalHirakatasTransliteratorOptions {
+                        hiraganas: HistoricalHiraganaMode::Decompose,
+                        katakanas: HistoricalKatakanaMode::Decompose,
+                        voiced_katakanas: VoicedHistoricalKanaMode::Decompose,
+                    }
+                }
+            };
+            builder =
+                builder.insert_middle(TransliteratorConfig::HistoricalHirakatas(options), false);
+        }
+        (builder, None)
+    }
+
     fn apply_combine_decomposed_hiraganas_and_katakanas(
         &self,
         mut builder: TransliteratorConfigBuilder,
@@ -809,6 +888,24 @@ impl TransliterationRecipe {
             errors.push(e);
         }
 
+        // 10a. replaceArchaicHirakatas
+        let (builder, e) = self.apply_replace_archaic_hirakatas(builder);
+        if let Some(e) = e {
+            errors.push(e);
+        }
+
+        // 10b. replaceSmallHirakatas
+        let (builder, e) = self.apply_replace_small_hirakatas(builder);
+        if let Some(e) = e {
+            errors.push(e);
+        }
+
+        // 10c. replaceHistoricalHirakatas
+        let (builder, e) = self.apply_replace_historical_hirakatas(builder);
+        if let Some(e) = e {
+            errors.push(e);
+        }
+
         // 11. combineDecomposedHiraganasAndKatakanas
         let (builder, e) = self.apply_combine_decomposed_hiraganas_and_katakanas(builder);
         if let Some(e) = e {
@@ -875,6 +972,9 @@ impl Default for TransliterationRecipe {
             replace_hyphens: ReplaceHyphensOptions::No,
             replace_mathematical_alphanumerics: false,
             replace_roman_numerals: false,
+            replace_archaic_hirakatas: false,
+            replace_small_hirakatas: false,
+            replace_historical_hirakatas: None,
             combine_decomposed_hiraganas_and_katakanas: false,
             to_fullwidth: ToFullWidthOptions::No,
             to_halfwidth: ToHalfwidthOptions::No,
