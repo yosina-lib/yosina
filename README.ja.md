@@ -110,7 +110,7 @@ print(result)
 
 ```toml
 [dependencies]
-yosina = "1.0.0"
+yosina = "1.1.0"
 ```
 
 ### Java
@@ -119,7 +119,7 @@ yosina = "1.0.0"
 
 ```gradle
 dependencies {
-    implementation 'io.yosina:yosina:1.0.0'
+    implementation 'io.yosina:yosina:1.1.0'
 }
 ```
 
@@ -245,7 +245,7 @@ Console.WriteLine(result);
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "1.0.0")
+    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "1.1.0")
 ]
 ```
 
