@@ -133,14 +133,14 @@ class JapaneseIterationMarksTransliterator implements TransliteratorInterface
         }
 
         // Kanji - CJK Unified Ideographs (common ranges)
-        if (($codepoint >= 0x4E00 && $codepoint <= 0x9FFF) ||
-            ($codepoint >= 0x3400 && $codepoint <= 0x4DBF) ||
-            ($codepoint >= 0x20000 && $codepoint <= 0x2A6DF) ||
-            ($codepoint >= 0x2A700 && $codepoint <= 0x2B73F) ||
-            ($codepoint >= 0x2B740 && $codepoint <= 0x2B81F) ||
-            ($codepoint >= 0x2B820 && $codepoint <= 0x2CEAF) ||
-            ($codepoint >= 0x2CEB0 && $codepoint <= 0x2EBEF) ||
-            ($codepoint >= 0x30000 && $codepoint <= 0x3134F)) {
+        if (($codepoint >= 0x4E00 && $codepoint <= 0x9FFF)
+            || ($codepoint >= 0x3400 && $codepoint <= 0x4DBF)
+            || ($codepoint >= 0x20000 && $codepoint <= 0x2A6DF)
+            || ($codepoint >= 0x2A700 && $codepoint <= 0x2B73F)
+            || ($codepoint >= 0x2B740 && $codepoint <= 0x2B81F)
+            || ($codepoint >= 0x2B820 && $codepoint <= 0x2CEAF)
+            || ($codepoint >= 0x2CEB0 && $codepoint <= 0x2EBEF)
+            || ($codepoint >= 0x30000 && $codepoint <= 0x3134F)) {
             return self::TYPE_KANJI;
         }
 
