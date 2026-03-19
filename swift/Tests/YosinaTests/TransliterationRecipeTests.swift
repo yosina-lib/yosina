@@ -18,22 +18,30 @@ final class TransliterationRecipeTests: XCTestCase {
         XCTAssertFalse(recipe.kanjiOldNew)
         XCTAssertFalse(recipe.replaceSuspiciousHyphensToProlongedSoundMarks)
         XCTAssertFalse(recipe.replaceCombinedCharacters)
+        XCTAssertNil(recipe.hiraKata)
+        XCTAssertFalse(recipe.replaceJapaneseIterationMarks)
         XCTAssertFalse(recipe.replaceCircledOrSquaredCharacters.isEnabled)
         XCTAssertFalse(recipe.replaceIdeographicAnnotations)
         XCTAssertFalse(recipe.replaceRadicals)
         XCTAssertFalse(recipe.replaceSpaces)
         XCTAssertFalse(recipe.replaceHyphens.isEnabled)
         XCTAssertFalse(recipe.replaceMathematicalAlphanumerics)
+        XCTAssertFalse(recipe.replaceRomanNumerals)
+        XCTAssertFalse(recipe.replaceArchaicHirakatas)
+        XCTAssertFalse(recipe.replaceSmallHirakatas)
         XCTAssertFalse(recipe.combineDecomposedHiraganasAndKatakanas)
         XCTAssertFalse(recipe.toFullwidth.isEnabled)
         XCTAssertFalse(recipe.toHalfwidth.isEnabled)
         XCTAssertFalse(recipe.removeIvsSvs.isEnabled)
+        XCTAssertNil(recipe.convertHistoricalHirakatas)
         XCTAssertEqual(recipe.charset, .unijis2004)
     }
 
     func testInitializeWithConstructor() {
         let recipe = TransliterationRecipe(
             kanjiOldNew: true,
+            hiraKata: .kataToHira,
+            replaceJapaneseIterationMarks: true,
             replaceSuspiciousHyphensToProlongedSoundMarks: true,
             replaceCombinedCharacters: true,
             replaceCircledOrSquaredCharacters: .enabled,
@@ -42,13 +50,19 @@ final class TransliterationRecipeTests: XCTestCase {
             replaceSpaces: true,
             replaceHyphens: .enabled,
             replaceMathematicalAlphanumerics: true,
+            replaceRomanNumerals: true,
+            replaceArchaicHirakatas: true,
+            replaceSmallHirakatas: true,
             combineDecomposedHiraganasAndKatakanas: true,
             toFullwidth: .u005cAsYenSign,
             toHalfwidth: .hankakuKana,
             removeIvsSvs: .dropAllSelectors,
+            convertHistoricalHirakatas: .simple,
             charset: .unijis90
         )
         XCTAssertTrue(recipe.kanjiOldNew)
+        XCTAssertEqual(recipe.hiraKata, .kataToHira)
+        XCTAssertTrue(recipe.replaceJapaneseIterationMarks)
         XCTAssertTrue(recipe.replaceSuspiciousHyphensToProlongedSoundMarks)
         XCTAssertTrue(recipe.replaceCombinedCharacters)
         XCTAssertTrue(recipe.replaceCircledOrSquaredCharacters.isEnabled)
@@ -57,6 +71,9 @@ final class TransliterationRecipeTests: XCTestCase {
         XCTAssertTrue(recipe.replaceSpaces)
         XCTAssertTrue(recipe.replaceHyphens.isEnabled)
         XCTAssertTrue(recipe.replaceMathematicalAlphanumerics)
+        XCTAssertTrue(recipe.replaceRomanNumerals)
+        XCTAssertTrue(recipe.replaceArchaicHirakatas)
+        XCTAssertTrue(recipe.replaceSmallHirakatas)
         XCTAssertTrue(recipe.combineDecomposedHiraganasAndKatakanas)
         XCTAssertTrue(recipe.toFullwidth.isEnabled)
         XCTAssertTrue(recipe.toFullwidth.isU005cAsYenSign)
@@ -64,6 +81,7 @@ final class TransliterationRecipeTests: XCTestCase {
         XCTAssertTrue(recipe.toHalfwidth.isHankakuKana)
         XCTAssertTrue(recipe.removeIvsSvs.isEnabled)
         XCTAssertTrue(recipe.removeIvsSvs.isDropAllSelectors)
+        XCTAssertEqual(recipe.convertHistoricalHirakatas, .simple)
         XCTAssertEqual(recipe.charset, .unijis90)
     }
 
@@ -82,6 +100,31 @@ final class TransliterationRecipeTests: XCTestCase {
         // Check for IVS/SVS base transliterators (should be 2)
         let ivsSvsCount = config.filter { if case .ivsSvsBase = $0 { return true } else { return false } }.count
         XCTAssertEqual(ivsSvsCount, 2)
+    }
+
+    func testHiraKata() throws {
+        let recipe = TransliterationRecipe().withHiraKata(.kataToHira)
+        let config = try recipe.buildTransliteratorConfig()
+
+        XCTAssertEqual(config.count, 1)
+        XCTAssert({ if case .hiraKata = config[0] { return true } else { return false } }())
+    }
+
+    func testHiraKataNil() throws {
+        let recipe = TransliterationRecipe().withHiraKata(nil)
+        let config = try recipe.buildTransliteratorConfig()
+
+        XCTAssertEqual(config.count, 0)
+    }
+
+    func testReplaceJapaneseIterationMarks() throws {
+        let recipe = TransliterationRecipe().withReplaceJapaneseIterationMarks(true)
+        let config = try recipe.buildTransliteratorConfig()
+
+        // Should create hiraKataComposition at head + japaneseIterationMarks in middle
+        XCTAssertGreaterThanOrEqual(config.count, 2)
+        XCTAssert(config.contains { if case .japaneseIterationMarks = $0 { return true } else { return false } })
+        XCTAssert(config.contains { if case .hiraKataComposition = $0 { return true } else { return false } })
     }
 
     func testReplaceSuspiciousHyphensToProlongedSoundMarks() throws {
@@ -160,6 +203,22 @@ final class TransliterationRecipeTests: XCTestCase {
 
         XCTAssertEqual(config.count, 1)
         XCTAssert({ if case .hiraKataComposition = config[0] { return true } else { return false } }())
+    }
+
+    func testReplaceArchaicHirakatas() throws {
+        let recipe = TransliterationRecipe().withReplaceArchaicHirakatas(true)
+        let config = try recipe.buildTransliteratorConfig()
+
+        XCTAssertEqual(config.count, 1)
+        XCTAssert({ if case .archaicHirakatas = config[0] { return true } else { return false } }())
+    }
+
+    func testReplaceSmallHirakatas() throws {
+        let recipe = TransliterationRecipe().withReplaceSmallHirakatas(true)
+        let config = try recipe.buildTransliteratorConfig()
+
+        XCTAssertEqual(config.count, 1)
+        XCTAssert({ if case .smallHirakatas = config[0] { return true } else { return false } }())
     }
 
     // MARK: - Complex Option Configuration Tests
@@ -345,6 +404,8 @@ final class TransliterationRecipeTests: XCTestCase {
     func testAllTransliteratorsEnabled() throws {
         let recipe = TransliterationRecipe()
             .withKanjiOldNew(true)
+            .withHiraKata(.kataToHira)
+            .withReplaceJapaneseIterationMarks(true)
             .withReplaceSuspiciousHyphensToProlongedSoundMarks(true)
             .withReplaceCombinedCharacters(true)
             .withReplaceCircledOrSquaredCharacters(.enabled)
@@ -353,6 +414,8 @@ final class TransliterationRecipeTests: XCTestCase {
             .withReplaceSpaces(true)
             .withReplaceHyphens(.enabled)
             .withReplaceMathematicalAlphanumerics(true)
+            .withReplaceArchaicHirakatas(true)
+            .withReplaceSmallHirakatas(true)
             .withCombineDecomposedHiraganasAndKatakanas(true)
             .withToHalfwidth(.hankakuKana)
             .withRemoveIvsSvs(.enabled)
@@ -362,6 +425,8 @@ final class TransliterationRecipeTests: XCTestCase {
 
         // Verify all expected transliterators are present
         XCTAssert(config.contains { if case .kanjiOldNew = $0 { return true } else { return false } })
+        XCTAssert(config.contains { if case .hiraKata = $0 { return true } else { return false } })
+        XCTAssert(config.contains { if case .japaneseIterationMarks = $0 { return true } else { return false } })
         XCTAssert(config.contains { if case .prolongedSoundMarks = $0 { return true } else { return false } })
         XCTAssert(config.contains { if case .combined = $0 { return true } else { return false } })
         XCTAssert(config.contains { if case .circledOrSquared = $0 { return true } else { return false } })
@@ -370,6 +435,8 @@ final class TransliterationRecipeTests: XCTestCase {
         XCTAssert(config.contains { if case .spaces = $0 { return true } else { return false } })
         XCTAssert(config.contains { if case .hyphens = $0 { return true } else { return false } })
         XCTAssert(config.contains { if case .mathematicalAlphanumerics = $0 { return true } else { return false } })
+        XCTAssert(config.contains { if case .archaicHirakatas = $0 { return true } else { return false } })
+        XCTAssert(config.contains { if case .smallHirakatas = $0 { return true } else { return false } })
         XCTAssert(config.contains { if case .hiraKataComposition = $0 { return true } else { return false } })
         XCTAssert(config.contains { if case .jisx0201AndAlike = $0 { return true } else { return false } })
 
@@ -439,10 +506,18 @@ final class TransliterationRecipeTests: XCTestCase {
     func testFluentAPI() throws {
         let recipe = TransliterationRecipe()
             .withKanjiOldNew(true)
+            .withHiraKata(.hiraToKata)
+            .withReplaceJapaneseIterationMarks(true)
+            .withReplaceArchaicHirakatas(true)
+            .withReplaceSmallHirakatas(true)
             .withReplaceSpaces(true)
             .withToHalfwidth(.enabled)
 
         XCTAssertTrue(recipe.kanjiOldNew)
+        XCTAssertEqual(recipe.hiraKata, .hiraToKata)
+        XCTAssertTrue(recipe.replaceJapaneseIterationMarks)
+        XCTAssertTrue(recipe.replaceArchaicHirakatas)
+        XCTAssertTrue(recipe.replaceSmallHirakatas)
         XCTAssertTrue(recipe.replaceSpaces)
         XCTAssertTrue(recipe.toHalfwidth.isEnabled)
 
@@ -450,6 +525,22 @@ final class TransliterationRecipeTests: XCTestCase {
         let recipe2 = recipe.withKanjiOldNew(false)
         XCTAssertFalse(recipe2.kanjiOldNew)
         XCTAssertTrue(recipe.kanjiOldNew) // Original should be unchanged
+
+        let recipe3 = recipe.withHiraKata(nil)
+        XCTAssertNil(recipe3.hiraKata)
+        XCTAssertEqual(recipe.hiraKata, .hiraToKata) // Original should be unchanged
+
+        let recipe4 = recipe.withReplaceJapaneseIterationMarks(false)
+        XCTAssertFalse(recipe4.replaceJapaneseIterationMarks)
+        XCTAssertTrue(recipe.replaceJapaneseIterationMarks) // Original should be unchanged
+
+        let recipe5 = recipe.withReplaceArchaicHirakatas(false)
+        XCTAssertFalse(recipe5.replaceArchaicHirakatas)
+        XCTAssertTrue(recipe.replaceArchaicHirakatas) // Original should be unchanged
+
+        let recipe6 = recipe.withReplaceSmallHirakatas(false)
+        XCTAssertFalse(recipe6.replaceSmallHirakatas)
+        XCTAssertTrue(recipe.replaceSmallHirakatas) // Original should be unchanged
     }
 
     // MARK: - Edge Cases

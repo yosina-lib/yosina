@@ -134,6 +134,50 @@ public enum ConvertHistoricalHirakatasMode {
 /// using high-level options that are automatically converted to the appropriate
 /// transliterator configurations.
 public struct TransliterationRecipe: TransliteratorFactory {
+    public init(
+        kanjiOldNew: Bool = false,
+        hiraKata: HiraKataTransliterator.Mode? = nil,
+        replaceJapaneseIterationMarks: Bool = false,
+        replaceSuspiciousHyphensToProlongedSoundMarks: Bool = false,
+        replaceCombinedCharacters: Bool = false,
+        replaceCircledOrSquaredCharacters: ReplaceCircledOrSquaredCharactersOptions = .disabled,
+        replaceIdeographicAnnotations: Bool = false,
+        replaceRadicals: Bool = false,
+        replaceSpaces: Bool = false,
+        replaceHyphens: ReplaceHyphensOptions = .disabled,
+        replaceMathematicalAlphanumerics: Bool = false,
+        replaceRomanNumerals: Bool = false,
+        replaceArchaicHirakatas: Bool = false,
+        replaceSmallHirakatas: Bool = false,
+        combineDecomposedHiraganasAndKatakanas: Bool = false,
+        toFullwidth: ToFullwidthOptions = .disabled,
+        toHalfwidth: ToHalfwidthOptions = .disabled,
+        removeIvsSvs: RemoveIvsSvsOptions = .disabled,
+        convertHistoricalHirakatas: ConvertHistoricalHirakatasMode? = nil,
+        charset: IvsSvsBaseTransliterator.Charset = .unijis2004
+    ) {
+        self.kanjiOldNew = kanjiOldNew
+        self.hiraKata = hiraKata
+        self.replaceJapaneseIterationMarks = replaceJapaneseIterationMarks
+        self.replaceSuspiciousHyphensToProlongedSoundMarks = replaceSuspiciousHyphensToProlongedSoundMarks
+        self.replaceCombinedCharacters = replaceCombinedCharacters
+        self.replaceCircledOrSquaredCharacters = replaceCircledOrSquaredCharacters
+        self.replaceIdeographicAnnotations = replaceIdeographicAnnotations
+        self.replaceRadicals = replaceRadicals
+        self.replaceSpaces = replaceSpaces
+        self.replaceHyphens = replaceHyphens
+        self.replaceMathematicalAlphanumerics = replaceMathematicalAlphanumerics
+        self.replaceRomanNumerals = replaceRomanNumerals
+        self.replaceArchaicHirakatas = replaceArchaicHirakatas
+        self.replaceSmallHirakatas = replaceSmallHirakatas
+        self.combineDecomposedHiraganasAndKatakanas = combineDecomposedHiraganasAndKatakanas
+        self.toFullwidth = toFullwidth
+        self.toHalfwidth = toHalfwidth
+        self.removeIvsSvs = removeIvsSvs
+        self.convertHistoricalHirakatas = convertHistoricalHirakatas
+        self.charset = charset
+    }
+
     /// Replace codepoints that correspond to old-style kanji glyphs (旧字体; kyu-ji-tai)
     /// with their modern equivalents (新字体; shin-ji-tai).
     ///
@@ -527,6 +571,18 @@ public extension TransliterationRecipe {
         return recipe
     }
 
+    func withHiraKata(_ value: HiraKataTransliterator.Mode?) -> TransliterationRecipe {
+        var recipe = self
+        recipe.hiraKata = value
+        return recipe
+    }
+
+    func withReplaceJapaneseIterationMarks(_ value: Bool) -> TransliterationRecipe {
+        var recipe = self
+        recipe.replaceJapaneseIterationMarks = value
+        return recipe
+    }
+
     func withReplaceSuspiciousHyphensToProlongedSoundMarks(_ value: Bool) -> TransliterationRecipe {
         var recipe = self
         recipe.replaceSuspiciousHyphensToProlongedSoundMarks = value
@@ -578,6 +634,18 @@ public extension TransliterationRecipe {
     func withReplaceRomanNumerals(_ value: Bool) -> TransliterationRecipe {
         var recipe = self
         recipe.replaceRomanNumerals = value
+        return recipe
+    }
+
+    func withReplaceArchaicHirakatas(_ value: Bool) -> TransliterationRecipe {
+        var recipe = self
+        recipe.replaceArchaicHirakatas = value
+        return recipe
+    }
+
+    func withReplaceSmallHirakatas(_ value: Bool) -> TransliterationRecipe {
+        var recipe = self
+        recipe.replaceSmallHirakatas = value
         return recipe
     }
 
