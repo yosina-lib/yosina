@@ -164,6 +164,23 @@ CJK部首文字を対応する表意文字に変換します。
 様々なUnicode空白文字を標準ASCII空白に正規化します。
 - 例: `A　B` (表意文字空白) → `A B`
 
+### 15. **ローマ数字** (`roman-numerals`)
+Unicodeのローマ数字文字を対応するASCII文字に変換します。
+- 例: `Ⅰ Ⅱ Ⅲ` → `I II III`、`ⅰ ⅱ ⅲ` → `i ii iii`
+
+### 16. **小書きひらがな・カタカナ** (`small-hirakatas`)
+小書きのひらがな・カタカナを通常サイズの等価文字に変換します。
+- 例: `ぁぃぅ` → `あいう`、`ァィゥ` → `アイウ`
+
+### 17. **変体仮名** (`archaic-hirakatas`)
+変体仮名（古い仮名文字）を現代のひらがな・カタカナに変換します。
+- 例: `𛀁` → `え`
+
+### 18. **歴史的仮名** (`historical-hirakatas`)
+歴史的なひらがな・カタカナを現代の等価文字に変換します。
+- オプション: `hiraganas` ("simple"、"decompose"、"skip")、`katakanas` ("simple"、"decompose"、"skip")、`voicedKatakanas` ("decompose"、"skip")
+- 例: `ゐ` → `い` (simple)、`ゐ` → `うぃ` (decompose)、`ヰ` → `イ` (simple)
+
 ## 開発
 
 ### テスト

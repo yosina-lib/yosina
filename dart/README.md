@@ -153,6 +153,19 @@ Normalizes various Unicode space characters to standard ASCII space.
 Converts Unicode Roman numeral characters to their ASCII letter equivalents.
 - Example: `Ⅰ Ⅱ Ⅲ` → `I II III`, `ⅰ ⅱ ⅲ` → `i ii iii`
 
+### 16. **Small Hirakatas** (`smallHirakatas`)
+Converts small hiragana and katakana characters to their ordinary-sized equivalents.
+- Example: `ぁぃぅ` → `あいう`, `ァィゥ` → `アイウ`
+
+### 17. **Archaic Hirakatas** (`archaicHirakatas`)
+Converts archaic kana (hentaigana) to their modern hiragana or katakana equivalents.
+- Example: `𛀁` → `え`
+
+### 18. **Historical Hirakatas** (`historicalHirakatas`)
+Converts historical hiragana and katakana characters to their modern equivalents.
+- Options: `hiraganas` ("simple", "decompose", or "skip"), `katakanas` ("simple", "decompose", or "skip"), `voicedKatakanas` ("decompose" or "skip")
+- Example: `ゐ` → `い` (simple), `ゐ` → `うぃ` (decompose), `ヰ` → `イ` (simple)
+
 ## Development
 
 ### Running Tests
