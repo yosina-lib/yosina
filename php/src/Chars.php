@@ -31,8 +31,8 @@ class Chars
             if ($prevChar !== null && $prevCodepoint !== null) {
                 // Check if current character is a variation selector
                 // Variation selectors are in ranges: U+FE00-U+FE0F, U+E0100-U+E01EF
-                if (($codepoint >= 0xFE00 && $codepoint <= 0xFE0F) ||
-                    ($codepoint >= 0xE0100 && $codepoint <= 0xE01EF)) {
+                if (($codepoint >= 0xFE00 && $codepoint <= 0xFE0F)
+                    || ($codepoint >= 0xE0100 && $codepoint <= 0xE01EF)) {
                     // Combine previous character with variation selector
                     $combinedChar = $prevChar . $char;
                     $result[] = new Char($combinedChar, $offset);

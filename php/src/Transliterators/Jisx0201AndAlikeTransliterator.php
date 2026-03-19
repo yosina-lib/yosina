@@ -233,9 +233,9 @@ class Jisx0201AndAlikeTransliterator implements TransliteratorInterface
                 'u005cAsYenSign' => $options['u005cAsYenSign'] ?? !isset($options['u005cAsBackslash']),
                 'u005cAsBackslash' => $options['u005cAsBackslash'] ?? false,
                 'u007eAsFullwidthTilde' => $options['u007eAsFullwidthTilde'] ?? (
-                    !isset($options['u007eAsWaveDash']) &&
-                    !isset($options['u007eAsOverline']) &&
-                    !isset($options['u007eAsFullwidthMacron'])
+                    !isset($options['u007eAsWaveDash'])
+                    && !isset($options['u007eAsOverline'])
+                    && !isset($options['u007eAsFullwidthMacron'])
                 ),
                 'u007eAsWaveDash' => $options['u007eAsWaveDash'] ?? false,
                 'u007eAsOverline' => $options['u007eAsOverline'] ?? false,

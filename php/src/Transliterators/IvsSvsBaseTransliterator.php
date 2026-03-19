@@ -235,8 +235,8 @@ class IvsSvsBaseTransliterator implements TransliteratorInterface
         $result = '';
         foreach ($chars as $c) {
             $codepoint = mb_ord($c, 'UTF-8');
-            if (!(($codepoint >= 0xFE00 && $codepoint <= 0xFE0F) ||
-                  ($codepoint >= 0xE0100 && $codepoint <= 0xE01EF))) {
+            if (!(($codepoint >= 0xFE00 && $codepoint <= 0xFE0F)
+                  || ($codepoint >= 0xE0100 && $codepoint <= 0xE01EF))) {
                 $result .= $c;
             }
         }

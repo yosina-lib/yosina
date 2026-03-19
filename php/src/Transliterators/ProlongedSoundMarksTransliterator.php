@@ -195,8 +195,8 @@ class ProlongedSoundMarksTransliterator implements TransliteratorInterface
                 $lastNonProlongedChar = [$char, $this->getCharType($codepoint)];
 
                 // Check if we should replace with hyphens for alphanumerics
-                if (($prevNonProlongedChar === null || $this->isAlnum($prevNonProlongedChar[1])) &&
-                    (!$this->skipAlreadyTransliteratedChars || !$processedCharsInLookahead)) {
+                if (($prevNonProlongedChar === null || $this->isAlnum($prevNonProlongedChar[1]))
+                    && (!$this->skipAlreadyTransliteratedChars || !$processedCharsInLookahead)) {
 
                     $replacement = ($prevNonProlongedChar === null
                                     ? $this->isHalfwidth($lastNonProlongedChar[1])
