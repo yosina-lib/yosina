@@ -1,0 +1,16 @@
+# Historical Hirakatas Transliterator (simple mode)
+#
+# Converts historical hiragana/katakana characters to their modern equivalents.
+# This is the "simple" conversion mode. The "decompose" mode would require
+# separate rule files.
+#
+# Note: Voiced historical katakana (ヷ, ヸ, ヹ, ヺ) are left unchanged
+# in the default configuration (voiced_katakanas="skip").
+
+# Historical hiragana → modern equivalents
+\u3090 > \u3044; # ゐ → い
+\u3091 > \u3048; # ゑ → え
+
+# Historical katakana → modern equivalents
+\u30F0 > \u30A4; # ヰ → イ
+\u30F1 > \u30A8; # ヱ → エ

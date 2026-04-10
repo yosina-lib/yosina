@@ -60,6 +60,12 @@ Yosina is available in multiple programming languages:
 - **[Swift](swift/)** - Swift implementation with Swift Package Manager support (Swift 5.0+)
 - **[Dart](dart/)** - Dart implementation for Flutter and Dart applications (Dart 3.0+)
 
+### ICU Transliteration Rules
+
+Yosina transliterators are also available as [ICU](https://icu.unicode.org/) transliteration rule files, for use with ICU4C, ICU4J, or any other ICU implementation. This allows integrating Yosina's transformations into systems that already use the ICU transliteration framework, without depending on Yosina as a library.
+
+The ICU rules cover all 18 transliterators, though some have simplified behavior compared to the native implementations (e.g. fixed default options, no runtime configuration). See [`icu/README.md`](icu/README.md) for details on coverage and limitations.
+
 ## Quick Start
 
 ### JavaScript/TypeScript
@@ -283,6 +289,83 @@ final recipe = TransliterationRecipe(
 final transliterator = makeTransliterator(recipe);
 final result = transliterator('some japanese text');
 print(result);
+```
+
+### ICU4C (C++)
+
+```cpp
+#include <unicode/translit.h>
+#include <unicode/unistr.h>
+#include <fstream>
+#include <sstream>
+#include <memory>
+#include <string>
+
+std::string loadRules(const std::string& filename) {
+    std::ifstream file(filename);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
+
+// Create a transliterator from a rule file and register it globally.
+// registerInstance() takes ownership, so a clone is returned for immediate use.
+std::unique_ptr<icu::Transliterator> createAndRegister(
+        const char* id, const std::string& filename) {
+    UErrorCode status = U_ZERO_ERROR;
+    UParseError parseError;
+    icu::UnicodeString rules = icu::UnicodeString::fromUTF8(loadRules(filename));
+    std::unique_ptr<icu::Transliterator> t(
+        icu::Transliterator::createFromRules(
+            id, rules, UTRANS_FORWARD, parseError, status));
+    std::unique_ptr<icu::Transliterator> clone(t->clone());
+    icu::Transliterator::registerInstance(t.release());
+    return clone;
+}
+
+// Load and register individual transliterators
+auto spaces = createAndRegister("Yosina-Spaces", "icu/rules/spaces.txt");
+auto kanji = createAndRegister("Yosina-KanjiOldNew", "icu/rules/kanji_old_new.txt");
+auto fw2hw = createAndRegister("Yosina-Fw2Hw", "icu/rules/jisx0201_and_alike.txt");
+
+// Chain them into a pipeline using registered IDs
+UErrorCode status = U_ZERO_ERROR;
+std::unique_ptr<icu::Transliterator> pipeline(
+    icu::Transliterator::createInstance(
+        "Yosina-Spaces; Yosina-KanjiOldNew; Yosina-Fw2Hw",
+        UTRANS_FORWARD, status));
+
+icu::UnicodeString text = icu::UnicodeString::fromUTF8(u8"東京醫科大學\u3000附屬病院");
+pipeline->transliterate(text);
+// → "東京医科大学 附属病院" (old kanji modernized, ideographic space normalized)
+```
+
+### ICU4J (Java)
+
+```java
+import com.ibm.icu.text.Transliterator;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+// Load transliterators from rule files and register them globally
+String spacesRules = Files.readString(Path.of("icu/rules/spaces.txt"));
+Transliterator.registerInstance(Transliterator.createFromRules(
+    "Yosina-Spaces", spacesRules, Transliterator.FORWARD));
+
+String kanjiRules = Files.readString(Path.of("icu/rules/kanji_old_new.txt"));
+Transliterator.registerInstance(Transliterator.createFromRules(
+    "Yosina-KanjiOldNew", kanjiRules, Transliterator.FORWARD));
+
+String fw2hwRules = Files.readString(Path.of("icu/rules/jisx0201_and_alike.txt"));
+Transliterator.registerInstance(Transliterator.createFromRules(
+    "Yosina-Fw2Hw", fw2hwRules, Transliterator.FORWARD));
+
+// Chain them into a pipeline using registered IDs
+Transliterator pipeline = Transliterator.getInstance(
+    "Yosina-Spaces; Yosina-KanjiOldNew; Yosina-Fw2Hw");
+
+String result = pipeline.transliterate("東京醫科大學\u3000附屬病院");
+// → "東京医科大学 附属病院" (old kanji modernized, ideographic space normalized)
 ```
 
 ## Project Scope and Limitations

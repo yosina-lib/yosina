@@ -60,6 +60,12 @@ Yosinaは複数のプログラミング言語で利用可能です：
 - **[Swift](swift/)** - Swift Package ManagerをサポートするSwift実装 (Swift 5.0+)
 - **[Dart](dart/)** - FlutterおよびDartアプリケーション向けのDart実装 (Dart 3.0+)
 
+### ICU 音訳ルール
+
+Yosinaの各トランスリテレーターは、[ICU](https://icu.unicode.org/) 音訳ルールファイルとしても提供されています。ICU4C、ICU4J、その他のICU実装から利用でき、Yosinaをライブラリとして組み込むことなく、ICUの音訳フレームワーク上でYosinaの変換を利用できます。
+
+ICUルールは18種類すべてのトランスリテレーターをカバーしていますが、一部はネイティブ実装と比べて簡略化された動作となっています（デフォルトオプション固定、実行時設定不可など）。カバレッジと制限事項の詳細は [`icu/README.md`](icu/README.md) を参照してください。
+
 ## クイックスタート
 
 ### JavaScript/TypeScript
@@ -283,6 +289,83 @@ final recipe = TransliterationRecipe(
 final transliterator = makeTransliterator(recipe);
 final result = transliterator('日本語のテキスト');
 print(result);
+```
+
+### ICU4C (C++)
+
+```cpp
+#include <unicode/translit.h>
+#include <unicode/unistr.h>
+#include <fstream>
+#include <sstream>
+#include <memory>
+#include <string>
+
+std::string loadRules(const std::string& filename) {
+    std::ifstream file(filename);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
+
+// ルールファイルからトランスリテレーターを作成しグローバル登録する。
+// registerInstance()が所有権を取得するため、即時利用にはcloneを返す。
+std::unique_ptr<icu::Transliterator> createAndRegister(
+        const char* id, const std::string& filename) {
+    UErrorCode status = U_ZERO_ERROR;
+    UParseError parseError;
+    icu::UnicodeString rules = icu::UnicodeString::fromUTF8(loadRules(filename));
+    std::unique_ptr<icu::Transliterator> t(
+        icu::Transliterator::createFromRules(
+            id, rules, UTRANS_FORWARD, parseError, status));
+    std::unique_ptr<icu::Transliterator> clone(t->clone());
+    icu::Transliterator::registerInstance(t.release());
+    return clone;
+}
+
+// 個別のトランスリテレーターをロード・登録
+auto spaces = createAndRegister("Yosina-Spaces", "icu/rules/spaces.txt");
+auto kanji = createAndRegister("Yosina-KanjiOldNew", "icu/rules/kanji_old_new.txt");
+auto fw2hw = createAndRegister("Yosina-Fw2Hw", "icu/rules/jisx0201_and_alike.txt");
+
+// 登録済みIDを使ってパイプラインを構成
+UErrorCode status = U_ZERO_ERROR;
+std::unique_ptr<icu::Transliterator> pipeline(
+    icu::Transliterator::createInstance(
+        "Yosina-Spaces; Yosina-KanjiOldNew; Yosina-Fw2Hw",
+        UTRANS_FORWARD, status));
+
+icu::UnicodeString text = icu::UnicodeString::fromUTF8(u8"東京醫科大學\u3000附屬病院");
+pipeline->transliterate(text);
+// → "東京医科大学 附属病院" (旧字体を新字体に変換、全角スペースを正規化)
+```
+
+### ICU4J (Java)
+
+```java
+import com.ibm.icu.text.Transliterator;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+// ルールファイルからトランスリテレーターをロード・グローバル登録
+String spacesRules = Files.readString(Path.of("icu/rules/spaces.txt"));
+Transliterator.registerInstance(Transliterator.createFromRules(
+    "Yosina-Spaces", spacesRules, Transliterator.FORWARD));
+
+String kanjiRules = Files.readString(Path.of("icu/rules/kanji_old_new.txt"));
+Transliterator.registerInstance(Transliterator.createFromRules(
+    "Yosina-KanjiOldNew", kanjiRules, Transliterator.FORWARD));
+
+String fw2hwRules = Files.readString(Path.of("icu/rules/jisx0201_and_alike.txt"));
+Transliterator.registerInstance(Transliterator.createFromRules(
+    "Yosina-Fw2Hw", fw2hwRules, Transliterator.FORWARD));
+
+// 登録済みIDを使ってパイプラインを構成
+Transliterator pipeline = Transliterator.getInstance(
+    "Yosina-Spaces; Yosina-KanjiOldNew; Yosina-Fw2Hw");
+
+String result = pipeline.transliterate("東京醫科大學\u3000附屬病院");
+// → "東京医科大学 附属病院" (旧字体を新字体に変換、全角スペースを正規化)
 ```
 
 ## プロジェクトの範囲と制限
