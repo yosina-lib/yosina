@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.yosina.examples'
+version = '0.1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.ibm.icu:icu4j:74.2'
+}
+
+application {
+    mainClass = 'com.yosina.examples.BasicUsage'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}

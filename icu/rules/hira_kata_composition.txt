@@ -1,0 +1,83 @@
+# Hiragana-Katakana Composition Transliterator
+#
+# This transliterator composes base characters with non-combining voiced/semi-voiced marks:
+# - Non-combining voiced sound mark (゛ U+309B)
+# - Non-combining semi-voiced sound mark (゜ U+309C)
+#
+# Note: Combining marks (U+3099, U+309A) are intentionally NOT handled here
+# because ICU can compose those via standard Unicode normalization (NFC).
+# Chain this transliterator with ::NFC; to handle both.
+
+# Hiragana voiced combinations (゛ U+309B)
+か\u309B > が;
+き\u309B > ぎ;
+く\u309B > ぐ;
+け\u309B > げ;
+こ\u309B > ご;
+
+さ\u309B > ざ;
+し\u309B > じ;
+す\u309B > ず;
+せ\u309B > ぜ;
+そ\u309B > ぞ;
+
+た\u309B > だ;
+ち\u309B > ぢ;
+つ\u309B > づ;
+て\u309B > で;
+と\u309B > ど;
+
+は\u309B > ば;
+ひ\u309B > び;
+ふ\u309B > ぶ;
+へ\u309B > べ;
+ほ\u309B > ぼ;
+
+う\u309B > ゔ;
+ゝ\u309B > ゞ;
+
+# Hiragana semi-voiced combinations (゜ U+309C)
+は\u309C > ぱ;
+ひ\u309C > ぴ;
+ふ\u309C > ぷ;
+へ\u309C > ぺ;
+ほ\u309C > ぽ;
+
+# Katakana voiced combinations (゛ U+309B)
+カ\u309B > ガ;
+キ\u309B > ギ;
+ク\u309B > グ;
+ケ\u309B > ゲ;
+コ\u309B > ゴ;
+
+サ\u309B > ザ;
+シ\u309B > ジ;
+ス\u309B > ズ;
+セ\u309B > ゼ;
+ソ\u309B > ゾ;
+
+タ\u309B > ダ;
+チ\u309B > ヂ;
+ツ\u309B > ヅ;
+テ\u309B > デ;
+ト\u309B > ド;
+
+ハ\u309B > バ;
+ヒ\u309B > ビ;
+フ\u309B > ブ;
+ヘ\u309B > ベ;
+ホ\u309B > ボ;
+
+ウ\u309B > ヴ;
+ワ\u309B > ヷ;
+ヰ\u309B > ヸ;
+ヱ\u309B > ヹ;
+ヲ\u309B > ヺ;
+ヽ\u309B > ヾ;
+
+# Katakana semi-voiced combinations (゜ U+309C)
+ハ\u309C > パ;
+ヒ\u309C > ピ;
+フ\u309C > プ;
+ヘ\u309C > ペ;
+ホ\u309C > ポ;

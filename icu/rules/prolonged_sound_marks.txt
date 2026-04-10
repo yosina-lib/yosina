@@ -1,0 +1,22 @@
+# Prolonged Sound Marks Transliterator
+# ICU implementation for context-aware prolonged sound mark replacement
+#
+# This transliterator replaces hyphen-like characters with appropriate
+# prolonged sound marks (ー or ｰ) when they appear after katakana
+# characters that can be prolonged.
+#
+# Note: This is a simplified version. The full implementation supports
+# additional options (e.g., hiragana context, hatsuon/sokuon handling).
+
+# Define character sets
+$katakana = [ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲヴヵヶヷヸヹヺンッ\u30FC];
+$halfwidth_katakana = [ｦｧｨｩｪｫｬｭｮｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝｯ\uFF70];
+
+# Hyphen-like characters (excluding prolonged sound marks themselves)
+$hyphen_like = [\u002D\u2010\u2014\u2015\u2212\uFF0D];
+
+# Replace hyphen-like chars after fullwidth katakana with fullwidth prolonged mark
+$katakana { $hyphen_like > \u30FC;
+
+# Replace hyphen-like chars after halfwidth katakana with halfwidth prolonged mark
+$halfwidth_katakana { $hyphen_like > \uFF70;

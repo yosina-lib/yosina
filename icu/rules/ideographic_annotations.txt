@@ -1,0 +1,17 @@
+# ideographic_annotations transliterator
+# Generated from yosina data
+
+\u3192 > \u4E00;
+\u3193 > \u4E8C;
+\u3194 > \u4E09;
+\u3195 > \u56DB;
+\u3196 > \u4E0A;
+\u3197 > \u4E2D;
+\u3198 > \u4E0B;
+\u3199 > \u7532;
+\u319A > \u4E59;
+\u319B > \u4E19;
+\u319C > \u4E01;
+\u319D > \u5929;
+\u319E > \u5730;
+\u319F > \u4EBA;
