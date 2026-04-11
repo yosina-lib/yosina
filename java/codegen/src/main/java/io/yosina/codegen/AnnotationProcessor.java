@@ -17,9 +17,16 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
+/**
+ * Annotation processor that collects classes annotated with {@code RegisteredTransliterator} and
+ * writes a manifest resource listing their names and qualified class names.
+ */
 @SupportedAnnotationTypes("io.yosina.annotations.RegisteredTransliterator")
 @SupportedSourceVersion(javax.lang.model.SourceVersion.RELEASE_17)
 public class AnnotationProcessor extends AbstractProcessor {
+    /** Constructs a new {@code AnnotationProcessor}. */
+    public AnnotationProcessor() {}
+
     private static final String TRANSLITERATOR_ANNOTATION_TYPE =
             "io.yosina.annotations.RegisteredTransliterator";
     private static final String TRANSLITERATORS_PACKAGE = "io.yosina.transliterators";

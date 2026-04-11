@@ -14,6 +14,15 @@ import java.util.stream.Collectors;
 public class Main {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    /** Utility class; do not instantiate. */
+    private Main() {}
+
+    /**
+     * Entry point for the code generator.
+     *
+     * @param args command-line arguments (unused)
+     * @throws IOException if an I/O error occurs during code generation
+     */
     public static void main(String[] args) throws IOException {
         // Find project root by looking for build.gradle
         Path projectRoot = findProjectRoot();

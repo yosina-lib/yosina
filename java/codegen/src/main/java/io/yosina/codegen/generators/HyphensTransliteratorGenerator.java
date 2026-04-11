@@ -293,6 +293,11 @@ public class HyphensTransliterator implements Transliterator {
 
     private final List<HyphensRecord> records;
 
+    /**
+     * Constructs a {@code HyphensTransliteratorGenerator} with the given records.
+     *
+     * @param records the list of hyphen replacement records
+     */
     public HyphensTransliteratorGenerator(List<HyphensRecord> records) {
         this.records = records;
     }
@@ -319,6 +324,11 @@ public class HyphensTransliterator implements Transliterator {
         return sb.toString();
     }
 
+    /**
+     * Renders the mapping entries as Java source code statements.
+     *
+     * @return a string containing the Java source code for mapping entries
+     */
     public String renderMappingEntries() {
         StringBuilder sb = new StringBuilder();
         for (HyphensRecord record : records) {

@@ -131,6 +131,13 @@ public class %1$s implements Transliterator {
     private final String className;
     private final String name;
 
+    /**
+     * Constructs a {@code CombinedTransliteratorGenerator} with the given mappings and names.
+     *
+     * @param mappings the character mappings from Unicode notation to replacement strings
+     * @param className the simple class name for the generated transliterator
+     * @param name the transliterator identifier name used for the resource file
+     */
     public CombinedTransliteratorGenerator(
             Map<String, String> mappings, String className, String name) {
         this.mappings = mappings;

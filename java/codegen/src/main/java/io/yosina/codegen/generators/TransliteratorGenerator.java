@@ -5,10 +5,19 @@ import java.util.List;
 
 /** Base class for transliterator generators. */
 public interface TransliteratorGenerator {
-    /** Generates the transliterator file. */
+    /**
+     * Generates the transliterator file.
+     *
+     * @return a list of generated {@link Artifact} instances
+     */
     public List<Artifact> generate();
 
-    /** Converts snake_case to PascalCase. */
+    /**
+     * Converts a snake_case string to PascalCase.
+     *
+     * @param snakeCase the snake_case string to convert
+     * @return the PascalCase equivalent
+     */
     public static String toCamelCase(String snakeCase) {
         StringBuilder result = new StringBuilder();
         boolean capitalizeNext = true;

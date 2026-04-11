@@ -75,38 +75,90 @@ public class HyphensRecord {
 
     private int jisx0208_verbatim;
 
+    /**
+     * Returns the Unicode code point of this hyphen character.
+     *
+     * @return the Unicode code point
+     */
     public int getCode() {
         return code;
     }
 
+    /**
+     * Returns the Unicode name of this hyphen character.
+     *
+     * @return the character name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the ASCII equivalent code points for this hyphen.
+     *
+     * @return the ASCII code points, or {@code null} if not applicable
+     */
     public int[] getAscii() {
         return ascii;
     }
 
+    /**
+     * Returns the Shift-JIS byte sequence for this hyphen.
+     *
+     * @return the Shift-JIS bytes as integers
+     */
     public int[] getShiftJis() {
         return shiftJis;
     }
 
+    /**
+     * Returns the JIS X 0201 equivalent code points for this hyphen.
+     *
+     * @return the JIS X 0201 code points, or {@code null} if not applicable
+     */
     public int[] getJisx0201() {
         return jisx0201;
     }
 
+    /**
+     * Returns the JIS X 0208-1978 equivalent code points for this hyphen.
+     *
+     * @return the JIS X 0208-1978 code points, or {@code null} if not applicable
+     */
     public int[] getJisx0208_1978() {
         return jisx0208_1978;
     }
 
+    /**
+     * Returns the JIS X 0208-1978 (Windows variant) equivalent code points for this hyphen.
+     *
+     * @return the JIS X 0208-1978 Windows code points, or {@code null} if not applicable
+     */
     public int[] getJisx0208_1978_windows() {
         return jisx0208_1978_windows;
     }
 
+    /**
+     * Returns the verbatim JIS X 0208 code point for this hyphen.
+     *
+     * @return the verbatim JIS X 0208 code point
+     */
     public int getJisx0208_verbatim() {
         return jisx0208_verbatim;
     }
 
+    /**
+     * Constructs a {@code HyphensRecord} with all hyphen encoding fields.
+     *
+     * @param code the Unicode code point
+     * @param name the Unicode character name
+     * @param ascii the ASCII equivalent code points
+     * @param shiftJis the Shift-JIS byte sequence
+     * @param jisx0201 the JIS X 0201 equivalent code points
+     * @param jisx0208_1978 the JIS X 0208-1978 equivalent code points
+     * @param jisx0208_1978_windows the JIS X 0208-1978 Windows variant code points
+     * @param jisx0208_verbatim the verbatim JIS X 0208 code point
+     */
     public HyphensRecord(
             int code,
             String name,
