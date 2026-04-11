@@ -561,7 +561,7 @@ update-version:
 	@sed -i.bak 's/yosina: \^[0-9.]*/yosina: ^$(VERSION)/' dart/README.md dart/README.ja.md && rm dart/README.md.bak dart/README.ja.md.bak
 	@sed -i.bak "s/\(io.yosina:yosina:\)[^']*'/\1$(VERSION)'/" java/README.md java/README.ja.md && rm java/README.md.bak java/README.ja.md.bak
 	@sed -i.bak 's/yosina = "[^"]*"/yosina = "$(VERSION)"/' rust/README.md rust/README.ja.md && rm rust/README.md.bak rust/README.ja.md.bak
-	@sed -i.bak 's/from: "[^"]*"/from: "$(VERSION)"/' swift/README.md && rm swift/README.md.bak
+	@sed -i.bak 's/from: "[^"]*"/from: "$(VERSION)"/' swift/README.md swift/README.ja.md && rm swift/README.md.bak swift/README.ja.md.bak
 	@cd javascript && npm update @yosina-lib/yosina
 	@cd python && uv lock
 	@cd rust && cargo update
