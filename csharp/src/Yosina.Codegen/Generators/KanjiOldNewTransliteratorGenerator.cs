@@ -38,7 +38,9 @@ public static class KanjiOldNewTransliteratorGenerator
 #pragma warning disable MA0051 // Method is too long
     private static string GenerateTemplate(string className, string registrationName, string description, string mappingsDict)
     {
-        return $@"using CodePointTuple = (int First, int Second);
+        return $@"// Copyright (c) Yosina. All rights reserved.
+
+using CodePointTuple = (int First, int Second);
 
 namespace Yosina.Transliterators;
 

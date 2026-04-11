@@ -255,7 +255,7 @@ codegen-php: $(PHP_GENERATED)
 
 $(CSHARP_GENERATED) &:: $(DATA_FILES)
 	@echo -e "$(BLUE)Generating C# code...$(NC)"
-	@cd csharp && dotnet run --project src/Yosina.Codegen/Yosina.Codegen.csproj && $(MAKE) format
+	@cd csharp && $(MAKE) codegen
 	@echo -e "$(GREEN)✓ C# code generation complete$(NC)"
 
 .PHONY: codegen-csharp
