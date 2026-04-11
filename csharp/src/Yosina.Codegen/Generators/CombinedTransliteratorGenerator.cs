@@ -35,7 +35,9 @@ public static class CombinedTransliteratorGenerator
 
     private static string GenerateTemplate(string className, string registrationName, string description, string mappingsDict)
     {
-        return $@"namespace Yosina.Transliterators;
+        return $@"// Copyright (c) Yosina. All rights reserved.
+
+namespace Yosina.Transliterators;
 
 /// <summary>
 /// {description}
