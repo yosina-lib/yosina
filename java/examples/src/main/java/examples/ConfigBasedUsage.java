@@ -14,6 +14,14 @@ import io.yosina.transliterators.ProlongedSoundMarksTransliterator;
  * This example demonstrates using direct transliterator configurations.
  */
 public class ConfigBasedUsage {
+    /** Utility class; do not instantiate. */
+    private ConfigBasedUsage() {}
+
+    /**
+     * Runs the configuration-based usage examples.
+     *
+     * @param args command-line arguments (unused)
+     */
     public static void main(String[] args) {
         System.out.println("=== Yosina Java Configuration-based Usage Example ===\n");
 

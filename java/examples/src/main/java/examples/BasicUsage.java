@@ -10,6 +10,14 @@ import io.yosina.Yosina;
  * as shown in the README documentation.
  */
 public class BasicUsage {
+    /** Utility class; do not instantiate. */
+    private BasicUsage() {}
+
+    /**
+     * Runs the basic usage examples.
+     *
+     * @param args command-line arguments (unused)
+     */
     public static void main(String[] args) {
         System.out.println("=== Yosina Java Basic Usage Example ===\n");
 

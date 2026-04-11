@@ -265,6 +265,11 @@ public class %1$s implements Transliterator {
     private final Map<String, CircledOrSquaredRecord> mappings;
     private final String className = "CircledOrSquaredTransliterator";
 
+    /**
+     * Constructs a {@code CircledOrSquaredTransliteratorGenerator} with the given mappings.
+     *
+     * @param mappings the circled/squared character mappings keyed by Unicode notation
+     */
     public CircledOrSquaredTransliteratorGenerator(Map<String, CircledOrSquaredRecord> mappings) {
         this.mappings = mappings;
     }

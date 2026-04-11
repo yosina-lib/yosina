@@ -404,6 +404,11 @@ public class IvsSvsBaseTransliterator implements Transliterator {
 
     private final List<IvsSvsBaseRecord> records;
 
+    /**
+     * Generates the binary mapping data for the IVS/SVS base transliterator.
+     *
+     * @return a {@link ByteBuffer} containing the serialized mapping data
+     */
     public ByteBuffer generateMappingData() {
         final ByteBuffer b =
                 ByteBuffer.allocate(4 + 24 * records.size()).order(ByteOrder.BIG_ENDIAN);
@@ -431,6 +436,11 @@ public class IvsSvsBaseTransliterator implements Transliterator {
                 new Artifact(Artifact.Type.RESOURCE, Path.of(dataFileName), generateMappingData()));
     }
 
+    /**
+     * Constructs an {@code IvsSvsBaseTransliteratorGenerator} with the given records.
+     *
+     * @param records the list of IVS/SVS base mapping records
+     */
     public IvsSvsBaseTransliteratorGenerator(List<IvsSvsBaseRecord> records) {
         this.records = records;
     }

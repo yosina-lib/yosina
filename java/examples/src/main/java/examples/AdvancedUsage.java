@@ -15,6 +15,14 @@ import io.yosina.transliterators.ProlongedSoundMarksTransliterator;
  * This example demonstrates complex text processing scenarios.
  */
 public class AdvancedUsage {
+    /** Utility class; do not instantiate. */
+    private AdvancedUsage() {}
+
+    /**
+     * Runs the advanced usage examples.
+     *
+     * @param args command-line arguments (unused)
+     */
     public static void main(String[] args) {
         System.out.println("=== Advanced Yosina Java Usage Examples ===\n");
 

@@ -18,12 +18,23 @@ public class CodeGenerator {
     private final Path sourceDir;
     private final Path resourceDir;
 
+    /**
+     * Constructs a {@code CodeGenerator} that writes sources to {@code sourceDir} and resources to
+     * {@code resourceDir}.
+     *
+     * @param sourceDir the directory for generated Java source files
+     * @param resourceDir the directory for generated resource files
+     */
     public CodeGenerator(Path sourceDir, Path resourceDir) {
         this.sourceDir = sourceDir;
         this.resourceDir = resourceDir;
     }
 
-    /** Writes the generated content to a file. */
+    /**
+     * Writes the generated content to files under the source or resource directory.
+     *
+     * @param artifacts the list of artifacts to write
+     */
     protected void writeToFile(List<Artifact> artifacts) {
         for (Artifact artifact : artifacts) {
             final Path outputPath;
@@ -58,20 +69,36 @@ public class CodeGenerator {
         }
     }
 
-    /** Generates a simple transliterator that maps single characters to single characters. */
+    /**
+     * Generates a simple transliterator that maps single characters to single characters.
+     *
+     * @param name the transliterator name (used for class and file naming)
+     * @param mappings the character mappings as arrays of code points
+     * @throws IOException if an I/O error occurs while writing the generated files
+     */
     public void generateSimpleTransliterator(String name, Map<int[], int[]> mappings)
             throws IOException {
         SimpleTransliteratorGenerator generator = new SimpleTransliteratorGenerator(name, mappings);
         writeToFile(generator.generate());
     }
 
-    /** Generates the hyphens transliterator. */
+    /**
+     * Generates the hyphens transliterator.
+     *
+     * @param records the list of hyphen replacement records
+     * @throws IOException if an I/O error occurs while writing the generated files
+     */
     public void generateHyphensTransliterator(List<HyphensRecord> records) throws IOException {
         HyphensTransliteratorGenerator generator = new HyphensTransliteratorGenerator(records);
         writeToFile(generator.generate());
     }
 
-    /** Generates the IVS/SVS base transliterator. */
+    /**
+     * Generates the IVS/SVS base transliterator.
+     *
+     * @param records the list of IVS/SVS base mapping records
+     * @throws IOException if an I/O error occurs while writing the generated files
+     */
     public void generateIvsSvsBaseTransliterator(List<IvsSvsBaseRecord> records)
             throws IOException {
         IvsSvsBaseTransliteratorGenerator generator =
@@ -79,7 +106,12 @@ public class CodeGenerator {
         writeToFile(generator.generate());
     }
 
-    /** Generates the kanji old-new transliterator. */
+    /**
+     * Generates the kanji old-new transliterator.
+     *
+     * @param records the list of kanji old-new form mapping records
+     * @throws IOException if an I/O error occurs while writing the generated files
+     */
     public void generateKanjiOldNewTransliterator(List<KanjiOldNewRecord> records)
             throws IOException {
         final Map<int[], int[]> records_ =
@@ -105,14 +137,24 @@ public class CodeGenerator {
         writeToFile(generator.generate());
     }
 
-    /** Generates the combined transliterator. */
+    /**
+     * Generates the combined transliterator.
+     *
+     * @param mappings the character mappings from Unicode notation to replacement strings
+     * @throws IOException if an I/O error occurs while writing the generated files
+     */
     public void generateCombinedTransliterator(Map<String, String> mappings) throws IOException {
         CombinedTransliteratorGenerator generator =
                 new CombinedTransliteratorGenerator(mappings, "CombinedTransliterator", "combined");
         writeToFile(generator.generate());
     }
 
-    /** Generates the circled-or-squared transliterator. */
+    /**
+     * Generates the circled-or-squared transliterator.
+     *
+     * @param mappings the circled/squared character mappings keyed by Unicode notation
+     * @throws IOException if an I/O error occurs while writing the generated files
+     */
     public void generateCircledOrSquaredTransliterator(Map<String, CircledOrSquaredRecord> mappings)
             throws IOException {
         CircledOrSquaredTransliteratorGenerator generator =
@@ -120,7 +162,12 @@ public class CodeGenerator {
         writeToFile(generator.generate());
     }
 
-    /** Generates the roman numerals transliterator. */
+    /**
+     * Generates the roman numerals transliterator.
+     *
+     * @param records the list of Roman numeral records
+     * @throws IOException if an I/O error occurs while writing the generated files
+     */
     public void generateRomanNumeralsTransliterator(List<RomanNumeralsRecord> records)
             throws IOException {
         // Convert records to a Map format similar to combined transliterator
