@@ -35,7 +35,9 @@ public static class CircledOrSquaredTransliteratorGenerator
 
     private static string GenerateTemplate(string className, string registrationName, string description, string mappingsDict)
     {
-        return $@"namespace Yosina.Transliterators;
+        return $@"// Copyright (c) Yosina. All rights reserved.
+
+namespace Yosina.Transliterators;
 
 /// <summary>
 /// {description}
@@ -163,7 +165,7 @@ public class {className} : ITransliterator
 
                 // Get template
                 string template = data.Type == CharType.Circle ? this.options.TemplateForCircled : this.options.TemplateForSquared;
-                var replacement = template.Replace(""?"", data.Rendering);
+                var replacement = template.Replace(""?"", data.Rendering, StringComparison.Ordinal);
 
                 if (string.IsNullOrEmpty(replacement))
                 {{

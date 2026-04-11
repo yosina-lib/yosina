@@ -1,4 +1,4 @@
-.PHONY: all build test format lint check clean restore
+.PHONY: all build test format lint check clean restore codegen
 
 # Default target
 all: format build test
@@ -34,6 +34,12 @@ lint: restore
 check: restore
 	@echo "Checking code format..."
 	@dotnet format --verify-no-changes --verbosity diagnostic
+
+# Run code generation
+codegen:
+	@echo "Running code generation..."
+	@dotnet run --project src/Yosina.Codegen/Yosina.Codegen.csproj
+	@$(MAKE) format
 
 # Clean build artifacts
 clean:
