@@ -1,7 +1,7 @@
 PATH
   remote: ../../ruby
   specs:
-    yosina (1.1.1)
+    yosina (1.1.2)
 
 GEM
   remote: https://rubygems.org/

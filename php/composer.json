@@ -1,7 +1,7 @@
 {
     "name": "yosina-lib/yosina",
     "description": "Japanese text transliteration library for PHP",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "type": "library",
     "license": "MIT",
     "authors": [
