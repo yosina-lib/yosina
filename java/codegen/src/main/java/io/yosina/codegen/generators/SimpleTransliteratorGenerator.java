@@ -65,6 +65,11 @@ public class SimpleTransliteratorGenerator implements TransliteratorGenerator {
     private final String name;
     private final Map<int[], int[]> mappings;
 
+    /**
+     * Build the binary data for the transliterator mappings.
+     *
+     * @return a ByteBuffer containing the serialized mappings
+     */
     public ByteBuffer buildData() {
         ByteBuffer buf = ByteBuffer.allocate(mappings.size() * 4 * 4).order(ByteOrder.BIG_ENDIAN);
         for (Map.Entry<int[], int[]> entry :
@@ -105,6 +110,12 @@ public class SimpleTransliteratorGenerator implements TransliteratorGenerator {
                 new Artifact(Artifact.Type.RESOURCE, Path.of(dataFileName), buildData()));
     }
 
+    /**
+     * Create a new SimpleTransliteratorGenerator.
+     *
+     * @param name the transliterator name
+     * @param rawMappings the raw codepoint mappings
+     */
     public SimpleTransliteratorGenerator(String name, Map<int[], int[]> rawMappings) {
         this.name = name;
         this.mappings = rawMappings;
