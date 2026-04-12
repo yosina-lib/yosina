@@ -501,7 +501,7 @@ $(JAVA_DOC_MARKER): $(JAVA_GENERATED)
 
 $(PHP_DOC_MARKER): $(PHP_GENERATED)
 	@echo -e "$(BLUE)Building PHP API docs...$(NC)"
-	@cd php && ./vendor/bin/phpdoc -d src -t docs --quiet
+	@cd php && composer run-script docs
 
 $(DART_DOC_MARKER): $(DART_GENERATED)
 	@echo -e "$(BLUE)Building Dart API docs...$(NC)"
