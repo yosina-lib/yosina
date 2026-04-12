@@ -433,7 +433,7 @@ JAVA_DOC_MARKER := java/build/docs/javadoc/index.html
 PHP_DOC_MARKER := php/docs/index.html
 GO_DOC_MARKER := go/docs/index.html
 DART_DOC_MARKER := dart/doc/api/index.html
-SWIFT_DOC_MARKER := swift/.build/documentation/yosina/index.html
+SWIFT_DOC_MARKER := swift/.build/documentation/index.html
 
 # Collected documentation markers
 JAVASCRIPT_COLLECTED := $(DOCS_DIR)/javascript/index.html
@@ -510,7 +510,7 @@ $(DART_COLLECTED): $(DART_DOC_MARKER)
 $(SWIFT_COLLECTED): $(SWIFT_DOC_MARKER)
 	@mkdir -p $(DOCS_DIR)
 	echo -e "$(YELLOW)Copying Swift API docs...$(NC)"; \
-	cp -r swift/.build/documentation/yosina $(DOCS_DIR)/swift; \
+	cp -r swift/.build/documentation $(DOCS_DIR)/swift; \
 	echo -e "$(GREEN)✓ Swift docs copied$(NC)"; \
 
 # Individual language documentation build rules
