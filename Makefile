@@ -324,6 +324,40 @@ $(SWIFT_CODEGEN_STAMP): $(DATA_FILES)
 .PHONY: codegen-swift
 codegen-swift: $(SWIFT_CODEGEN_STAMP)
 
+DOCS_DIR := _site/api
+
+# Documentation marker files (indicate successful build)
+JAVASCRIPT_DOC_MARKER := javascript/docs/index.html
+CSHARP_DOC_MARKER := csharp/docs/_site/index.html
+PYTHON_DOC_MARKER := python/docs/build/html/index.html
+RUBY_DOC_MARKER := ruby/doc/index.html
+RUST_DOC_MARKER := rust/target/doc/yosina/index.html
+JAVA_DOC_MARKER := java/build/docs/javadoc/index.html
+PHP_DOC_MARKER := php/docs/index.html
+GO_DOC_MARKER := go/docs/index.html
+DART_DOC_MARKER := dart/doc/api/index.html
+SWIFT_DOC_MARKER := swift/.build/documentation/index.html
+
+# Collected documentation markers
+JAVASCRIPT_COLLECTED := $(DOCS_DIR)/javascript/index.html
+CSHARP_COLLECTED := $(DOCS_DIR)/csharp/index.html
+PYTHON_COLLECTED := $(DOCS_DIR)/python/index.html
+RUBY_COLLECTED := $(DOCS_DIR)/ruby/index.html
+RUST_COLLECTED := $(DOCS_DIR)/rust/index.html
+JAVA_COLLECTED := $(DOCS_DIR)/java/index.html
+GO_COLLECTED := $(DOCS_DIR)/go/index.html
+PHP_COLLECTED := $(DOCS_DIR)/php/index.html
+DART_COLLECTED := $(DOCS_DIR)/dart/index.html
+SWIFT_COLLECTED := $(DOCS_DIR)/swift/index.html
+
+ALL_DOC_MARKERS := $(JAVASCRIPT_DOC_MARKER) $(CSHARP_DOC_MARKER) $(PYTHON_DOC_MARKER) \
+	$(RUBY_DOC_MARKER) $(RUST_DOC_MARKER) $(JAVA_DOC_MARKER) $(GO_DOC_MARKER) $(PHP_DOC_MARKER) \
+	$(DART_DOC_MARKER) $(SWIFT_DOC_MARKER)
+
+ALL_COLLECTED := $(JAVASCRIPT_COLLECTED) $(CSHARP_COLLECTED) $(PYTHON_COLLECTED) \
+	$(RUBY_COLLECTED) $(RUST_COLLECTED) $(JAVA_COLLECTED) $(GO_COLLECTED) $(PHP_COLLECTED) \
+	$(DART_COLLECTED) $(SWIFT_COLLECTED)
+
 # Documentation generation targets for individual languages
 .PHONY: docs-csharp
 docs-csharp: $(CSHARP_DOC_MARKER)
@@ -421,38 +455,6 @@ install-deps:
 	@echo -e "$(GREEN)✓ All dependencies installed$(NC)"
 
 # API Documentation targets
-DOCS_DIR := _site/api
-
-# Documentation marker files (indicate successful build)
-JAVASCRIPT_DOC_MARKER := javascript/docs/index.html
-CSHARP_DOC_MARKER := csharp/docs/_site/index.html
-PYTHON_DOC_MARKER := python/docs/build/html/index.html
-RUBY_DOC_MARKER := ruby/doc/index.html
-RUST_DOC_MARKER := rust/target/doc/yosina/index.html
-JAVA_DOC_MARKER := java/build/docs/javadoc/index.html
-PHP_DOC_MARKER := php/docs/index.html
-GO_DOC_MARKER := go/docs/index.html
-DART_DOC_MARKER := dart/doc/api/index.html
-SWIFT_DOC_MARKER := swift/.build/documentation/index.html
-
-# Collected documentation markers
-JAVASCRIPT_COLLECTED := $(DOCS_DIR)/javascript/index.html
-CSHARP_COLLECTED := $(DOCS_DIR)/csharp/index.html
-PYTHON_COLLECTED := $(DOCS_DIR)/python/index.html
-RUBY_COLLECTED := $(DOCS_DIR)/ruby/index.html
-RUST_COLLECTED := $(DOCS_DIR)/rust/index.html
-JAVA_COLLECTED := $(DOCS_DIR)/java/index.html
-PHP_COLLECTED := $(DOCS_DIR)/php/index.html
-DART_COLLECTED := $(DOCS_DIR)/dart/index.html
-SWIFT_COLLECTED := $(DOCS_DIR)/swift/index.html
-
-ALL_DOC_MARKERS := $(JAVASCRIPT_DOC_MARKER) $(CSHARP_DOC_MARKER) $(PYTHON_DOC_MARKER) \
-	$(RUBY_DOC_MARKER) $(RUST_DOC_MARKER) $(JAVA_DOC_MARKER) $(PHP_DOC_MARKER) \
-	$(DART_DOC_MARKER) $(SWIFT_DOC_MARKER)
-
-ALL_COLLECTED := $(JAVASCRIPT_COLLECTED) $(CSHARP_COLLECTED) $(PYTHON_COLLECTED) \
-	$(RUBY_COLLECTED) $(RUST_COLLECTED) $(JAVA_COLLECTED) $(GO_COLLECTED) $(PHP_COLLECTED) \
-	$(DART_COLLECTED) $(SWIFT_COLLECTED)
 
 # Main documentation target
 .PHONY: docs
@@ -494,6 +496,12 @@ $(JAVA_COLLECTED): $(JAVA_DOC_MARKER)
 	echo -e "$(YELLOW)Copying Java API docs...$(NC)"; \
 	cp -r java/build/docs/javadoc $(DOCS_DIR)/java; \
 	echo -e "$(GREEN)✓ Java docs copied$(NC)"; \
+
+$(GO_COLLECTED): $(GO_DOC_MARKER)
+	@mkdir -p $(DOCS_DIR)
+	echo -e "$(YELLOW)Copying Go API docs...$(NC)"; \
+	cp -r go/docs $(DOCS_DIR)/go; \
+	echo -e "$(GREEN)✓ Go docs copied$(NC)"; \
 
 $(PHP_COLLECTED): $(PHP_DOC_MARKER)
 	@mkdir -p $(DOCS_DIR)
@@ -537,6 +545,11 @@ $(RUST_DOC_MARKER): $(RUST_CODEGEN_STAMP)
 $(JAVA_DOC_MARKER): $(JAVA_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building Java API docs...$(NC)"
 	@cd java && gradle javadoc
+
+$(GO_DOC_MARKER): $(GO_CODEGEN_STAMP)
+	@echo -e "$(BLUE)Building Go API docs...$(NC)"
+	@mkdir -p go/docs
+	@cd go && go run github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest ./... | (cd internal/docgen && go run .) > docs/index.html
 
 $(PHP_DOC_MARKER): $(PHP_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building PHP API docs...$(NC)"
