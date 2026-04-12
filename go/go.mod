@@ -1,6 +1,6 @@
 module github.com/yosina-lib/yosina/go
 
-go 1.21.13
+go 1.22
 
 require (
 	github.com/alecthomas/mph v0.0.0-20240904185214-2a0c46a2ff46
