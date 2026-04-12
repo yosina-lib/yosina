@@ -3,3 +3,4 @@ Thumbs_DB
 *.swp
 *.swo
 _site
+.codegen-stamp

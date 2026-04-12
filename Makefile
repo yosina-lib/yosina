@@ -25,7 +25,7 @@ DATA_FILES := \
 	$(DATA_DIR)/archaic-hirakatas.json \
 	$(DATA_DIR)/small-hirakatas.json
 
-# Generated files for each language
+# Generated files for each language (used for clean targets)
 GO_GENERATED := \
 	go/transliterators/spaces/impl.go \
 	go/transliterators/radicals/impl.go \
@@ -178,6 +178,31 @@ SWIFT_GENERATED := \
 	swift/Sources/Yosina/Transliterators/ArchaicHirakatasTransliterator.swift \
 	swift/Sources/Yosina/Transliterators/SmallHirakatasTransliterator.swift \
 
+# Stamp files — each is touched after codegen runs; used to avoid re-running the
+# script once per generated file (the script produces all files in one invocation)
+GO_CODEGEN_STAMP         := go/.codegen-stamp
+JAVASCRIPT_CODEGEN_STAMP := javascript/.codegen-stamp
+PYTHON_CODEGEN_STAMP     := python/.codegen-stamp
+RUBY_CODEGEN_STAMP       := ruby/.codegen-stamp
+RUST_CODEGEN_STAMP       := rust/.codegen-stamp
+PHP_CODEGEN_STAMP        := php/.codegen-stamp
+CSHARP_CODEGEN_STAMP     := csharp/.codegen-stamp
+JAVA_CODEGEN_STAMP       := java/.codegen-stamp
+DART_CODEGEN_STAMP       := dart/.codegen-stamp
+SWIFT_CODEGEN_STAMP      := swift/.codegen-stamp
+
+ALL_CODEGEN_STAMPS := \
+	$(GO_CODEGEN_STAMP) \
+	$(JAVASCRIPT_CODEGEN_STAMP) \
+	$(PYTHON_CODEGEN_STAMP) \
+	$(RUBY_CODEGEN_STAMP) \
+	$(RUST_CODEGEN_STAMP) \
+	$(PHP_CODEGEN_STAMP) \
+	$(CSHARP_CODEGEN_STAMP) \
+	$(JAVA_CODEGEN_STAMP) \
+	$(DART_CODEGEN_STAMP) \
+	$(SWIFT_CODEGEN_STAMP)
+
 # Colors for output
 RED := \033[0;31m
 GREEN := \033[0;32m
@@ -201,89 +226,103 @@ codegen: codegen-csharp codegen-dart codegen-go codegen-java codegen-javascript 
 .PHONY: codegen-clean
 codegen-clean:
 	@echo -e "$(YELLOW)Cleaning generated files...$(NC)"
-	@rm -f $(ALL_GENERATED)
+	@rm -f $(GO_GENERATED) $(JAVASCRIPT_GENERATED) $(PYTHON_GENERATED) $(RUBY_GENERATED) \
+	       $(RUST_GENERATED) $(PHP_GENERATED) $(CSHARP_GENERATED) $(JAVA_GENERATED) \
+	       $(DART_GENERATED) $(SWIFT_GENERATED) $(ALL_CODEGEN_STAMPS)
 	@echo -e "$(GREEN)✓ Clean complete$(NC)"
 
-# Rule to generate all files when data changes
-$(GO_GENERATED) &:: $(DATA_FILES)
+# Codegen rules — each stamp is (re)built once when any data file changes,
+# regardless of how many generated files are listed as dependents elsewhere.
+
+$(GO_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Go code...$(NC)"
 	@cd go && go run internal/codegen/main.go && go fmt ./...
+	@touch $@
 	@echo -e "$(GREEN)✓ Go code generation complete$(NC)"
 
 .PHONY: codegen-go
-codegen-go: $(GO_GENERATED)
+codegen-go: $(GO_CODEGEN_STAMP)
 
-$(JAVASCRIPT_GENERATED) &:: $(DATA_FILES)
+$(JAVASCRIPT_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating JavaScript/TypeScript code...$(NC)"
 	@cd javascript && npm run codegen && npm run format && npm run check -- --fix
+	@touch $@
 	@echo -e "$(GREEN)✓ JavaScript/TypeScript code generation complete$(NC)"
 
 .PHONY: codegen-javascript
-codegen-javascript: $(JAVASCRIPT_GENERATED)
+codegen-javascript: $(JAVASCRIPT_CODEGEN_STAMP)
 
-$(PYTHON_GENERATED) &:: $(DATA_FILES)
+$(PYTHON_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Python code...$(NC)"
 	@cd python && python -m codegen && uv run ruff format
+	@touch $@
 	@echo -e "$(GREEN)✓ Python code generation complete$(NC)"
 
 .PHONY: codegen-python
-codegen-python: $(PYTHON_GENERATED)
+codegen-python: $(PYTHON_CODEGEN_STAMP)
 
-$(RUBY_GENERATED) &:: $(DATA_FILES)
+$(RUBY_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Ruby code...$(NC)"
 	@cd ruby && bundle exec ruby codegen/main.rb && bundle exec rake rubocop:autocorrect_all
+	@touch $@
 	@echo -e "$(GREEN)✓ Ruby code generation complete$(NC)"
 
 .PHONY: codegen-ruby
-codegen-ruby: $(RUBY_GENERATED)
+codegen-ruby: $(RUBY_CODEGEN_STAMP)
 
-$(RUST_GENERATED) &:: $(DATA_FILES)
+$(RUST_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Rust code...$(NC)"
 	@cd rust && cargo run -F codegen --bin codegen && cargo fmt
+	@touch $@
 	@echo -e "$(GREEN)✓ Rust code generation complete$(NC)"
 
 .PHONY: codegen-rust
-codegen-rust: $(RUST_GENERATED)
+codegen-rust: $(RUST_CODEGEN_STAMP)
 
-$(PHP_GENERATED) &:: $(DATA_FILES)
+$(PHP_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating PHP code...$(NC)"
 	@cd php && composer exec php codegen/generate.php && composer cs-fix
+	@touch $@
 	@echo -e "$(GREEN)✓ PHP code generation complete$(NC)"
 
 .PHONY: codegen-php
-codegen-php: $(PHP_GENERATED)
+codegen-php: $(PHP_CODEGEN_STAMP)
 
-$(CSHARP_GENERATED) &:: $(DATA_FILES)
+$(CSHARP_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating C# code...$(NC)"
 	@cd csharp && $(MAKE) codegen
+	@touch $@
 	@echo -e "$(GREEN)✓ C# code generation complete$(NC)"
 
 .PHONY: codegen-csharp
-codegen-csharp: $(CSHARP_GENERATED)
+codegen-csharp: $(CSHARP_CODEGEN_STAMP)
 
-$(JAVA_GENERATED) &:: $(DATA_FILES)
+$(JAVA_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Java code...$(NC)"
 	@cd java && gradle :codegen:run && gradle spotlessApply
+	@touch $@
 	@echo -e "$(GREEN)✓ Java code generation complete$(NC)"
 
 .PHONY: codegen-java
-codegen-java: $(JAVA_GENERATED)
+codegen-java: $(JAVA_CODEGEN_STAMP)
 
-$(DART_GENERATED) &:: $(DATA_FILES)
+$(DART_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Dart code...$(NC)"
 	@cd dart && dart run codegen/generate.dart && dart fix --apply . && dart format .
+	@touch $@
 	@echo -e "$(GREEN)✓ Dart code generation complete$(NC)"
 
 .PHONY: codegen-dart
-codegen-dart: $(DART_GENERATED)
+codegen-dart: $(DART_CODEGEN_STAMP)
 
-$(SWIFT_GENERATED) &:: $(DATA_FILES)
+$(SWIFT_CODEGEN_STAMP): $(DATA_FILES)
 	@echo -e "$(BLUE)Generating Swift code...$(NC)"
 	@cd swift/codegen && swift run && cd .. && swiftformat Sources/
+	@touch $@
 	@echo -e "$(GREEN)✓ Swift code generation complete$(NC)"
 
 .PHONY: codegen-swift
-codegen-swift: $(SWIFT_GENERATED)
+codegen-swift: $(SWIFT_CODEGEN_STAMP)
 
 # Documentation generation targets for individual languages
 .PHONY: docs-csharp
@@ -475,39 +514,39 @@ $(SWIFT_COLLECTED): $(SWIFT_DOC_MARKER)
 	echo -e "$(GREEN)✓ Swift docs copied$(NC)"; \
 
 # Individual language documentation build rules
-$(JAVASCRIPT_DOC_MARKER): $(JAVASCRIPT_GENERATED)
+$(JAVASCRIPT_DOC_MARKER): $(JAVASCRIPT_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building JavaScript API docs...$(NC)"
 	@cd javascript && npm run docs:build
 
-$(CSHARP_DOC_MARKER): $(CSHARP_GENERATED)
+$(CSHARP_DOC_MARKER): $(CSHARP_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building C# API docs...$(NC)"
 	@cd csharp && docfx docs/docfx.json
 
-$(PYTHON_DOC_MARKER): $(PYTHON_GENERATED)
+$(PYTHON_DOC_MARKER): $(PYTHON_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building Python API docs...$(NC)"
 	@cd python/docs && uv run make clean html
 
-$(RUBY_DOC_MARKER): $(RUBY_GENERATED)
+$(RUBY_DOC_MARKER): $(RUBY_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building Ruby API docs...$(NC)"
 	@cd ruby && bundle exec rake yard
 
-$(RUST_DOC_MARKER): $(RUST_GENERATED)
+$(RUST_DOC_MARKER): $(RUST_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building Rust API docs...$(NC)"
 	@cd rust && cargo doc --no-deps
 
-$(JAVA_DOC_MARKER): $(JAVA_GENERATED)
+$(JAVA_DOC_MARKER): $(JAVA_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building Java API docs...$(NC)"
 	@cd java && gradle javadoc
 
-$(PHP_DOC_MARKER): $(PHP_GENERATED)
+$(PHP_DOC_MARKER): $(PHP_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building PHP API docs...$(NC)"
 	@cd php && composer run-script docs
 
-$(DART_DOC_MARKER): $(DART_GENERATED)
+$(DART_DOC_MARKER): $(DART_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building Dart API docs...$(NC)"
 	@cd dart && dart doc
 
-$(SWIFT_DOC_MARKER): $(SWIFT_GENERATED)
+$(SWIFT_DOC_MARKER): $(SWIFT_CODEGEN_STAMP)
 	@echo -e "$(BLUE)Building Swift API docs...$(NC)"
 	@cd swift && swift package --allow-writing-to-package-directory generate-documentation --target Yosina --output-path .build/documentation
 
