@@ -509,7 +509,7 @@ $(DART_DOC_MARKER): $(DART_GENERATED)
 
 $(SWIFT_DOC_MARKER): $(SWIFT_GENERATED)
 	@echo -e "$(BLUE)Building Swift API docs...$(NC)"
-	@cd swift && swift-docc generate --target Yosina --output-path .build/documentation
+	@cd swift && swift package --allow-writing-to-package-directory generate-documentation --target Yosina --output-path .build/documentation
 
 .PHONY: sync-split-repos
 sync-split-repos: sync-split-repo-php sync-split-repo-swift
