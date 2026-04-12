@@ -17,6 +17,8 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.13",
+        "league/uri": ">=7.5.1 <7.6",
+        "league/uri-interfaces": ">=7.5.0 <7.6",
         "phpdocumentor/phpdocumentor": "^3.4",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.0",
@@ -37,7 +39,7 @@
         "analyse": "phpstan analyse src tests --level=max --memory-limit=1024m",
         "cs-fix": "php-cs-fixer fix",
         "cs-check": "php-cs-fixer fix --dry-run --diff",
-        "docs": "phpdoc -d src -t docs",
+        "docs": "phpdoc -t docs",
         "composer-dependency-analyser": "composer-dependency-analyser"
     },
     "config": {
