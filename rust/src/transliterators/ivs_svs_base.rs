@@ -101,7 +101,7 @@ impl<'a> IvsSvsBaseMappings<'a> {
         &'b self,
         mode: IvsSvsBaseMode,
         charset: Charset,
-    ) -> Box<dyn Fn(&str) -> Option<&'a str> + 'b> {
+    ) -> Box<dyn Fn(&str) -> Option<&'a str> + Send + Sync + 'b> {
         use Charset::*;
         use IvsSvsBaseMode::*;
 
@@ -162,7 +162,7 @@ impl Default for IvsSvsBaseTransliteratorOptions {
 pub struct IvsSvsBaseTransliterator {
     options: IvsSvsBaseTransliteratorOptions,
     #[allow(clippy::type_complexity)]
-    getter: Box<dyn Fn(&str) -> Option<&'static str> + 'static>,
+    getter: Box<dyn Fn(&str) -> Option<&'static str> + Send + Sync + 'static>,
 }
 
 impl IvsSvsBaseTransliterator {

@@ -75,7 +75,7 @@ impl HyphensMappings {
 
 pub struct HyphensTransliterator<'c> {
     #[allow(clippy::type_complexity)]
-    getters: Vec<Box<dyn Fn(&str) -> Option<&'static str> + 'c>>,
+    getters: Vec<Box<dyn Fn(&str) -> Option<&'static str> + Send + Sync + 'c>>,
 }
 
 impl<'c> Transliterator for HyphensTransliterator<'c> {
@@ -112,7 +112,7 @@ impl<'c> HyphensTransliterator<'c> {
                 .into_iter()
                 .map(|variant| {
                     Box::new(HyphensMappings::get().variant_getter(variant))
-                        as Box<dyn Fn(&str) -> Option<&'static str> + 'c>
+                        as Box<dyn Fn(&str) -> Option<&'static str> + Send + Sync + 'c>
                 })
                 .collect(),
         }
