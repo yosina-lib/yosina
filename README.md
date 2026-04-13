@@ -116,7 +116,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-yosina = "1.1.2"
+yosina = "1.1.3"
 ```
 
 ### Java
@@ -125,7 +125,7 @@ Add to your `build.gradle`:
 
 ```gradle
 dependencies {
-    implementation 'io.yosina:yosina:1.1.2'
+    implementation 'io.yosina:yosina:1.1.3'
 }
 ```
 
@@ -251,7 +251,7 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "1.1.2")
+    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "1.1.3")
 ]
 ```
 

@@ -12,7 +12,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-yosina = "1.1.2"
+yosina = "1.1.3"
 ```
 
 ## Usage
