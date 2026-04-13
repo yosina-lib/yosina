@@ -1,6 +1,6 @@
 name: yosina
 description: A transliteration library for Japanese text normalization
-version: 1.1.2
+version: 1.1.3
 homepage: https://github.com/yosina-lib/yosina
 repository: https://github.com/yosina-lib/yosina
 issue_tracker: https://github.com/yosina-lib/yosina/issues
