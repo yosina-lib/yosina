@@ -7,7 +7,7 @@ pub enum TransliterationError {
 }
 
 /// A transliterator function that transforms an iterator of characters
-pub trait Transliterator {
+pub trait Transliterator: Send + Sync {
     fn transliterate<'a, 'b>(
         &self,
         pool: &mut CharPool<'a, 'b>,
@@ -37,9 +37,11 @@ where
 impl<T> Transliterator for FnTransliterator<T>
 where
     T: for<'a, 'b> Fn(
-        &mut CharPool<'a, 'b>,
-        &[&'a Char<'a, 'b>],
-    ) -> Result<Vec<&'a Char<'a, 'b>>, TransliterationError>,
+            &mut CharPool<'a, 'b>,
+            &[&'a Char<'a, 'b>],
+        ) -> Result<Vec<&'a Char<'a, 'b>>, TransliterationError>
+        + Send
+        + Sync,
 {
     fn transliterate<'a, 'b>(
         &self,
