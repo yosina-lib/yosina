@@ -12,7 +12,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  yosina: ^1.1.1
+  yosina: ^1.1.2
 ```
 
 Then run:
