@@ -421,7 +421,6 @@ CIRCLED_OR_SQUARED_MAPPINGS: dict[str, tuple[str, Literal["c", "s"], bool]] = {
     "\U0001f1fe": ("Y", "s", False),
     "\U0001f1ff": ("Z", "s", False),
     "\U0001f6be": ("WC", "s", True),
-    "\U0001f200": ("ほか", "s", False),
     "\U0001f201": ("ココ", "s", True),
     "\U0001f202": ("サ", "s", False),
     "\U0001f210": ("手", "s", False),

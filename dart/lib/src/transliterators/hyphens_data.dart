@@ -6,7 +6,7 @@ const hyphensData = <String, Map<String, String?>>{
     'ascii': '-',
     'jisx0201': '-',
     'jisx0208_90': '\u{2212}',
-    'jisx0208_90_windows': '\u{2212}',
+    'jisx0208_90_windows': '\u{ff0d}',
     'jisx0208_verbatim': null,
   },
   '|': {

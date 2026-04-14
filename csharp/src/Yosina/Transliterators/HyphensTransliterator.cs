@@ -143,7 +143,7 @@ public class HyphensTransliterator : ITransliterator
         },
         [Mapping.JISX0208_90_WINDOWS] = new Dictionary<int, int[]>
         {
-            [0x2D] = new[] { 0x2212 },
+            [0x2D] = new[] { 0xFF0D },
             [0x7C] = new[] { 0xFF5C },
             [0x7E] = new[] { 0xFF5E },
             [0xA2] = new[] { 0xFFE0 },

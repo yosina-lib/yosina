@@ -179,7 +179,7 @@ public class HyphensTransliteratorTests
         };
 
         // Test some key mappings
-        Assert.Equal("−", Transliterate("-", options)); // Hyphen to minus sign
+        Assert.Equal("－", Transliterate("-", options)); // Hyphen to minus sign
         Assert.Equal("～", Transliterate("~", options)); // Tilde to fullwidth tilde
         Assert.Equal("｜", Transliterate("|", options)); // Pipe to fullwidth vertical line
     }

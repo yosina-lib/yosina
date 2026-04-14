@@ -13,7 +13,7 @@ module Yosina
 
       # Generated mapping data
       HYPHENS_MAPPINGS = {
-        '-' => HyphensRecord.new(ascii: '-', jisx0201: '-', jisx0208_90: "\u{2212}", jisx0208_90_windows: "\u{2212}"),
+        '-' => HyphensRecord.new(ascii: '-', jisx0201: '-', jisx0208_90: "\u{2212}", jisx0208_90_windows: "\u{ff0d}"),
         '|' => HyphensRecord.new(ascii: '|', jisx0201: '|', jisx0208_90: "\u{ff5c}", jisx0208_90_windows: "\u{ff5c}"),
         '~' => HyphensRecord.new(ascii: '~', jisx0201: '~', jisx0208_90: "\u{301c}", jisx0208_90_windows: "\u{ff5e}"),
         "\u{a2}" => HyphensRecord.new(jisx0208_90: "\u{a2}", jisx0208_90_windows: "\u{ffe0}"),

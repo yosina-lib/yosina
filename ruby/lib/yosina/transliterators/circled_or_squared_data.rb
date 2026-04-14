@@ -416,7 +416,6 @@ module Yosina
         "\u{1f1fe}" => { rendering: 'Y', type: 's', emoji: false },
         "\u{1f1ff}" => { rendering: 'Z', type: 's', emoji: false },
         "\u{1f6be}" => { rendering: 'WC', type: 's', emoji: true },
-        "\u{1f200}" => { rendering: "\u{307b}\u{304b}", type: 's', emoji: false },
         "\u{1f201}" => { rendering: "\u{30b3}\u{30b3}", type: 's', emoji: true },
         "\u{1f202}" => { rendering: "\u{30b5}", type: 's', emoji: false },
         "\u{1f210}" => { rendering: "\u{624b}", type: 's', emoji: false },

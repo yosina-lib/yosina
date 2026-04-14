@@ -423,7 +423,6 @@ class CircledOrSquaredTransliterator implements TransliteratorInterface
         '🇾' => ['rendering' => "Y", 'type' => "square", 'emoji' => false],
         '🇿' => ['rendering' => "Z", 'type' => "square", 'emoji' => false],
         '🚾' => ['rendering' => "WC", 'type' => "square", 'emoji' => true],
-        '🈀' => ['rendering' => 'ほか', 'type' => "square", 'emoji' => false],
         '🈁' => ['rendering' => 'ココ', 'type' => "square", 'emoji' => true],
         '🈂' => ['rendering' => 'サ', 'type' => "square", 'emoji' => false],
         '🈐' => ['rendering' => '手', 'type' => "square", 'emoji' => false],

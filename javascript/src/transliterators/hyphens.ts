@@ -39,7 +39,7 @@ const mappings: Mappings = {
     ascii: "-",
     jisx0201: "-",
     jisx0208_90: "\u2212",
-    jisx0208_90_windows: "\u2212",
+    jisx0208_90_windows: "\uFF0D",
     jisx0208_verbatim: null,
   },
   "|": {

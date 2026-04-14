@@ -48,7 +48,7 @@ func TestHyphensTransliterator(t *testing.T) {
 		{
 			name:     "hyphen minus with JIS X 0208-90 Windows precedence",
 			input:    "-",
-			expected: "−", // U+2212 MINUS SIGN
+			expected: "－", // U+FF0D FULLWIDTH HYPHEN-MINUS
 			opts: Options{
 				Precedence: []Mapping{Jisx0208_90_Windows},
 			},
@@ -205,7 +205,7 @@ func TestHyphensTransliteratorOptions(t *testing.T) {
 			name:        "JIS X 0208-90 Windows first",
 			input:       "-",
 			precedence:  []Mapping{Jisx0208_90_Windows},
-			expected:    "−",
+			expected:    "－",
 			description: "JIS X 0208-90 Windows precedence should use JIS X 0208-90 Windows mapping",
 		},
 		{
