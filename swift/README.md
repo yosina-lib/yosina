@@ -19,7 +19,7 @@ Add this package to your Swift project:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "1.1.3")
+    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "2.0.0")
 ]
 ```
 
