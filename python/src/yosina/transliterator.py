@@ -8,12 +8,13 @@ from .chars import build_char_list, from_chars
 from .intrinsics import make_chained_transliterator
 from .recipes import TransliterationRecipe, build_transliterator_configs_from_recipe
 from .transliterators import TransliteratorConfig, TransliteratorIdentifier
+from .types import Transliterator
 
 __all__ = ["make_transliterator"]
 
 
 def make_transliterator(
-    configs_or_recipe: list[TransliteratorConfig | TransliteratorIdentifier] | TransliterationRecipe,
+    configs_or_recipe: list[TransliteratorConfig | TransliteratorIdentifier | Transliterator] | TransliterationRecipe,
 ) -> Callable[[str], str]:
     """Frontend convenience function to create a string-to-string transliterator.
 
