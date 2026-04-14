@@ -602,6 +602,7 @@ update-version:
 	@sed -i.bak 's/"version": "[^"]*"/"version": "$(VERSION)"/' javascript/package.json && rm javascript/package.json.bak
 	@sed -i.bak 's/"version": "[^"]*"/"version": "$(VERSION)"/' php/composer.json && rm php/composer.json.bak
 	@sed -i.bak 's/^version = ".*"/version = "$(VERSION)"/' python/pyproject.toml && rm python/pyproject.toml.bak
+	@sed -i.bak 's/^__version__ = ".*"/__version__ = "$(VERSION)"/' python/src/yosina/__init__.py && rm python/src/yosina/__init__.py.bak
 	@sed -i.bak "s/VERSION = .*/VERSION = '$(VERSION)'/" ruby/lib/yosina/version.rb && rm ruby/lib/yosina/version.rb.bak
 	@sed -i.bak 's/^version = ".*"/version = "$(VERSION)"/' rust/Cargo.toml && rm rust/Cargo.toml.bak
 	@sed -i.bak "s/version = '[^']*'/version = '$(VERSION)'/" java/build.gradle && rm java/build.gradle.bak
