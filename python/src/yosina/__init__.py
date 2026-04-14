@@ -6,7 +6,7 @@ from .transliterator import make_transliterator
 from .transliterators import TransliteratorConfig, TransliteratorIdentifier
 from .types import Transliterator, TransliteratorFactory
 
-__version__ = "0.1.0"
+__version__ = "2.0.0"
 __all__ = [
     "Char",
     "Transliterator",
