@@ -432,7 +432,6 @@ public class CircledOrSquaredTransliterator : ITransliterator
         [0x1F1FD] = new CircledOrSquaredData("X", CharType.Square, false),
         [0x1F1FE] = new CircledOrSquaredData("Y", CharType.Square, false),
         [0x1F1FF] = new CircledOrSquaredData("Z", CharType.Square, false),
-        [0x1F200] = new CircledOrSquaredData("ほか", CharType.Square, false),
         [0x1F201] = new CircledOrSquaredData("ココ", CharType.Square, true),
         [0x1F202] = new CircledOrSquaredData("サ", CharType.Square, false),
         [0x1F210] = new CircledOrSquaredData("手", CharType.Square, false),

@@ -431,7 +431,6 @@ const mappings: Mappings = {
   "\uD83C\uDDFE": ["Y", "s", false],
   "\uD83C\uDDFF": ["Z", "s", false],
   "\uD83D\uDEBE": ["WC", "s", true],
-  "\uD83C\uDE00": ["\u307B\u304B", "s", false],
   "\uD83C\uDE01": ["\u30B3\u30B3", "s", true],
   "\uD83C\uDE02": ["\u30B5", "s", false],
   "\uD83C\uDE10": ["\u624B", "s", false],

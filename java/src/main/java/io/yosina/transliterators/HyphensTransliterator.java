@@ -72,7 +72,7 @@ public class HyphensTransliterator implements Transliterator {
                         new CodePointTuple[] {CodePointTuple.of(0x002D)},
                         new CodePointTuple[] {CodePointTuple.of(0x002D)},
                         new CodePointTuple[] {CodePointTuple.of(0x2212)},
-                        new CodePointTuple[] {CodePointTuple.of(0x2212)},
+                        new CodePointTuple[] {CodePointTuple.of(0xFF0D)},
                         null));
         mappings_.put(
                 CodePointTuple.of(0x007C),

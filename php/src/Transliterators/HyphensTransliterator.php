@@ -23,7 +23,7 @@ class HyphensTransliterator implements TransliteratorInterface
             'ascii' => "-",
             'jisx0201' => "-",
             'jisx0208_90' => "\u{2212}",
-            'jisx0208_90_windows' => "\u{2212}",
+            'jisx0208_90_windows' => "\u{FF0D}",
             'jisx0208_verbatim' => null,
         ],
         "|" => [
