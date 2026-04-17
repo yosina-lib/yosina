@@ -38,7 +38,7 @@ readonly class TransliterationRecipe
          *   Input:  "スーパ-" (with hyphen-minus)
          *   Output: "スーパー" (becomes prolonged sound mark)
          */
-        public bool $replaceSuspiciousHyphensToProlongedSoundMarks = false,
+        public bool|string $replaceSuspiciousHyphensToProlongedSoundMarks = false,
         /**
          * Replace circled or squared characters with their corresponding templates.
          * @example
@@ -270,6 +270,7 @@ readonly class TransliterationRecipe
         if ($this->replaceSuspiciousHyphensToProlongedSoundMarks) {
             $ctx = $ctx->insertMiddle(['prolonged-sound-marks', [
                 'replace_prolonged_marks_following_alnums' => true,
+                'replace_prolonged_marks_between_non_kanas' => $this->replaceSuspiciousHyphensToProlongedSoundMarks === 'aggressive',
             ]], false);
         }
         return $ctx;

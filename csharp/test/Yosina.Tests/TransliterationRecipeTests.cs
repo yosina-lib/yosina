@@ -25,7 +25,7 @@ public static class TransliterationRecipeTests
             var recipe = new TransliterationRecipe();
 
             Assert.False(recipe.KanjiOldNew);
-            Assert.False(recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks);
+            Assert.False(recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks.IsEnabled);
             Assert.False(recipe.ReplaceCombinedCharacters);
             Assert.Equal(TransliterationRecipe.ReplaceCircledOrSquaredCharactersOptions.Disabled, recipe.ReplaceCircledOrSquaredCharacters);
             Assert.False(recipe.ReplaceIdeographicAnnotations);
@@ -68,6 +68,37 @@ public static class TransliterationRecipeTests
             Assert.Single(configs);
             Assert.Equal("prolonged-sound-marks", configs[0].Name);
             Assert.NotNull(configs[0].Options);
+        }
+
+        [Fact]
+        public void ProlongedSoundMarks_ConservativeConfiguration()
+        {
+            var recipe = new TransliterationRecipe { ReplaceSuspiciousHyphensToProlongedSoundMarks = TransliterationRecipe.ReplaceSuspiciousHyphensOptions.Conservative };
+            var configs = recipe.BuildTransliteratorConfigs();
+
+            Assert.Single(configs);
+            Assert.Equal("prolonged-sound-marks", configs[0].Name);
+            Assert.NotNull(configs[0].Options);
+        }
+
+        [Fact]
+        public void ProlongedSoundMarks_AggressiveConfiguration()
+        {
+            var recipe = new TransliterationRecipe { ReplaceSuspiciousHyphensToProlongedSoundMarks = TransliterationRecipe.ReplaceSuspiciousHyphensOptions.Aggressive };
+            var configs = recipe.BuildTransliteratorConfigs();
+
+            Assert.Single(configs);
+            Assert.Equal("prolonged-sound-marks", configs[0].Name);
+            Assert.NotNull(configs[0].Options);
+        }
+
+        [Fact]
+        public void ProlongedSoundMarks_DisabledConfiguration()
+        {
+            var recipe = new TransliterationRecipe { ReplaceSuspiciousHyphensToProlongedSoundMarks = TransliterationRecipe.ReplaceSuspiciousHyphensOptions.Disabled };
+            var configs = recipe.BuildTransliteratorConfigs();
+
+            Assert.Empty(configs);
         }
 
         [Fact]

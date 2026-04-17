@@ -259,6 +259,97 @@ test.each([
     expected: "Ａ\uff0dＢ\uff0dＣ\uff0dａ\uff0dｂ\uff0dｃ\uff0d",
     replaceProlongedMarksFollowingAlnums: true,
   },
+  {
+    name: "PSM between non-kana OTHER chars",
+    input: "漢\u30fc字",
+    expected: "漢\uff0d字",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "PSM between halfwidth alnums with non-kana option",
+    input: "1\u30fc2",
+    expected: "1\u002d2",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "PSM between fullwidth alnums with non-kana option",
+    input: "１\u30fc２",
+    expected: "１\uff0d２",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "PSM between mixed width with non-kana option",
+    input: "1\u30fc２",
+    expected: "1\u002d２",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "PSM after kana not replaced with non-kana option",
+    input: "カ\u30fc漢",
+    expected: "カ\u30fc漢",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "PSM before kana not replaced with non-kana option",
+    input: "漢\u30fcカ",
+    expected: "漢\u30fcカ",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "multiple consecutive hyphens between non-kana",
+    input: "漢\u002d\u002d字",
+    expected: "漢\uff0d\uff0d字",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "multiple consecutive PSMs between non-kana",
+    input: "漢\u30fc\u30fc\u30fc字",
+    expected: "漢\uff0d\uff0d\uff0d字",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "multiple consecutive PSMs between non-kana followed by kana",
+    input: "漢\u30fc\u30fc\u30fcカ",
+    expected: "漢\u30fc\u30fc\u30fcカ",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "trailing consecutive PSMs after fullwidth non-kana",
+    input: "漢\u30fc\u30fc\u30fc",
+    expected: "漢\uff0d\uff0d\uff0d",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "trailing consecutive PSMs after halfwidth non-kana",
+    input: "1\u30fc\u30fc\u30fc",
+    expected: "1\u002d\u002d\u002d",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "PSM between emoji",
+    input: "😀\u30fc😊",
+    expected: "😀\uff0d😊",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "trailing PSM after non-kana",
+    input: "漢\u30fc",
+    expected: "漢\uff0d",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "non-kana option only: PSM after alnum before kana not replaced",
+    input: "A\u30fcカ",
+    expected: "A\u30fcカ",
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
+  {
+    name: "both options: PSM after alnum before kana replaced by alnum option",
+    input: "A\u30fcカ",
+    expected: "A\u002dカ",
+    replaceProlongedMarksFollowingAlnums: true,
+    replaceProlongedMarksBetweenNonKanas: true,
+  },
 ] satisfies {
   name: string;
   expected: string;
@@ -266,6 +357,7 @@ test.each([
   allowProlongedHatsuon?: boolean;
   allowProlongedSokuon?: boolean;
   replaceProlongedMarksFollowingAlnums?: boolean;
+  replaceProlongedMarksBetweenNonKanas?: boolean;
   skipAlreadyTransliteratedChars?: boolean;
 }[])("prolongedSoundMarks: %s", ({ name, expected, input, ...options }) => {
   expect(fromChars(target(options)(buildCharArray(input)))).toBe(expected);

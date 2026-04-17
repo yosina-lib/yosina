@@ -16,7 +16,7 @@ func TestDefaultRecipeValues(t *testing.T) {
 	recipe := NewTransliterationRecipe()
 
 	assert.False(t, recipe.KanjiOldNew)
-	assert.False(t, recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks)
+	assert.Equal(t, No, recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks)
 	assert.False(t, recipe.ReplaceIdeographicAnnotations)
 	assert.False(t, recipe.ReplaceRadicals)
 	assert.False(t, recipe.ReplaceSpaces)
@@ -54,9 +54,9 @@ func TestKanjiOldNewConfiguration(t *testing.T) {
 	assert.GreaterOrEqual(t, len(configs), 3, "Should have multiple configs for kanji-old-new")
 }
 
-func TestProlongedSoundMarksConfiguration(t *testing.T) {
+func TestProlongedSoundMarksConservativeConfiguration(t *testing.T) {
 	recipe := NewTransliterationRecipe()
-	recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks = true
+	recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks = Conservative
 
 	configs, err := recipe.BuildTransliteratorConfigs()
 	require.NoError(t, err)
@@ -71,6 +71,45 @@ func TestProlongedSoundMarksConfiguration(t *testing.T) {
 	options, ok := config.Options.(*prolonged_sound_marks.Options)
 	require.True(t, ok, "Options should be of correct type")
 	assert.True(t, options.ReplaceProlongedMarksFollowingAlnums)
+	assert.False(t, options.ReplaceProlongedMarksBetweenNonKanas)
+}
+
+func TestProlongedSoundMarksYesConfiguration(t *testing.T) {
+	recipe := NewTransliterationRecipe()
+	recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks = Yes
+
+	configs, err := recipe.BuildTransliteratorConfigs()
+	require.NoError(t, err)
+
+	assert.True(t, containsConfig(configs, "prolonged-sound-marks"), "Should contain prolonged-sound-marks")
+
+	config := findConfig(configs, "prolonged-sound-marks")
+	require.NotNil(t, config)
+	require.NotNil(t, config.Options)
+
+	options, ok := config.Options.(*prolonged_sound_marks.Options)
+	require.True(t, ok, "Options should be of correct type")
+	assert.True(t, options.ReplaceProlongedMarksFollowingAlnums)
+	assert.False(t, options.ReplaceProlongedMarksBetweenNonKanas)
+}
+
+func TestProlongedSoundMarksAggressiveConfiguration(t *testing.T) {
+	recipe := NewTransliterationRecipe()
+	recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks = Aggressive
+
+	configs, err := recipe.BuildTransliteratorConfigs()
+	require.NoError(t, err)
+
+	assert.True(t, containsConfig(configs, "prolonged-sound-marks"), "Should contain prolonged-sound-marks")
+
+	config := findConfig(configs, "prolonged-sound-marks")
+	require.NotNil(t, config)
+	require.NotNil(t, config.Options)
+
+	options, ok := config.Options.(*prolonged_sound_marks.Options)
+	require.True(t, ok, "Options should be of correct type")
+	assert.True(t, options.ReplaceProlongedMarksFollowingAlnums)
+	assert.True(t, options.ReplaceProlongedMarksBetweenNonKanas)
 }
 
 func TestBasicTransliteratorsConfiguration(t *testing.T) {
@@ -368,7 +407,7 @@ func TestCircledOrSquaredAndCombinedOrder(t *testing.T) {
 func TestComprehensiveConfiguration(t *testing.T) {
 	recipe := &TransliterationRecipe{
 		KanjiOldNew: true,
-		ReplaceSuspiciousHyphensToProlongedSoundMarks: true,
+		ReplaceSuspiciousHyphensToProlongedSoundMarks: Conservative,
 		ReplaceCombinedCharacters:                     true,
 		ReplaceCircledOrSquaredCharacters:             Yes,
 		ReplaceIdeographicAnnotations:                 true,
@@ -436,7 +475,7 @@ func TestComprehensiveConfiguration(t *testing.T) {
 func TestConfigurationOrdering(t *testing.T) {
 	recipe := NewTransliterationRecipe()
 	recipe.KanjiOldNew = true
-	recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks = true
+	recipe.ReplaceSuspiciousHyphensToProlongedSoundMarks = Conservative
 	recipe.ReplaceSpaces = true
 	recipe.ReplaceCircledOrSquaredCharacters = Yes
 	recipe.ReplaceCombinedCharacters = true

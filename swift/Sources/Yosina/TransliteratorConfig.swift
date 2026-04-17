@@ -8,7 +8,7 @@ public enum TransliteratorConfig: TransliteratorFactory {
     case combined
     case circledOrSquared(options: CircledOrSquaredTransliterator.Options = CircledOrSquaredTransliterator.Options())
     case romanNumerals
-    case prolongedSoundMarks
+    case prolongedSoundMarks(options: ProlongedSoundMarksTransliterator.Options = ProlongedSoundMarksTransliterator.Options())
     case hiraKata(options: HiraKataTransliterator.Options = HiraKataTransliterator.Options())
     case hiraKataComposition(options: HiraKataCompositionTransliterator.Options = HiraKataCompositionTransliterator.Options())
     case jisx0201AndAlike(options: Jisx0201AndAlikeTransliterator.Options = Jisx0201AndAlikeTransliterator.Options())
@@ -39,8 +39,8 @@ public enum TransliteratorConfig: TransliteratorFactory {
             return CircledOrSquaredTransliterator(options: options)
         case .romanNumerals:
             return RomanNumeralsTransliterator()
-        case .prolongedSoundMarks:
-            return ProlongedSoundMarksTransliterator()
+        case let .prolongedSoundMarks(options):
+            return ProlongedSoundMarksTransliterator(options: options)
         case let .hiraKata(options):
             return HiraKataTransliterator(options: options)
         case let .hiraKataComposition(options):

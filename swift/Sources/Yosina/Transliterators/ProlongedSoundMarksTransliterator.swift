@@ -6,17 +6,20 @@ public struct ProlongedSoundMarksTransliterator: Transliterator {
         public var allowProlongedHatsuon: Bool
         public var allowProlongedSokuon: Bool
         public var replaceProlongedMarksFollowingAlnums: Bool
+        public var replaceProlongedMarksBetweenNonKanas: Bool
 
         public init(
             skipAlreadyTransliteratedChars: Bool = false,
             allowProlongedHatsuon: Bool = false,
             allowProlongedSokuon: Bool = false,
-            replaceProlongedMarksFollowingAlnums: Bool = false
+            replaceProlongedMarksFollowingAlnums: Bool = false,
+            replaceProlongedMarksBetweenNonKanas: Bool = false
         ) {
             self.skipAlreadyTransliteratedChars = skipAlreadyTransliteratedChars
             self.allowProlongedHatsuon = allowProlongedHatsuon
             self.allowProlongedSokuon = allowProlongedSokuon
             self.replaceProlongedMarksFollowingAlnums = replaceProlongedMarksFollowingAlnums
+            self.replaceProlongedMarksBetweenNonKanas = replaceProlongedMarksBetweenNonKanas
         }
     }
 
@@ -52,6 +55,11 @@ public struct ProlongedSoundMarksTransliterator: Transliterator {
 
         func isHalfwidth() -> Bool {
             return (rawValue & CharType.halfwidth.rawValue) != 0
+        }
+
+        func isKana() -> Bool {
+            let masked = rawValue & 0xE0
+            return masked == CharType.hiragana.rawValue || masked == CharType.katakana.rawValue || masked == CharType.either.rawValue
         }
     }
 
@@ -93,18 +101,31 @@ public struct ProlongedSoundMarksTransliterator: Transliterator {
                     let currentCharType = char.value.map { getCharType(String($0)) } ?? .other
                     lastNonProlongedChar = (char, currentCharType)
 
-                    if (prevNonProlongedChar == nil || prevNonProlongedChar!.1.isAlnum()) &&
+                    let replaceByAlnum = options.replaceProlongedMarksFollowingAlnums
+                        && (prevNonProlongedChar == nil || prevNonProlongedChar!.1.isAlnum())
+                    let replaceByNonKana = options.replaceProlongedMarksBetweenNonKanas
+                        && (prevNonProlongedChar == nil || !prevNonProlongedChar!.1.isKana())
+                        && !currentCharType.isKana()
+
+                    if (replaceByAlnum || replaceByNonKana) &&
                         (!options.skipAlreadyTransliteratedChars || !processedCharsInLookahead)
                     {
-                        let replacement = prevNonProlongedChar?.1.isHalfwidth() ?? currentCharType.isHalfwidth() ? "\u{002D}" : "\u{FF0D}"
+                        let cc: String
+                        if replaceByNonKana {
+                            let prevHalf = prevNonProlongedChar == nil || prevNonProlongedChar!.1.isHalfwidth()
+                            let nextHalf = currentCharType.isHalfwidth()
+                            cc = (!prevHalf && !nextHalf) ? "\u{FF0D}" : "\u{002D}"
+                        } else {
+                            cc = prevNonProlongedChar?.1.isHalfwidth() ?? currentCharType.isHalfwidth() ? "\u{002D}" : "\u{FF0D}"
+                        }
 
                         // Replace all marks in lookahead buffer with the chosen replacement
                         for lookaheadChar in lookaheadBuf {
-                            result.append(TransliteratorChar(value: Character(replacement), offset: offset, source: lookaheadChar))
-                            offset += replacement.utf8.count
+                            result.append(TransliteratorChar(value: Character(cc), offset: offset, source: lookaheadChar))
+                            offset += cc.utf8.count
                         }
                     } else {
-                        // Not between alphanumeric characters - preserve original
+                        // Not between matching characters - preserve original
                         for lookaheadChar in lookaheadBuf {
                             if let value = lookaheadChar.value {
                                 result.append(TransliteratorChar(value: value, offset: offset, source: lookaheadChar.source))
@@ -134,7 +155,9 @@ public struct ProlongedSoundMarksTransliterator: Transliterator {
                             continue
                         } else {
                             // Not a Japanese character
-                            if options.replaceProlongedMarksFollowingAlnums && lastCharType.isAlnum() {
+                            if (options.replaceProlongedMarksFollowingAlnums && lastCharType.isAlnum()) ||
+                                (options.replaceProlongedMarksBetweenNonKanas && !lastCharType.isKana())
+                            {
                                 lookaheadBuf.append(char)
                                 continue
                             }

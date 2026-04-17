@@ -68,6 +68,10 @@ const isAlnum = (c: CharType) => {
   const masked = c & 0xe0;
   return masked === ALPHABET || masked === DIGIT;
 };
+const isKana = (c: CharType) => {
+  const masked = c & 0xe0;
+  return masked === HIRAGANA || masked === KATAKANA || masked === EITHER;
+};
 const isHalfwidth = (c: CharType) => (c & HALFWIDTH) !== 0;
 
 export type Options = {
@@ -75,6 +79,7 @@ export type Options = {
   allowProlongedHatsuon?: boolean;
   allowProlongedSokuon?: boolean;
   replaceProlongedMarksFollowingAlnums?: boolean;
+  replaceProlongedMarksBetweenNonKanas?: boolean;
 };
 
 const isHyphenLike = (c: string) =>
@@ -109,17 +114,31 @@ export default (options: Options) => {
         }
         const prevNonProlongedChar = lastNonProlongedChar;
         lastNonProlongedChar = [c, getCharType(c.c.codePointAt(0) ?? -1)];
+        const replaceByAlnum =
+          options.replaceProlongedMarksFollowingAlnums &&
+          (prevNonProlongedChar === undefined || isAlnum(prevNonProlongedChar[1]));
+        const replaceByNonKana =
+          options.replaceProlongedMarksBetweenNonKanas &&
+          (prevNonProlongedChar === undefined || !isKana(prevNonProlongedChar[1])) &&
+          !isKana(lastNonProlongedChar[1]);
         if (
-          (prevNonProlongedChar === undefined || isAlnum(prevNonProlongedChar[1])) &&
+          (replaceByAlnum || replaceByNonKana) &&
           (!options.skipAlreadyTransliteratedChars || !processedCharsInLookahead)
         ) {
-          const cc = (
-            prevNonProlongedChar === undefined
-              ? isHalfwidth(lastNonProlongedChar[1])
-              : isHalfwidth(prevNonProlongedChar[1])
-          )
-            ? "\u{002d}"
-            : "\u{ff0d}";
+          let cc: string;
+          if (replaceByNonKana) {
+            const prevHalf = prevNonProlongedChar === undefined || isHalfwidth(prevNonProlongedChar[1]);
+            const nextHalf = isHalfwidth(lastNonProlongedChar[1]);
+            cc = !prevHalf && !nextHalf ? "\u{ff0d}" : "\u{002d}";
+          } else {
+            cc = (
+              prevNonProlongedChar === undefined
+                ? isHalfwidth(lastNonProlongedChar[1])
+                : isHalfwidth(prevNonProlongedChar[1])
+            )
+              ? "\u{002d}"
+              : "\u{ff0d}";
+          }
           for (const c of lookaheadBuf) {
             yield { c: cc, offset, source: c };
             offset += cc.length;
@@ -146,7 +165,10 @@ export default (options: Options) => {
             offset += cc.length;
             continue;
           } else {
-            if (options.replaceProlongedMarksFollowingAlnums && isAlnum(lastNonProlongedChar[1])) {
+            if (
+              (options.replaceProlongedMarksFollowingAlnums && isAlnum(lastNonProlongedChar[1])) ||
+              (options.replaceProlongedMarksBetweenNonKanas && !isKana(lastNonProlongedChar[1]))
+            ) {
               lookaheadBuf.push(c);
               continue;
             }

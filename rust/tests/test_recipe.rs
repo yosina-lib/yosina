@@ -1,7 +1,7 @@
 use yosina::make_transliterator;
 use yosina::recipes::{
     RemoveIVSSVSOptions, ReplaceCircledOrSquaredCharactersOptions, ReplaceHyphensOptions,
-    ToFullWidthOptions, ToHalfwidthOptions, TransliterationRecipe,
+    ReplaceSuspiciousHyphensOptions, ToFullWidthOptions, ToHalfwidthOptions, TransliterationRecipe,
 };
 use yosina::transliterators::{Charset, HyphensTransliterationVariant};
 
@@ -18,7 +18,10 @@ fn test_default_values() {
     let recipe = TransliterationRecipe::default();
 
     assert!(!recipe.kanji_old_new);
-    assert!(!recipe.replace_suspicious_hyphens_to_prolonged_sound_marks);
+    assert_eq!(
+        recipe.replace_suspicious_hyphens_to_prolonged_sound_marks,
+        ReplaceSuspiciousHyphensOptions::No
+    );
     assert!(!recipe.replace_combined_characters);
     assert_eq!(
         recipe.replace_circled_or_squared_characters,
@@ -60,16 +63,32 @@ fn test_kanji_old_new_with_ivs_svs() {
 }
 
 #[test]
-fn test_prolonged_sound_marks() {
+fn test_prolonged_sound_marks_conservative() {
     let recipe = TransliterationRecipe {
-        replace_suspicious_hyphens_to_prolonged_sound_marks: true,
+        replace_suspicious_hyphens_to_prolonged_sound_marks:
+            ReplaceSuspiciousHyphensOptions::Conservative,
         ..Default::default()
     };
     let configs = recipe.build().unwrap();
 
     assert_eq!(configs.len(), 1);
     assert!(
-        matches!(&configs[0], yosina::TransliteratorConfig::ProlongedSoundMarks(opts) if opts.replace_prolonged_marks_following_alnums)
+        matches!(&configs[0], yosina::TransliteratorConfig::ProlongedSoundMarks(opts) if opts.replace_prolonged_marks_following_alnums && !opts.replace_prolonged_marks_between_non_kanas)
+    );
+}
+
+#[test]
+fn test_prolonged_sound_marks_aggressive() {
+    let recipe = TransliterationRecipe {
+        replace_suspicious_hyphens_to_prolonged_sound_marks:
+            ReplaceSuspiciousHyphensOptions::Aggressive,
+        ..Default::default()
+    };
+    let configs = recipe.build().unwrap();
+
+    assert_eq!(configs.len(), 1);
+    assert!(
+        matches!(&configs[0], yosina::TransliteratorConfig::ProlongedSoundMarks(opts) if opts.replace_prolonged_marks_following_alnums && opts.replace_prolonged_marks_between_non_kanas)
     );
 }
 
@@ -445,7 +464,8 @@ fn test_circled_or_squared_and_combined_order() {
 fn test_comprehensive_ordering() {
     let recipe = TransliterationRecipe {
         kanji_old_new: true,
-        replace_suspicious_hyphens_to_prolonged_sound_marks: true,
+        replace_suspicious_hyphens_to_prolonged_sound_marks:
+            ReplaceSuspiciousHyphensOptions::Conservative,
         replace_spaces: true,
         combine_decomposed_hiraganas_and_katakanas: true,
         to_halfwidth: ToHalfwidthOptions::Yes {
@@ -530,7 +550,8 @@ fn test_all_transliterators_enabled() {
             ],
         },
         replace_ideographic_annotations: true,
-        replace_suspicious_hyphens_to_prolonged_sound_marks: true,
+        replace_suspicious_hyphens_to_prolonged_sound_marks:
+            ReplaceSuspiciousHyphensOptions::Conservative,
         replace_radicals: true,
         replace_spaces: true,
         replace_circled_or_squared_characters: ReplaceCircledOrSquaredCharactersOptions::Yes {

@@ -54,6 +54,27 @@ class TestIndividualTransliterators < Minitest::Test
     config = find_config(configs, :prolonged_sound_marks)
     refute_nil config
     assert_equal true, config[1][:replace_prolonged_marks_following_alnums]
+    assert_equal false, config[1][:replace_prolonged_marks_between_non_kanas]
+  end
+
+  def test_prolonged_sound_marks_conservative
+    recipe = Yosina::TransliterationRecipe.new(replace_suspicious_hyphens_to_prolonged_sound_marks: 'conservative')
+    configs = recipe.build_transliterator_configs
+
+    config = find_config(configs, :prolonged_sound_marks)
+    refute_nil config
+    assert_equal true, config[1][:replace_prolonged_marks_following_alnums]
+    assert_equal false, config[1][:replace_prolonged_marks_between_non_kanas]
+  end
+
+  def test_prolonged_sound_marks_aggressive
+    recipe = Yosina::TransliterationRecipe.new(replace_suspicious_hyphens_to_prolonged_sound_marks: 'aggressive')
+    configs = recipe.build_transliterator_configs
+
+    config = find_config(configs, :prolonged_sound_marks)
+    refute_nil config
+    assert_equal true, config[1][:replace_prolonged_marks_following_alnums]
+    assert_equal true, config[1][:replace_prolonged_marks_between_non_kanas]
   end
 
   def test_circled_or_squared

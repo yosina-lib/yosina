@@ -398,6 +398,105 @@ public class ProlongedSoundMarksTransliteratorTest {
     }
 
     @Test
+    public void testReplaceProlongedMarksBetweenNonKanasOtherChars() {
+        String input = "\u6f22\u30fc\u5b57";
+        String expected = "\u6f22\uff0d\u5b57";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasHalfwidthAlnums() {
+        String input = "1\u30fc2";
+        String expected = "1\u002d2";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasFullwidthAlnums() {
+        String input = "\uff11\u30fc\uff12";
+        String expected = "\uff11\uff0d\uff12";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasAfterKanaNotReplaced() {
+        String input = "\u30ab\u30fc\u6f22";
+        String expected = "\u30ab\u30fc\u6f22";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasBeforeKanaNotReplaced() {
+        String input = "\u6f22\u30fc\u30ab";
+        String expected = "\u6f22\u30fc\u30ab";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasConsecutive() {
+        String input = "\u6f22\u30fc\u30fc\u30fc\u5b57";
+        String expected = "\u6f22\uff0d\uff0d\uff0d\u5b57";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasConsecutiveBeforeKanaPreserved() {
+        String input = "\u6f22\u30fc\u30fc\u30fc\u30ab";
+        String expected = "\u6f22\u30fc\u30fc\u30fc\u30ab";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasTrailingAfterFullwidth() {
+        String input = "\u6f22\u30fc\u30fc\u30fc";
+        String expected = "\u6f22\uff0d\uff0d\uff0d";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasTrailingAfterHalfwidth() {
+        String input = "1\u30fc\u30fc\u30fc";
+        String expected = "1\u002d\u002d\u002d";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasOnlyAfterAlnumBeforeKana() {
+        String input = "A\u30fc\u30ab";
+        String expected = "A\u30fc\u30ab";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, false, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
+    public void testReplaceProlongedMarksBetweenNonKanasBothOptionsAfterAlnumBeforeKana() {
+        String input = "A\u30fc\u30ab";
+        String expected = "A\u002d\u30ab";
+        ProlongedSoundMarksTransliterator.Options options =
+                new ProlongedSoundMarksTransliterator.Options(false, false, false, true, true);
+        assertEquals(expected, transliterate(input, options));
+    }
+
+    @Test
     public void testProlongedSoundMarksTransliteratorOptionsEquals() {
         ProlongedSoundMarksTransliterator.Options options1 =
                 new ProlongedSoundMarksTransliterator.Options(true, false, true, false);

@@ -359,6 +359,93 @@ func TestProlongedSoundMarksCharacterTypes(t *testing.T) {
 	}
 }
 
+func TestProlongedSoundMarksReplaceBetweenNonKanas(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+		opts     Options
+	}{
+		{
+			name:     "PSM between non-kana OTHER chars",
+			input:    "漢\u30fc字",
+			expected: "漢\uff0d字",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "PSM between halfwidth alnums",
+			input:    "1\u30fc2",
+			expected: "1\u002d2",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "PSM between fullwidth alnums",
+			input:    "１\u30fc２",
+			expected: "１\uff0d２",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "PSM after kana not replaced",
+			input:    "カ\u30fc漢",
+			expected: "カ\u30fc漢",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "PSM before kana not replaced",
+			input:    "漢\u30fcカ",
+			expected: "漢\u30fcカ",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "consecutive PSMs between non-kana",
+			input:    "漢\u30fc\u30fc\u30fc字",
+			expected: "漢\uff0d\uff0d\uff0d字",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "consecutive PSMs before kana preserved",
+			input:    "漢\u30fc\u30fc\u30fcカ",
+			expected: "漢\u30fc\u30fc\u30fcカ",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "trailing PSMs after fullwidth non-kana",
+			input:    "漢\u30fc\u30fc\u30fc",
+			expected: "漢\uff0d\uff0d\uff0d",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "trailing PSMs after halfwidth non-kana",
+			input:    "1\u30fc\u30fc\u30fc",
+			expected: "1\u002d\u002d\u002d",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "non-kana only: PSM after alnum before kana",
+			input:    "A\u30fcカ",
+			expected: "A\u30fcカ",
+			opts:     Options{ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+		{
+			name:     "both options: PSM after alnum before kana",
+			input:    "A\u30fcカ",
+			expected: "A\u002dカ",
+			opts:     Options{ReplaceProlongedMarksFollowingAlnums: true, ReplaceProlongedMarksBetweenNonKanas: true},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			chars := yosina.BuildCharArray(tt.input)
+			iter := yosina.NewCharIteratorFromSlice(chars)
+			transliteratedIter := Transliterate(iter, tt.opts)
+			result := yosina.StringFromChars(transliteratedIter)
+
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
 func BenchmarkProlongedSoundMarks(b *testing.B) {
 	input := "イ\uff0dハト\uff0dヴォ\u002dカトラリ\u002d"
 	chars := yosina.BuildCharArray(input)

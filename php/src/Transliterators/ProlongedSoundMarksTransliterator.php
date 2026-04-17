@@ -72,6 +72,7 @@ class ProlongedSoundMarksTransliterator implements TransliteratorInterface
     private bool $allowProlongedHatsuon;
     private bool $allowProlongedSokuon;
     private bool $replaceProlongedMarksFollowingAlnums;
+    private bool $replaceProlongedMarksBetweenNonKanas;
     private int $prolongables;
 
     /**
@@ -83,6 +84,7 @@ class ProlongedSoundMarksTransliterator implements TransliteratorInterface
         $this->allowProlongedHatsuon = (bool) ($options['allowProlongedHatsuon'] ?? false);
         $this->allowProlongedSokuon = (bool) ($options['allowProlongedSokuon'] ?? false);
         $this->replaceProlongedMarksFollowingAlnums = (bool) ($options['replaceProlongedMarksFollowingAlnums'] ?? false);
+        $this->replaceProlongedMarksBetweenNonKanas = (bool) ($options['replaceProlongedMarksBetweenNonKanas'] ?? false);
 
         // Build prolongable character types
         $this->prolongables = self::VOWEL_ENDED | self::PROLONGED_SOUND_MARK;
@@ -160,6 +162,15 @@ class ProlongedSoundMarksTransliterator implements TransliteratorInterface
     }
 
     /**
+     * Check if character type is kana (hiragana, katakana, or either).
+     */
+    private function isKana(int $charType): bool
+    {
+        $masked = $charType & 0xE0;
+        return $masked === self::HIRAGANA || $masked === self::KATAKANA || $masked === self::EITHER;
+    }
+
+    /**
      * Check if character is hyphen-like.
      */
     private function isHyphenLike(string $char): bool
@@ -194,15 +205,27 @@ class ProlongedSoundMarksTransliterator implements TransliteratorInterface
                 $codepoint = $firstChar !== '' ? mb_ord($firstChar, 'UTF-8') : -1;
                 $lastNonProlongedChar = [$char, $this->getCharType($codepoint)];
 
-                // Check if we should replace with hyphens for alphanumerics
-                if (($prevNonProlongedChar === null || $this->isAlnum($prevNonProlongedChar[1]))
+                // Check if we should replace with hyphens
+                $replaceByAlnum = $this->replaceProlongedMarksFollowingAlnums
+                    && ($prevNonProlongedChar === null || $this->isAlnum($prevNonProlongedChar[1]));
+                $replaceByNonKana = $this->replaceProlongedMarksBetweenNonKanas
+                    && ($prevNonProlongedChar === null || !$this->isKana($prevNonProlongedChar[1]))
+                    && !$this->isKana($lastNonProlongedChar[1]);
+
+                if (($replaceByAlnum || $replaceByNonKana)
                     && (!$this->skipAlreadyTransliteratedChars || !$processedCharsInLookahead)) {
 
-                    $replacement = ($prevNonProlongedChar === null
-                                    ? $this->isHalfwidth($lastNonProlongedChar[1])
-                                    : $this->isHalfwidth($prevNonProlongedChar[1]))
-                        ? "\u{002d}"
-                        : "\u{ff0d}";
+                    if ($replaceByNonKana) {
+                        $prevHalf = $prevNonProlongedChar === null || $this->isHalfwidth($prevNonProlongedChar[1]);
+                        $nextHalf = $this->isHalfwidth($lastNonProlongedChar[1]);
+                        $replacement = (!$prevHalf && !$nextHalf) ? "\u{ff0d}" : "\u{002d}";
+                    } else {
+                        $replacement = ($prevNonProlongedChar === null
+                                        ? $this->isHalfwidth($lastNonProlongedChar[1])
+                                        : $this->isHalfwidth($prevNonProlongedChar[1]))
+                            ? "\u{002d}"
+                            : "\u{ff0d}";
+                    }
 
                     foreach ($lookaheadBuf as $bufferedChar) {
                         yield new Char($replacement, $offset, $bufferedChar);
@@ -233,8 +256,9 @@ class ProlongedSoundMarksTransliterator implements TransliteratorInterface
                         $offset += strlen($replacement);
                         continue;
                     } else {
-                        // Check if we should buffer for alphanumeric replacement
-                        if ($this->replaceProlongedMarksFollowingAlnums && $this->isAlnum($lastNonProlongedChar[1])) {
+                        // Check if we should buffer for alphanumeric or non-kana replacement
+                        if (($this->replaceProlongedMarksFollowingAlnums && $this->isAlnum($lastNonProlongedChar[1]))
+                            || ($this->replaceProlongedMarksBetweenNonKanas && !$this->isKana($lastNonProlongedChar[1]))) {
                             $lookaheadBuf[] = $char;
                             continue;
                         }

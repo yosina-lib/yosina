@@ -42,6 +42,13 @@ impl CharType {
         self.0 & CharType::HALFWIDTH.0 != 0
     }
 
+    fn is_kana(&self) -> bool {
+        let masked = self.0 & 0xe0;
+        masked == CharType::HIRAGANA.0
+            || masked == CharType::KATAKANA.0
+            || masked == CharType::EITHER.0
+    }
+
     /// Special character mappings for character type detection
     fn get_special_char_type(codepoint: u32) -> Option<Self> {
         match codepoint {
@@ -133,6 +140,10 @@ pub struct ProlongedSoundMarksTransliteratorOptions {
     /// Replace prolonged voice marks following an alphanumeric
     #[serde(default)]
     pub replace_prolonged_marks_following_alnums: bool,
+
+    /// Replace prolonged marks between non-kana characters
+    #[serde(default)]
+    pub replace_prolonged_marks_between_non_kanas: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -189,6 +200,58 @@ impl Transliterator for ProlongedSoundMarksTransliterator {
         for &current_char in chars {
             // Skip sentinel characters
             if current_char.c.is_empty() {
+                if !lookahead_buf.is_empty() {
+                    // Flush lookahead buffer at end of input (sentinel)
+                    // Sentinel has type OTHER (non-kana, not halfwidth)
+                    let sentinel_type = CharType::OTHER;
+                    let prev_non_prolonged = last_non_prolonged_char;
+
+                    let replace_by_alnum = self.options.replace_prolonged_marks_following_alnums
+                        && prev_non_prolonged.is_none_or(|(_, t)| t.is_alnum());
+                    let replace_by_non_kana =
+                        self.options.replace_prolonged_marks_between_non_kanas
+                            && prev_non_prolonged.is_none_or(|(_, t)| !t.is_kana())
+                            && !sentinel_type.is_kana();
+
+                    if (replace_by_alnum || replace_by_non_kana)
+                        && (!self.options.skip_already_transliterated_chars
+                            || !processed_chars_in_lookahead)
+                    {
+                        let replacement = if replace_by_non_kana {
+                            let prev_half =
+                                prev_non_prolonged.is_none_or(|(_, t)| t.is_halfwidth());
+                            let next_half = sentinel_type.is_halfwidth();
+                            if !prev_half && !next_half {
+                                "\u{FF0D}"
+                            } else {
+                                "\u{002D}"
+                            }
+                        } else if prev_non_prolonged
+                            .map_or(sentinel_type.is_halfwidth(), |(_, t)| t.is_halfwidth())
+                        {
+                            "\u{002D}"
+                        } else {
+                            "\u{FF0D}"
+                        };
+
+                        for &lookahead_char in &lookahead_buf {
+                            let new_char = pool.new_char_from(
+                                Cow::Borrowed(replacement),
+                                offset,
+                                lookahead_char,
+                            );
+                            offset += replacement.len();
+                            result.push(new_char);
+                        }
+                    } else {
+                        for &lookahead_char in &lookahead_buf {
+                            let new_char = pool.new_with_offset(lookahead_char, offset);
+                            offset += lookahead_char.c.len();
+                            result.push(new_char);
+                        }
+                    }
+                    lookahead_buf.clear();
+                }
                 result.push(current_char);
                 continue;
             }
@@ -208,18 +271,33 @@ impl Transliterator for ProlongedSoundMarksTransliterator {
                     let current_char_type = CharType::from_codepoint(current_codepoint);
                     last_non_prolonged_char = Some((current_char, current_char_type));
 
-                    if (prev_non_prolonged_char.is_none()
-                        || prev_non_prolonged_char.unwrap().1.is_alnum())
+                    let replace_by_alnum = self.options.replace_prolonged_marks_following_alnums
+                        && prev_non_prolonged_char.is_none_or(|(_, t)| t.is_alnum());
+                    let replace_by_non_kana =
+                        self.options.replace_prolonged_marks_between_non_kanas
+                            && prev_non_prolonged_char.is_none_or(|(_, t)| !t.is_kana())
+                            && !current_char_type.is_kana();
+
+                    if (replace_by_alnum || replace_by_non_kana)
                         && (!self.options.skip_already_transliterated_chars
                             || !processed_chars_in_lookahead)
                     {
-                        let replacement = if match prev_non_prolonged_char {
+                        let replacement = if replace_by_non_kana {
+                            let prev_half =
+                                prev_non_prolonged_char.is_none_or(|(_, t)| t.is_halfwidth());
+                            let next_half = current_char_type.is_halfwidth();
+                            if !prev_half && !next_half {
+                                "\u{FF0D}"
+                            } else {
+                                "\u{002D}"
+                            }
+                        } else if match prev_non_prolonged_char {
                             Some(c) => c.1.is_halfwidth(),
                             None => current_char_type.is_halfwidth(),
                         } {
-                            "\u{002D}" // HYPHEN-MINUS
+                            "\u{002D}"
                         } else {
-                            "\u{FF0D}" // FULLWIDTH HYPHEN-MINUS
+                            "\u{FF0D}"
                         };
 
                         // Replace all marks in lookahead buffer with the chosen replacement
@@ -233,7 +311,7 @@ impl Transliterator for ProlongedSoundMarksTransliterator {
                             result.push(new_char);
                         }
                     } else {
-                        // Not between alphanumeric characters - preserve original
+                        // Not between matching characters - preserve original
                         for &lookahead_char in &lookahead_buf {
                             let new_char = pool.new_with_offset(lookahead_char, offset);
                             offset += lookahead_char.c.len();
@@ -274,8 +352,10 @@ impl Transliterator for ProlongedSoundMarksTransliterator {
                             continue;
                         } else {
                             // Not a Japanese character
-                            if self.options.replace_prolonged_marks_following_alnums
-                                && last_char_type.is_alnum()
+                            if (self.options.replace_prolonged_marks_following_alnums
+                                && last_char_type.is_alnum())
+                                || (self.options.replace_prolonged_marks_between_non_kanas
+                                    && !last_char_type.is_kana())
                             {
                                 lookahead_buf.push(current_char);
                                 continue;
@@ -885,5 +965,197 @@ mod tests {
             let result_string = from_chars(result.iter().cloned());
             assert_eq!(result_string, *expected, "Failed for input '{input}'");
         }
+    }
+
+    #[test]
+    fn test_psm_between_non_kanas() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        // PSM between CJK characters
+        let input_chars = pool.build_char_array("漢\u{30FC}字");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(from_chars(result.iter().cloned()), "漢\u{FF0D}字");
+    }
+
+    #[test]
+    fn test_psm_between_halfwidth_alnums_non_kana() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("1\u{30FC}2");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(from_chars(result.iter().cloned()), "1\u{002D}2");
+    }
+
+    #[test]
+    fn test_psm_between_fullwidth_alnums_non_kana() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("１\u{30FC}２");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(from_chars(result.iter().cloned()), "１\u{FF0D}２");
+    }
+
+    #[test]
+    fn test_psm_after_kana_not_replaced_non_kana_option() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("カ\u{30FC}漢");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(from_chars(result.iter().cloned()), "カ\u{30FC}漢");
+    }
+
+    #[test]
+    fn test_psm_before_kana_not_replaced_non_kana_option() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("漢\u{30FC}カ");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(from_chars(result.iter().cloned()), "漢\u{30FC}カ");
+    }
+
+    #[test]
+    fn test_consecutive_psms_between_non_kanas() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("漢\u{30FC}\u{30FC}\u{30FC}字");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(
+            from_chars(result.iter().cloned()),
+            "漢\u{FF0D}\u{FF0D}\u{FF0D}字"
+        );
+    }
+
+    #[test]
+    fn test_consecutive_psms_before_kana_not_replaced() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("漢\u{30FC}\u{30FC}\u{30FC}カ");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(
+            from_chars(result.iter().cloned()),
+            "漢\u{30FC}\u{30FC}\u{30FC}カ"
+        );
+    }
+
+    #[test]
+    fn test_trailing_psms_after_fullwidth_non_kana() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("漢\u{30FC}\u{30FC}\u{30FC}");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(
+            from_chars(result.iter().cloned()),
+            "漢\u{FF0D}\u{FF0D}\u{FF0D}"
+        );
+    }
+
+    #[test]
+    fn test_trailing_psms_after_halfwidth_non_kana() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        let input_chars = pool.build_char_array("1\u{30FC}\u{30FC}\u{30FC}");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(
+            from_chars(result.iter().cloned()),
+            "1\u{002D}\u{002D}\u{002D}"
+        );
+    }
+
+    #[test]
+    fn test_non_kana_only_psm_after_alnum_before_kana() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        // With only non-kana option, PSM after alnum before kana should NOT be replaced
+        let input_chars = pool.build_char_array("A\u{30FC}カ");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(from_chars(result.iter().cloned()), "A\u{30FC}カ");
+    }
+
+    #[test]
+    fn test_both_options_psm_after_alnum_before_kana() {
+        let options = ProlongedSoundMarksTransliteratorOptions {
+            replace_prolonged_marks_following_alnums: true,
+            replace_prolonged_marks_between_non_kanas: true,
+            ..Default::default()
+        };
+        let transliterator = ProlongedSoundMarksTransliterator::new(options);
+        let mut pool = CharPool::new();
+
+        // With both options, alnum option should trigger replacement
+        let input_chars = pool.build_char_array("A\u{30FC}カ");
+        let result = transliterator
+            .transliterate(&mut pool, &input_chars)
+            .unwrap();
+        assert_eq!(from_chars(result.iter().cloned()), "A\u{002D}カ");
     }
 }

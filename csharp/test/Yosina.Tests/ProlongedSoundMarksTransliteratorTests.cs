@@ -426,4 +426,159 @@ public class ProlongedSoundMarksTransliteratorTests
         var result = Transliterate(input, options);
         Assert.Equal(expected, result);
     }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasOtherChars()
+    {
+        var input = "\u6f22\u30fc\u5b57";
+        var expected = "\u6f22\uff0d\u5b57";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasHalfwidthAlnums()
+    {
+        var input = "1\u30fc2";
+        var expected = "1\u002d2";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasFullwidthAlnums()
+    {
+        var input = "\uff11\u30fc\uff12";
+        var expected = "\uff11\uff0d\uff12";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasAfterKanaNotReplaced()
+    {
+        var input = "\u30ab\u30fc\u6f22";
+        var expected = "\u30ab\u30fc\u6f22";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasBeforeKanaNotReplaced()
+    {
+        var input = "\u6f22\u30fc\u30ab";
+        var expected = "\u6f22\u30fc\u30ab";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasConsecutive()
+    {
+        var input = "\u6f22\u30fc\u30fc\u30fc\u5b57";
+        var expected = "\u6f22\uff0d\uff0d\uff0d\u5b57";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasConsecutiveBeforeKanaPreserved()
+    {
+        var input = "\u6f22\u30fc\u30fc\u30fc\u30ab";
+        var expected = "\u6f22\u30fc\u30fc\u30fc\u30ab";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasTrailingAfterFullwidth()
+    {
+        var input = "\u6f22\u30fc\u30fc\u30fc";
+        var expected = "\u6f22\uff0d\uff0d\uff0d";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasTrailingAfterHalfwidth()
+    {
+        var input = "1\u30fc\u30fc\u30fc";
+        var expected = "1\u002d\u002d\u002d";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBetweenNonKanasOnlyPsmAfterAlnumBeforeKana()
+    {
+        var input = "A\u30fc\u30ab";
+        var expected = "A\u30fc\u30ab";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void TestReplaceProlongedMarksBothOptions()
+    {
+        var input = "A\u30fc\u30ab";
+        var expected = "A\u002d\u30ab";
+        var options = new ProlongedSoundMarksTransliterator.Options
+        {
+            ReplaceProlongedMarksFollowingAlnums = true,
+            ReplaceProlongedMarksBetweenNonKanas = true,
+        };
+        var result = Transliterate(input, options);
+
+        Assert.Equal(expected, result);
+    }
 }

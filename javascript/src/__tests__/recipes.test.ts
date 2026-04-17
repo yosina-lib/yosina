@@ -33,14 +33,43 @@ describe("Individual Transliterators", () => {
     expect(configs.length).toBeGreaterThanOrEqual(3);
   });
 
-  it("prolonged sound marks configuration", () => {
+  it("prolonged sound marks configuration with true", () => {
     const configs = buildTransliteratorConfigsFromRecipe({
       replaceSuspiciousHyphensToProlongedSoundMarks: true,
     });
 
     const config = configs.find((c) => c[0] === "prolonged-sound-marks");
     expect(config).toBeDefined();
-    expect(config?.[1]).toEqual({ replaceProlongedMarksFollowingAlnums: true });
+    expect(config?.[1]).toEqual({
+      replaceProlongedMarksFollowingAlnums: true,
+      replaceProlongedMarksBetweenNonKanas: false,
+    });
+  });
+
+  it("prolonged sound marks configuration with conservative", () => {
+    const configs = buildTransliteratorConfigsFromRecipe({
+      replaceSuspiciousHyphensToProlongedSoundMarks: "conservative",
+    });
+
+    const config = configs.find((c) => c[0] === "prolonged-sound-marks");
+    expect(config).toBeDefined();
+    expect(config?.[1]).toEqual({
+      replaceProlongedMarksFollowingAlnums: true,
+      replaceProlongedMarksBetweenNonKanas: false,
+    });
+  });
+
+  it("prolonged sound marks configuration with aggressive", () => {
+    const configs = buildTransliteratorConfigsFromRecipe({
+      replaceSuspiciousHyphensToProlongedSoundMarks: "aggressive",
+    });
+
+    const config = configs.find((c) => c[0] === "prolonged-sound-marks");
+    expect(config).toBeDefined();
+    expect(config?.[1]).toEqual({
+      replaceProlongedMarksFollowingAlnums: true,
+      replaceProlongedMarksBetweenNonKanas: true,
+    });
   });
 
   it("circled_or_squared configuration", () => {

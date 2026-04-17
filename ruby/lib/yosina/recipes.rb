@@ -271,7 +271,11 @@ module Yosina
 
     def apply_replace_suspicious_hyphens_to_prolonged_sound_marks(ctx)
       if @replace_suspicious_hyphens_to_prolonged_sound_marks
-        ctx.insert_middle([:prolonged_sound_marks, { replace_prolonged_marks_following_alnums: true }])
+        ctx.insert_middle([:prolonged_sound_marks, {
+                            replace_prolonged_marks_following_alnums: true,
+                            replace_prolonged_marks_between_non_kanas:
+                              @replace_suspicious_hyphens_to_prolonged_sound_marks == 'aggressive'
+                          }])
       else
         ctx
       end

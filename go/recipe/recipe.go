@@ -31,6 +31,8 @@ const (
 	ExcludeEmojis
 	HiraToKata
 	KataToHira
+	Conservative
+	Aggressive
 )
 
 // ConvertHistoricalHirakatasMode specifies how historical hiragana/katakana should be converted.
@@ -87,10 +89,11 @@ type TransliterationRecipe struct {
 	ReplaceJapaneseIterationMarks bool
 
 	// ReplaceSuspiciousHyphensToProlongedSoundMarks replaces "suspicious" hyphens with prolonged sound marks
+	// Values: Yes/Conservative (replace following alnums only), Aggressive (also replace between non-kana), or No (disabled)
 	// Example:
 	//   Input:  "スーパ-" (with hyphen-minus)
 	//   Output: "スーパー" (becomes prolonged sound mark)
-	ReplaceSuspiciousHyphensToProlongedSoundMarks bool
+	ReplaceSuspiciousHyphensToProlongedSoundMarks TransliterationRecipeOptionValue
 
 	// ReplaceCombinedCharacters replaces combined characters with their corresponding characters
 	// Example:
@@ -377,11 +380,21 @@ func (r *TransliterationRecipe) applyReplaceJapaneseIterationMarks(ctx *translit
 }
 
 func (r *TransliterationRecipe) applyReplaceSuspiciousHyphensToProlongedSoundMarks(ctx *transliteratorConfigListBuilder) {
-	if r.ReplaceSuspiciousHyphensToProlongedSoundMarks {
+	switch r.ReplaceSuspiciousHyphensToProlongedSoundMarks {
+	case Yes, Conservative:
 		ctx.insertMiddle(TransliteratorConfig{
 			Name: "prolonged-sound-marks",
 			Options: &prolonged_sound_marks.Options{
 				ReplaceProlongedMarksFollowingAlnums: true,
+				ReplaceProlongedMarksBetweenNonKanas: false,
+			},
+		}, false)
+	case Aggressive:
+		ctx.insertMiddle(TransliteratorConfig{
+			Name: "prolonged-sound-marks",
+			Options: &prolonged_sound_marks.Options{
+				ReplaceProlongedMarksFollowingAlnums: true,
+				ReplaceProlongedMarksBetweenNonKanas: true,
 			},
 		}, false)
 	}

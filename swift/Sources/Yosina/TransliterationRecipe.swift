@@ -95,6 +95,29 @@ public struct ReplaceHyphensOptions {
     }
 }
 
+/// Options for suspicious hyphens to prolonged sound marks replacement.
+public struct ReplaceSuspiciousHyphensOptions {
+    public let enabled: Bool
+    public let aggressive: Bool
+
+    public static let disabled = ReplaceSuspiciousHyphensOptions(enabled: false, aggressive: false)
+    public static let enabled = ReplaceSuspiciousHyphensOptions(enabled: true, aggressive: false)
+    public static let conservative = ReplaceSuspiciousHyphensOptions(enabled: true, aggressive: false)
+    public static let aggressive = ReplaceSuspiciousHyphensOptions(enabled: true, aggressive: true)
+
+    public var isEnabled: Bool { enabled }
+    public var isAggressive: Bool { aggressive }
+
+    public init(enabled: Bool, aggressive: Bool) {
+        self.enabled = enabled
+        self.aggressive = aggressive
+    }
+
+    public static func from(_ enabled: Bool) -> ReplaceSuspiciousHyphensOptions {
+        enabled ? .enabled : .disabled
+    }
+}
+
 /// Options for circled or squared characters replacement.
 public struct ReplaceCircledOrSquaredCharactersOptions {
     public let enabled: Bool
@@ -138,7 +161,7 @@ public struct TransliterationRecipe: TransliteratorFactory {
         kanjiOldNew: Bool = false,
         hiraKata: HiraKataTransliterator.Mode? = nil,
         replaceJapaneseIterationMarks: Bool = false,
-        replaceSuspiciousHyphensToProlongedSoundMarks: Bool = false,
+        replaceSuspiciousHyphensToProlongedSoundMarks: ReplaceSuspiciousHyphensOptions = .disabled,
         replaceCombinedCharacters: Bool = false,
         replaceCircledOrSquaredCharacters: ReplaceCircledOrSquaredCharactersOptions = .disabled,
         replaceIdeographicAnnotations: Bool = false,
@@ -209,7 +232,7 @@ public struct TransliterationRecipe: TransliteratorFactory {
     /// Example:
     /// Input:  "スーパ-" (with hyphen-minus)
     /// Output: "スーパー" (becomes prolonged sound mark)
-    public var replaceSuspiciousHyphensToProlongedSoundMarks: Bool = false
+    public var replaceSuspiciousHyphensToProlongedSoundMarks: ReplaceSuspiciousHyphensOptions = .disabled
 
     /// Replace combined characters with their corresponding characters.
     ///
@@ -434,10 +457,11 @@ public struct TransliterationRecipe: TransliteratorFactory {
     }
 
     private func applyReplaceSuspiciousHyphensToProlongedSoundMarks(to builder: TransliteratorConfigListBuilder) {
-        if replaceSuspiciousHyphensToProlongedSoundMarks {
-            // Note: ProlongedSoundMarksTransliterator does not yet support options in Swift
-            // The replaceProlongedMarksFollowingAlnums option would be configured here when available
-            builder.insertMiddle(.prolongedSoundMarks, forceReplace: false)
+        if replaceSuspiciousHyphensToProlongedSoundMarks.isEnabled {
+            var options = ProlongedSoundMarksTransliterator.Options()
+            options.replaceProlongedMarksFollowingAlnums = true
+            options.replaceProlongedMarksBetweenNonKanas = replaceSuspiciousHyphensToProlongedSoundMarks.isAggressive
+            builder.insertMiddle(.prolongedSoundMarks(options: options), forceReplace: false)
         }
     }
 
@@ -583,7 +607,7 @@ public extension TransliterationRecipe {
         return recipe
     }
 
-    func withReplaceSuspiciousHyphensToProlongedSoundMarks(_ value: Bool) -> TransliterationRecipe {
+    func withReplaceSuspiciousHyphensToProlongedSoundMarks(_ value: ReplaceSuspiciousHyphensOptions) -> TransliterationRecipe {
         var recipe = self
         recipe.replaceSuspiciousHyphensToProlongedSoundMarks = value
         return recipe
@@ -753,7 +777,6 @@ class TransliteratorConfigListBuilder {
              (.ideographicAnnotations, .ideographicAnnotations),
              (.kanjiOldNew, .kanjiOldNew),
              (.combined, .combined),
-             (.prolongedSoundMarks, .prolongedSoundMarks),
              (.romanNumerals, .romanNumerals):
             return true
         case (.hyphens, .hyphens),
@@ -762,7 +785,8 @@ class TransliteratorConfigListBuilder {
              (.circledOrSquared, .circledOrSquared),
              (.hiraKataComposition, .hiraKataComposition),
              (.hiraKata, .hiraKata),
-             (.japaneseIterationMarks, .japaneseIterationMarks):
+             (.japaneseIterationMarks, .japaneseIterationMarks),
+             (.prolongedSoundMarks, .prolongedSoundMarks):
             return true
         case let (.historicalHirakatas(options: lhsOpts), .historicalHirakatas(options: rhsOpts)):
             return lhsOpts == rhsOpts

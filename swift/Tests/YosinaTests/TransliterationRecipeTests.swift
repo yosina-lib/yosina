@@ -16,7 +16,7 @@ final class TransliterationRecipeTests: XCTestCase {
         let recipe = TransliterationRecipe()
 
         XCTAssertFalse(recipe.kanjiOldNew)
-        XCTAssertFalse(recipe.replaceSuspiciousHyphensToProlongedSoundMarks)
+        XCTAssertFalse(recipe.replaceSuspiciousHyphensToProlongedSoundMarks.isEnabled)
         XCTAssertFalse(recipe.replaceCombinedCharacters)
         XCTAssertNil(recipe.hiraKata)
         XCTAssertFalse(recipe.replaceJapaneseIterationMarks)
@@ -42,7 +42,7 @@ final class TransliterationRecipeTests: XCTestCase {
             kanjiOldNew: true,
             hiraKata: .kataToHira,
             replaceJapaneseIterationMarks: true,
-            replaceSuspiciousHyphensToProlongedSoundMarks: true,
+            replaceSuspiciousHyphensToProlongedSoundMarks: .enabled,
             replaceCombinedCharacters: true,
             replaceCircledOrSquaredCharacters: .enabled,
             replaceIdeographicAnnotations: true,
@@ -63,7 +63,7 @@ final class TransliterationRecipeTests: XCTestCase {
         XCTAssertTrue(recipe.kanjiOldNew)
         XCTAssertEqual(recipe.hiraKata, .kataToHira)
         XCTAssertTrue(recipe.replaceJapaneseIterationMarks)
-        XCTAssertTrue(recipe.replaceSuspiciousHyphensToProlongedSoundMarks)
+        XCTAssertTrue(recipe.replaceSuspiciousHyphensToProlongedSoundMarks.isEnabled)
         XCTAssertTrue(recipe.replaceCombinedCharacters)
         XCTAssertTrue(recipe.replaceCircledOrSquaredCharacters.isEnabled)
         XCTAssertTrue(recipe.replaceIdeographicAnnotations)
@@ -128,11 +128,36 @@ final class TransliterationRecipeTests: XCTestCase {
     }
 
     func testReplaceSuspiciousHyphensToProlongedSoundMarks() throws {
-        let recipe = TransliterationRecipe().withReplaceSuspiciousHyphensToProlongedSoundMarks(true)
+        let recipe = TransliterationRecipe().withReplaceSuspiciousHyphensToProlongedSoundMarks(.enabled)
         let config = try recipe.buildTransliteratorConfig()
 
         XCTAssertEqual(config.count, 1)
         XCTAssert({ if case .prolongedSoundMarks = config[0] { return true } else { return false } }())
+
+        XCTAssertTrue(recipe.replaceSuspiciousHyphensToProlongedSoundMarks.isEnabled)
+        XCTAssertFalse(recipe.replaceSuspiciousHyphensToProlongedSoundMarks.isAggressive)
+    }
+
+    func testReplaceSuspiciousHyphensToProlongedSoundMarksConservative() throws {
+        let recipe = TransliterationRecipe().withReplaceSuspiciousHyphensToProlongedSoundMarks(.conservative)
+        let config = try recipe.buildTransliteratorConfig()
+
+        XCTAssertEqual(config.count, 1)
+        XCTAssert({ if case .prolongedSoundMarks = config[0] { return true } else { return false } }())
+
+        XCTAssertTrue(recipe.replaceSuspiciousHyphensToProlongedSoundMarks.isEnabled)
+        XCTAssertFalse(recipe.replaceSuspiciousHyphensToProlongedSoundMarks.isAggressive)
+    }
+
+    func testReplaceSuspiciousHyphensToProlongedSoundMarksAggressive() throws {
+        let recipe = TransliterationRecipe().withReplaceSuspiciousHyphensToProlongedSoundMarks(.aggressive)
+        let config = try recipe.buildTransliteratorConfig()
+
+        XCTAssertEqual(config.count, 1)
+        XCTAssert({ if case .prolongedSoundMarks = config[0] { return true } else { return false } }())
+
+        XCTAssertTrue(recipe.replaceSuspiciousHyphensToProlongedSoundMarks.isEnabled)
+        XCTAssertTrue(recipe.replaceSuspiciousHyphensToProlongedSoundMarks.isAggressive)
     }
 
     func testReplaceCircledOrSquaredCharactersDefault() throws {
@@ -406,7 +431,7 @@ final class TransliterationRecipeTests: XCTestCase {
             .withKanjiOldNew(true)
             .withHiraKata(.kataToHira)
             .withReplaceJapaneseIterationMarks(true)
-            .withReplaceSuspiciousHyphensToProlongedSoundMarks(true)
+            .withReplaceSuspiciousHyphensToProlongedSoundMarks(.enabled)
             .withReplaceCombinedCharacters(true)
             .withReplaceCircledOrSquaredCharacters(.enabled)
             .withReplaceIdeographicAnnotations(true)

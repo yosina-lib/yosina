@@ -59,6 +59,27 @@ class TestIndividualTransliterators:
         config = next((c for c in configs if c[0] == "prolonged-sound-marks"), None)
         assert config is not None
         assert config[1]["replace_prolonged_marks_following_alnums"] is True
+        assert config[1]["replace_prolonged_marks_between_non_kanas"] is False
+
+    def test_prolonged_sound_marks_conservative(self):
+        """Test replace_suspicious_hyphens_to_prolonged_sound_marks with conservative mode."""
+        recipe = TransliterationRecipe(replace_suspicious_hyphens_to_prolonged_sound_marks="conservative")
+        configs = build_transliterator_configs_from_recipe(recipe)
+
+        config = next((c for c in configs if c[0] == "prolonged-sound-marks"), None)
+        assert config is not None
+        assert config[1]["replace_prolonged_marks_following_alnums"] is True
+        assert config[1]["replace_prolonged_marks_between_non_kanas"] is False
+
+    def test_prolonged_sound_marks_aggressive(self):
+        """Test replace_suspicious_hyphens_to_prolonged_sound_marks with aggressive mode."""
+        recipe = TransliterationRecipe(replace_suspicious_hyphens_to_prolonged_sound_marks="aggressive")
+        configs = build_transliterator_configs_from_recipe(recipe)
+
+        config = next((c for c in configs if c[0] == "prolonged-sound-marks"), None)
+        assert config is not None
+        assert config[1]["replace_prolonged_marks_following_alnums"] is True
+        assert config[1]["replace_prolonged_marks_between_non_kanas"] is True
 
     def test_circled_or_squared(self):
         """Test replace_circled_or_squared_characters configuration."""

@@ -321,6 +321,91 @@ from yosina.transliterators.prolonged_sound_marks import Transliterator
             "Ａ\uff0dＢ\uff0dＣ\uff0dａ\uff0dｂ\uff0dｃ\uff0d",
             {"replace_prolonged_marks_following_alnums": True},
         ),
+        # replace_prolonged_marks_between_non_kanas option
+        (
+            "PSM between non-kana OTHER chars",
+            "漢\u30fc字",
+            "漢\uff0d字",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "PSM between halfwidth alnums with non-kana option",
+            "1\u30fc2",
+            "1\u002d2",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "PSM between fullwidth alnums with non-kana option",
+            "１\u30fc２",
+            "１\uff0d２",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "PSM between mixed width with non-kana option",
+            "1\u30fc２",
+            "1\u002d２",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "PSM after kana not replaced with non-kana option",
+            "カ\u30fc漢",
+            "カ\u30fc漢",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "PSM before kana not replaced with non-kana option",
+            "漢\u30fcカ",
+            "漢\u30fcカ",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "multiple consecutive PSMs between non-kana",
+            "漢\u30fc\u30fc\u30fc字",
+            "漢\uff0d\uff0d\uff0d字",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "multiple consecutive PSMs between non-kana followed by kana",
+            "漢\u30fc\u30fc\u30fcカ",
+            "漢\u30fc\u30fc\u30fcカ",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "trailing consecutive PSMs after fullwidth non-kana",
+            "漢\u30fc\u30fc\u30fc",
+            "漢\uff0d\uff0d\uff0d",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "trailing consecutive PSMs after halfwidth non-kana",
+            "1\u30fc\u30fc\u30fc",
+            "1\u002d\u002d\u002d",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "PSM between emoji",
+            "😀\u30fc😊",
+            "😀\uff0d😊",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "trailing PSM after non-kana",
+            "漢\u30fc",
+            "漢\uff0d",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "non-kana option only: PSM after alnum before kana not replaced",
+            "A\u30fcカ",
+            "A\u30fcカ",
+            {"replace_prolonged_marks_between_non_kanas": True},
+        ),
+        (
+            "both options: PSM after alnum before kana replaced by alnum option",
+            "A\u30fcカ",
+            "A\u002dカ",
+            {"replace_prolonged_marks_following_alnums": True, "replace_prolonged_marks_between_non_kanas": True},
+        ),
     ],
 )
 def test_prolonged_sound_marks(name: str, input_str: str, expected: str, options: dict[str, Any]) -> None:

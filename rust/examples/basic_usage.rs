@@ -2,7 +2,9 @@
 //! This example demonstrates the fundamental transliteration functionality
 //! as shown in the README documentation.
 
-use yosina::recipes::{ReplaceCircledOrSquaredCharactersOptions, ToFullWidthOptions};
+use yosina::recipes::{
+    ReplaceCircledOrSquaredCharactersOptions, ReplaceSuspiciousHyphensOptions, ToFullWidthOptions,
+};
 use yosina::{make_transliterator, TransliterationRecipe};
 
 fn main() {
@@ -12,7 +14,8 @@ fn main() {
     let recipe = TransliterationRecipe {
         kanji_old_new: true,
         replace_spaces: true,
-        replace_suspicious_hyphens_to_prolonged_sound_marks: true,
+        replace_suspicious_hyphens_to_prolonged_sound_marks:
+            ReplaceSuspiciousHyphensOptions::Conservative,
         replace_circled_or_squared_characters: ReplaceCircledOrSquaredCharactersOptions::Yes {
             exclude_emojis: false,
         },
