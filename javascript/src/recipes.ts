@@ -44,7 +44,7 @@ export type TransliterationRecipe = {
    * // Output: "スーパー" (becomes prolonged sound mark)
    * ```
    */
-  replaceSuspiciousHyphensToProlongedSoundMarks?: boolean;
+  replaceSuspiciousHyphensToProlongedSoundMarks?: boolean | "conservative" | "aggressive";
   /**
    * Replace circled or squared characters with their corresponding templates.
    * @example
@@ -329,7 +329,13 @@ const transliteratorAppliers: {
   },
   replaceSuspiciousHyphensToProlongedSoundMarks: (ctx, recipe) =>
     recipe.replaceSuspiciousHyphensToProlongedSoundMarks
-      ? insertMiddle(ctx, ["prolonged-sound-marks", { replaceProlongedMarksFollowingAlnums: true }])
+      ? insertMiddle(ctx, [
+          "prolonged-sound-marks",
+          {
+            replaceProlongedMarksFollowingAlnums: true,
+            replaceProlongedMarksBetweenNonKanas: recipe.replaceSuspiciousHyphensToProlongedSoundMarks === "aggressive",
+          },
+        ])
       : ctx,
   replaceCircledOrSquaredCharacters: (ctx, recipe) =>
     recipe.replaceCircledOrSquaredCharacters

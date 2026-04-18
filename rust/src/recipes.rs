@@ -149,6 +149,50 @@ pub enum ReplaceCircledOrSquaredCharactersOptions {
     },
 }
 
+#[derive(Debug, Default, Clone, PartialEq)]
+pub enum ReplaceSuspiciousHyphensOptions {
+    #[default]
+    No,
+    Conservative,
+    Aggressive,
+}
+
+impl Serialize for ReplaceSuspiciousHyphensOptions {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            ReplaceSuspiciousHyphensOptions::No => serializer.serialize_bool(false),
+            ReplaceSuspiciousHyphensOptions::Conservative => serializer.serialize_bool(true),
+            ReplaceSuspiciousHyphensOptions::Aggressive => serializer.serialize_str("aggressive"),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for ReplaceSuspiciousHyphensOptions {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value =
+            serde_json::Value::deserialize(deserializer).map_err(serde::de::Error::custom)?;
+        match value {
+            serde_json::Value::Bool(false) => Ok(ReplaceSuspiciousHyphensOptions::No),
+            serde_json::Value::Bool(true) => Ok(ReplaceSuspiciousHyphensOptions::Conservative),
+            serde_json::Value::String(s) => match s.as_str() {
+                "No" | "no" => Ok(ReplaceSuspiciousHyphensOptions::No),
+                "Yes" | "yes" | "Conservative" | "conservative" => {
+                    Ok(ReplaceSuspiciousHyphensOptions::Conservative)
+                }
+                "Aggressive" | "aggressive" => Ok(ReplaceSuspiciousHyphensOptions::Aggressive),
+                _ => Err(serde::de::Error::custom(format!("unknown variant: {s}"))),
+            },
+            _ => Err(serde::de::Error::custom("expected bool or string")),
+        }
+    }
+}
+
 #[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
 pub enum ReplaceHyphensOptions {
     #[default]
@@ -220,7 +264,7 @@ pub struct TransliterationRecipe {
     /// Output: "スーパー" (becomes prolonged sound mark)
     /// ```
     #[serde(default)]
-    pub replace_suspicious_hyphens_to_prolonged_sound_marks: bool,
+    pub replace_suspicious_hyphens_to_prolonged_sound_marks: ReplaceSuspiciousHyphensOptions,
     /// Replace combined characters with their corresponding characters.
     ///
     /// # Example
@@ -530,16 +574,32 @@ impl TransliterationRecipe {
         TransliteratorConfigBuilder,
         Option<TransliterationRecipeError>,
     ) {
-        if self.replace_suspicious_hyphens_to_prolonged_sound_marks {
-            builder = builder.insert_middle(
-                TransliteratorConfig::ProlongedSoundMarks(
-                    crate::transliterators::ProlongedSoundMarksTransliteratorOptions {
-                        replace_prolonged_marks_following_alnums: true,
-                        ..Default::default()
-                    },
-                ),
-                false,
-            );
+        match &self.replace_suspicious_hyphens_to_prolonged_sound_marks {
+            ReplaceSuspiciousHyphensOptions::No => {}
+            ReplaceSuspiciousHyphensOptions::Conservative => {
+                builder = builder.insert_middle(
+                    TransliteratorConfig::ProlongedSoundMarks(
+                        crate::transliterators::ProlongedSoundMarksTransliteratorOptions {
+                            replace_prolonged_marks_following_alnums: true,
+                            replace_prolonged_marks_between_non_kanas: false,
+                            ..Default::default()
+                        },
+                    ),
+                    false,
+                );
+            }
+            ReplaceSuspiciousHyphensOptions::Aggressive => {
+                builder = builder.insert_middle(
+                    TransliteratorConfig::ProlongedSoundMarks(
+                        crate::transliterators::ProlongedSoundMarksTransliteratorOptions {
+                            replace_prolonged_marks_following_alnums: true,
+                            replace_prolonged_marks_between_non_kanas: true,
+                            ..Default::default()
+                        },
+                    ),
+                    false,
+                );
+            }
         }
         (builder, None)
     }
@@ -963,7 +1023,8 @@ impl Default for TransliterationRecipe {
             kanji_old_new: false,
             hira_kata: HiraKataOptions::No,
             replace_japanese_iteration_marks: false,
-            replace_suspicious_hyphens_to_prolonged_sound_marks: false,
+            replace_suspicious_hyphens_to_prolonged_sound_marks:
+                ReplaceSuspiciousHyphensOptions::No,
             replace_combined_characters: false,
             replace_circled_or_squared_characters: ReplaceCircledOrSquaredCharactersOptions::No,
             replace_ideographic_annotations: false,

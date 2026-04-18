@@ -75,6 +75,11 @@ func (ct charType) isAlnum() bool {
 	return masked == charTypeAlphabet || masked == charTypeDigit
 }
 
+func (ct charType) isKana() bool {
+	masked := ct & 0xe0
+	return masked == charTypeHiragana || masked == charTypeKatakana || masked == charTypeEither
+}
+
 func (ct charType) isHalfwidth() bool {
 	return (ct & charTypeHalfwidth) != 0
 }
@@ -95,6 +100,7 @@ type Options struct {
 	AllowProlongedHatsuon                bool
 	AllowProlongedSokuon                 bool
 	ReplaceProlongedMarksFollowingAlnums bool
+	ReplaceProlongedMarksBetweenNonKanas bool
 }
 
 type charTypePair struct {
@@ -153,7 +159,8 @@ reenter:
 				i.offset += cc.RuneLen()
 				return cc
 			}
-			if i.options.ReplaceProlongedMarksFollowingAlnums && i.lastNonProlongedChar.t.isAlnum() {
+			if (i.options.ReplaceProlongedMarksFollowingAlnums && i.lastNonProlongedChar.t.isAlnum()) ||
+				(i.options.ReplaceProlongedMarksBetweenNonKanas && !i.lastNonProlongedChar.t.isKana()) {
 				prevNonProlongedChar := i.lastNonProlongedChar
 				for {
 					i.lookaheadBuf = append(i.lookaheadBuf, c)
@@ -165,32 +172,53 @@ reenter:
 						break
 					}
 				}
+				var followingCharType charType
 				if c == nil {
 					i.eoi = true
+					followingCharType = charTypeOther
 				} else {
 					i.lookaheadBuf = append(i.lookaheadBuf, c)
-					i.lastNonProlongedChar = charTypePair{c, getCharType(c.C)}
+					followingCharType = getCharType(c.C)
+					i.lastNonProlongedChar = charTypePair{c, followingCharType}
 				}
-				var halfwidth bool
-				if prevNonProlongedChar.isValid() {
-					halfwidth = prevNonProlongedChar.t.isHalfwidth()
-				} else {
-					halfwidth = i.lastNonProlongedChar.t.isHalfwidth()
-				}
-				var tc rune
-				if halfwidth {
-					tc = 0x002d // HYPHEN-MINUS
-				} else {
-					tc = 0xff0d // FULLWIDTH HYPHEN-MINUS
-				}
-				for j := 0; j < len(i.lookaheadBuf)-1; j++ {
-					cc := &yosina.Char{
-						C:      [2]rune{tc, yosina.InvalidUnicodeValue},
-						Offset: i.offset,
-						Source: i.lookaheadBuf[j],
+				replaceByAlnum := i.options.ReplaceProlongedMarksFollowingAlnums &&
+					(!prevNonProlongedChar.isValid() || prevNonProlongedChar.t.isAlnum())
+				replaceByNonKana := i.options.ReplaceProlongedMarksBetweenNonKanas &&
+					(!prevNonProlongedChar.isValid() || !prevNonProlongedChar.t.isKana()) &&
+					!followingCharType.isKana()
+				if replaceByAlnum || replaceByNonKana {
+					var halfwidth bool
+					if replaceByAlnum {
+						if prevNonProlongedChar.isValid() {
+							halfwidth = prevNonProlongedChar.t.isHalfwidth()
+						} else {
+							halfwidth = followingCharType.isHalfwidth()
+						}
+					} else {
+						// replaceByNonKana
+						prevHalfwidth := !prevNonProlongedChar.isValid() || prevNonProlongedChar.t.isHalfwidth()
+						followingHalfwidth := c != nil && !c.IsSentinel() && followingCharType.isHalfwidth()
+						halfwidth = prevHalfwidth || followingHalfwidth
 					}
-					i.lookaheadBuf[j] = cc
-					i.offset += cc.RuneLen()
+					var tc rune
+					if halfwidth {
+						tc = 0x002d // HYPHEN-MINUS
+					} else {
+						tc = 0xff0d // FULLWIDTH HYPHEN-MINUS
+					}
+					hyphenCount := len(i.lookaheadBuf)
+					if c != nil {
+						hyphenCount--
+					}
+					for j := 0; j < hyphenCount; j++ {
+						cc := &yosina.Char{
+							C:      [2]rune{tc, yosina.InvalidUnicodeValue},
+							Offset: i.offset,
+							Source: i.lookaheadBuf[j],
+						}
+						i.lookaheadBuf[j] = cc
+						i.offset += cc.RuneLen()
+					}
 				}
 				i.lookaheadBufIndex = 0
 				goto reenter

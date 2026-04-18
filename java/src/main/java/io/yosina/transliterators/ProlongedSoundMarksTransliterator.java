@@ -83,6 +83,17 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
         }
 
         /**
+         * Checks if the character type is kana (hiragana, katakana, or either).
+         *
+         * @param typeValue the character type value
+         * @return true if the character is kana, false otherwise
+         */
+        public static boolean isKana(int typeValue) {
+            int masked = typeValue & 0xe0;
+            return masked == HIRAGANA.value || masked == KATAKANA.value || masked == EITHER.value;
+        }
+
+        /**
          * Checks if the character type is halfwidth.
          *
          * @param typeValue the character type value
@@ -203,13 +214,14 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
         private final boolean allowProlongedHatsuon;
         private final boolean allowProlongedSokuon;
         private final boolean replaceProlongedMarksFollowingAlnums;
+        private final boolean replaceProlongedMarksBetweenNonKanas;
 
         /**
          * Creates a new Options instance with default settings. All options are disabled by
          * default.
          */
         public Options() {
-            this(false, false, false, false);
+            this(false, false, false, false, false);
         }
 
         /**
@@ -227,10 +239,37 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
                 boolean allowProlongedHatsuon,
                 boolean allowProlongedSokuon,
                 boolean replaceProlongedMarksFollowingAlnums) {
+            this(
+                    skipAlreadyTransliteratedChars,
+                    allowProlongedHatsuon,
+                    allowProlongedSokuon,
+                    replaceProlongedMarksFollowingAlnums,
+                    false);
+        }
+
+        /**
+         * Creates a new Options instance with the specified settings.
+         *
+         * @param skipAlreadyTransliteratedChars if true, skip characters that have already been
+         *     transliterated
+         * @param allowProlongedHatsuon if true, allow prolonging hatsuon (ん/ン) characters
+         * @param allowProlongedSokuon if true, allow prolonging sokuon (っ/ッ) characters
+         * @param replaceProlongedMarksFollowingAlnums if true, replace prolonged marks following
+         *     alphanumeric characters
+         * @param replaceProlongedMarksBetweenNonKanas if true, replace prolonged marks between
+         *     non-kana characters
+         */
+        public Options(
+                boolean skipAlreadyTransliteratedChars,
+                boolean allowProlongedHatsuon,
+                boolean allowProlongedSokuon,
+                boolean replaceProlongedMarksFollowingAlnums,
+                boolean replaceProlongedMarksBetweenNonKanas) {
             this.skipAlreadyTransliteratedChars = skipAlreadyTransliteratedChars;
             this.allowProlongedHatsuon = allowProlongedHatsuon;
             this.allowProlongedSokuon = allowProlongedSokuon;
             this.replaceProlongedMarksFollowingAlnums = replaceProlongedMarksFollowingAlnums;
+            this.replaceProlongedMarksBetweenNonKanas = replaceProlongedMarksBetweenNonKanas;
         }
 
         /**
@@ -271,6 +310,16 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
         }
 
         /**
+         * Returns whether prolonged marks between non-kana characters should be replaced.
+         *
+         * @return true if prolonged marks between non-kana characters should be replaced, false
+         *     otherwise
+         */
+        public boolean isReplaceProlongedMarksBetweenNonKanas() {
+            return replaceProlongedMarksBetweenNonKanas;
+        }
+
+        /**
          * Creates a new Options instance with the specified skip already transliterated chars
          * setting.
          *
@@ -282,7 +331,8 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
                     skipAlreadyTransliteratedChars,
                     this.allowProlongedHatsuon,
                     this.allowProlongedSokuon,
-                    this.replaceProlongedMarksFollowingAlnums);
+                    this.replaceProlongedMarksFollowingAlnums,
+                    this.replaceProlongedMarksBetweenNonKanas);
         }
 
         /**
@@ -296,7 +346,8 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
                     this.skipAlreadyTransliteratedChars,
                     allowProlongedHatsuon,
                     this.allowProlongedSokuon,
-                    this.replaceProlongedMarksFollowingAlnums);
+                    this.replaceProlongedMarksFollowingAlnums,
+                    this.replaceProlongedMarksBetweenNonKanas);
         }
 
         /**
@@ -310,7 +361,8 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
                     this.skipAlreadyTransliteratedChars,
                     this.allowProlongedHatsuon,
                     allowProlongedSokuon,
-                    this.replaceProlongedMarksFollowingAlnums);
+                    this.replaceProlongedMarksFollowingAlnums,
+                    this.replaceProlongedMarksBetweenNonKanas);
         }
 
         /**
@@ -327,7 +379,26 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
                     this.skipAlreadyTransliteratedChars,
                     this.allowProlongedHatsuon,
                     this.allowProlongedSokuon,
-                    replaceProlongedMarksFollowingAlnums);
+                    replaceProlongedMarksFollowingAlnums,
+                    this.replaceProlongedMarksBetweenNonKanas);
+        }
+
+        /**
+         * Creates a new Options instance with the specified replace prolonged marks between
+         * non-kana characters setting.
+         *
+         * @param replaceProlongedMarksBetweenNonKanas the new replace prolonged marks between
+         *     non-kana characters setting
+         * @return a new Options instance with the updated setting
+         */
+        public Options withReplaceProlongedMarksBetweenNonKanas(
+                boolean replaceProlongedMarksBetweenNonKanas) {
+            return new Options(
+                    this.skipAlreadyTransliteratedChars,
+                    this.allowProlongedHatsuon,
+                    this.allowProlongedSokuon,
+                    this.replaceProlongedMarksFollowingAlnums,
+                    replaceProlongedMarksBetweenNonKanas);
         }
 
         @Override
@@ -339,7 +410,9 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
                     && allowProlongedHatsuon == options.allowProlongedHatsuon
                     && allowProlongedSokuon == options.allowProlongedSokuon
                     && replaceProlongedMarksFollowingAlnums
-                            == options.replaceProlongedMarksFollowingAlnums;
+                            == options.replaceProlongedMarksFollowingAlnums
+                    && replaceProlongedMarksBetweenNonKanas
+                            == options.replaceProlongedMarksBetweenNonKanas;
         }
 
         @Override
@@ -348,7 +421,8 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
                     skipAlreadyTransliteratedChars,
                     allowProlongedHatsuon,
                     allowProlongedSokuon,
-                    replaceProlongedMarksFollowingAlnums);
+                    replaceProlongedMarksFollowingAlnums,
+                    replaceProlongedMarksBetweenNonKanas);
         }
     }
 
@@ -485,8 +559,10 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
                     Char result = new Char(CodePointTuple.of(replacement), offset, character);
                     offset += result.charCount();
                     return result;
-                } else if (options.replaceProlongedMarksFollowingAlnums
-                        && CharType.isAlnum(lastNonProlongedChar.type)) {
+                } else if ((options.replaceProlongedMarksFollowingAlnums
+                                && CharType.isAlnum(lastNonProlongedChar.type))
+                        || (options.replaceProlongedMarksBetweenNonKanas
+                                && !CharType.isKana(lastNonProlongedChar.type))) {
                     // Start buffering for potential alphanumeric replacement
                     lookaheadBuf.add(character);
                     if (character.getSource() != null) {
@@ -539,21 +615,44 @@ public class ProlongedSoundMarksTransliterator implements Transliterator {
                         new CharWithType(pendingChar, CharType.fromCodepoint(codepoint));
             }
 
-            // Check if we should replace with hyphens for alphanumerics
-            if ((prevNonProlongedChar == null || CharType.isAlnum(prevNonProlongedChar.type))
+            int followingCharType =
+                    lastNonProlongedChar != null ? lastNonProlongedChar.type : CharType.OTHER.value;
+
+            boolean replaceByAlnum =
+                    options.replaceProlongedMarksFollowingAlnums
+                            && (prevNonProlongedChar == null
+                                    || CharType.isAlnum(prevNonProlongedChar.type));
+            boolean replaceByNonKana =
+                    options.replaceProlongedMarksBetweenNonKanas
+                            && (prevNonProlongedChar == null
+                                    || !CharType.isKana(prevNonProlongedChar.type))
+                            && !CharType.isKana(followingCharType);
+
+            // Check if we should replace with hyphens
+            if ((replaceByAlnum || replaceByNonKana)
                     && (!options.skipAlreadyTransliteratedChars || !processedCharsInLookahead)) {
 
                 // Determine replacement based on width
                 String replacement;
-                if (prevNonProlongedChar == null) {
-                    replacement =
-                            lastNonProlongedChar != null
-                                            && CharType.isHalfwidth(lastNonProlongedChar.type)
-                                    ? "\u002d"
-                                    : "\uff0d";
+                if (replaceByNonKana) {
+                    boolean prevHalf =
+                            prevNonProlongedChar == null
+                                    || CharType.isHalfwidth(prevNonProlongedChar.type);
+                    boolean nextHalf = CharType.isHalfwidth(followingCharType);
+                    replacement = (!prevHalf && !nextHalf) ? "\uff0d" : "\u002d";
                 } else {
-                    replacement =
-                            CharType.isHalfwidth(prevNonProlongedChar.type) ? "\u002d" : "\uff0d";
+                    if (prevNonProlongedChar == null) {
+                        replacement =
+                                lastNonProlongedChar != null
+                                                && CharType.isHalfwidth(lastNonProlongedChar.type)
+                                        ? "\u002d"
+                                        : "\uff0d";
+                    } else {
+                        replacement =
+                                CharType.isHalfwidth(prevNonProlongedChar.type)
+                                        ? "\u002d"
+                                        : "\uff0d";
+                    }
                 }
 
                 // Replace ALL characters in buffer

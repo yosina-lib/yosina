@@ -37,7 +37,7 @@ public class TransliterationRecipeTest {
         @Test
         public void testDefaultValues() {
             assertFalse(recipe.isKanjiOldNew());
-            assertFalse(recipe.isReplaceSuspiciousHyphensToProlongedSoundMarks());
+            assertFalse(recipe.getReplaceSuspiciousHyphensToProlongedSoundMarks().isEnabled());
             assertFalse(recipe.isReplaceCombinedCharacters());
             assertFalse(recipe.getReplaceCircledOrSquaredCharacters().isEnabled());
             assertFalse(recipe.isReplaceIdeographicAnnotations());
@@ -81,6 +81,47 @@ public class TransliterationRecipeTest {
                     new ProlongedSoundMarksTransliterator.Options()
                             .withReplaceProlongedMarksFollowingAlnums(true),
                     config.getOptions().get());
+        }
+
+        @Test
+        public void testProlongedSoundMarksConservative() {
+            recipe.withReplaceSuspiciousHyphensToProlongedSoundMarks(
+                    TransliterationRecipe.ReplaceSuspiciousHyphensOptions.CONSERVATIVE);
+            List<Yosina.TransliteratorConfig> configs = recipe.buildTransliteratorConfigs();
+
+            assertTrue(containsConfig(configs, "prolonged-sound-marks"));
+
+            Yosina.TransliteratorConfig config = findConfig(configs, "prolonged-sound-marks");
+            assertTrue(config.getOptions().isPresent());
+            ProlongedSoundMarksTransliterator.Options options =
+                    (ProlongedSoundMarksTransliterator.Options) config.getOptions().get();
+            assertTrue(options.isReplaceProlongedMarksFollowingAlnums());
+            assertFalse(options.isReplaceProlongedMarksBetweenNonKanas());
+        }
+
+        @Test
+        public void testProlongedSoundMarksAggressive() {
+            recipe.withReplaceSuspiciousHyphensToProlongedSoundMarks(
+                    TransliterationRecipe.ReplaceSuspiciousHyphensOptions.AGGRESSIVE);
+            List<Yosina.TransliteratorConfig> configs = recipe.buildTransliteratorConfigs();
+
+            assertTrue(containsConfig(configs, "prolonged-sound-marks"));
+
+            Yosina.TransliteratorConfig config = findConfig(configs, "prolonged-sound-marks");
+            assertTrue(config.getOptions().isPresent());
+            ProlongedSoundMarksTransliterator.Options options =
+                    (ProlongedSoundMarksTransliterator.Options) config.getOptions().get();
+            assertTrue(options.isReplaceProlongedMarksFollowingAlnums());
+            assertTrue(options.isReplaceProlongedMarksBetweenNonKanas());
+        }
+
+        @Test
+        public void testProlongedSoundMarksDisabled() {
+            recipe.withReplaceSuspiciousHyphensToProlongedSoundMarks(
+                    TransliterationRecipe.ReplaceSuspiciousHyphensOptions.DISABLED);
+            List<Yosina.TransliteratorConfig> configs = recipe.buildTransliteratorConfigs();
+
+            assertFalse(containsConfig(configs, "prolonged-sound-marks"));
         }
 
         @Test

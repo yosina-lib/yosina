@@ -21,13 +21,13 @@ yosina = "2.0.0"
 
 ```rust
 use yosina::{make_transliterator, TransliterationRecipe};
-use yosina::recipes::{ReplaceCircledOrSquaredCharactersOptions, ToFullWidthOptions};
+use yosina::recipes::{ReplaceCircledOrSquaredCharactersOptions, ReplaceSuspiciousHyphensOptions, ToFullWidthOptions};
 
 // Create a recipe with desired transformations
 let recipe = TransliterationRecipe {
     kanji_old_new: true,
     replace_spaces: true,
-    replace_suspicious_hyphens_to_prolonged_sound_marks: true,
+    replace_suspicious_hyphens_to_prolonged_sound_marks: ReplaceSuspiciousHyphensOptions::Conservative,
     replace_circled_or_squared_characters: ReplaceCircledOrSquaredCharactersOptions::Yes {
         exclude_emojis: false,
     },

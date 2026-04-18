@@ -51,9 +51,10 @@ void main() {
         expect(configs[2].options['mode'], equals('base'));
       });
 
-      test('replaceSuspiciousHyphensToProlongedSoundMarks', () {
+      test('replaceSuspiciousHyphensToProlongedSoundMarks - conservative', () {
         final recipe = TransliterationRecipe(
-          replaceSuspiciousHyphensToProlongedSoundMarks: true,
+          replaceSuspiciousHyphensToProlongedSoundMarks:
+              ReplaceSuspiciousHyphensOptions.conservative,
         );
         final configs = recipe.buildTransliteratorConfigs();
 
@@ -61,6 +62,48 @@ void main() {
         expect(configs[0].name, equals('prolongedSoundMarks'));
         expect(
             configs[0].options['replaceProlongedMarksFollowingAlnums'], isTrue);
+        expect(configs[0].options['replaceProlongedMarksBetweenNonKanas'],
+            isFalse);
+      });
+
+      test('replaceSuspiciousHyphensToProlongedSoundMarks - aggressive', () {
+        final recipe = TransliterationRecipe(
+          replaceSuspiciousHyphensToProlongedSoundMarks:
+              ReplaceSuspiciousHyphensOptions.aggressive,
+        );
+        final configs = recipe.buildTransliteratorConfigs();
+
+        expect(configs.length, equals(1));
+        expect(configs[0].name, equals('prolongedSoundMarks'));
+        expect(
+            configs[0].options['replaceProlongedMarksFollowingAlnums'], isTrue);
+        expect(
+            configs[0].options['replaceProlongedMarksBetweenNonKanas'], isTrue);
+      });
+
+      test('replaceSuspiciousHyphensToProlongedSoundMarks - disabled', () {
+        final recipe = TransliterationRecipe(
+          replaceSuspiciousHyphensToProlongedSoundMarks:
+              ReplaceSuspiciousHyphensOptions.disabled,
+        );
+        final configs = recipe.buildTransliteratorConfigs();
+
+        expect(configs, isEmpty);
+      });
+
+      test('replaceSuspiciousHyphensToProlongedSoundMarks - fromBool', () {
+        final recipe = TransliterationRecipe(
+          replaceSuspiciousHyphensToProlongedSoundMarks:
+              ReplaceSuspiciousHyphensOptions.fromBool(true),
+        );
+        final configs = recipe.buildTransliteratorConfigs();
+
+        expect(configs.length, equals(1));
+        expect(configs[0].name, equals('prolongedSoundMarks'));
+        expect(
+            configs[0].options['replaceProlongedMarksFollowingAlnums'], isTrue);
+        expect(configs[0].options['replaceProlongedMarksBetweenNonKanas'],
+            isFalse);
       });
 
       test('replaceCombinedCharacters', () {
@@ -320,7 +363,8 @@ void main() {
       test('comprehensive ordering test', () {
         final recipe = TransliterationRecipe(
           kanjiOldNew: true,
-          replaceSuspiciousHyphensToProlongedSoundMarks: true,
+          replaceSuspiciousHyphensToProlongedSoundMarks:
+              ReplaceSuspiciousHyphensOptions.conservative,
           replaceCircledOrSquaredCharacters:
               ReplaceCircledOrSquaredCharactersOptions.fromBool(true),
           replaceCombinedCharacters: true,
@@ -369,7 +413,8 @@ void main() {
       test('all options enabled', () {
         final recipe = TransliterationRecipe(
           kanjiOldNew: true,
-          replaceSuspiciousHyphensToProlongedSoundMarks: true,
+          replaceSuspiciousHyphensToProlongedSoundMarks:
+              ReplaceSuspiciousHyphensOptions.conservative,
           replaceCombinedCharacters: true,
           replaceCircledOrSquaredCharacters:
               const ReplaceCircledOrSquaredCharactersOptions.excludeEmojis(),
@@ -532,6 +577,32 @@ void main() {
         final custom = ReplaceHyphensOptions.withPrecedence(['ascii']);
         expect(custom.isEnabled, isTrue);
         expect(custom.precedence, equals(['ascii']));
+      });
+    });
+
+    group('ReplaceSuspiciousHyphensOptions', () {
+      test('constructors and properties', () {
+        const disabled = ReplaceSuspiciousHyphensOptions.disabled;
+        expect(disabled.isEnabled, isFalse);
+        expect(disabled.isAggressive, isFalse);
+
+        const conservative = ReplaceSuspiciousHyphensOptions.conservative;
+        expect(conservative.isEnabled, isTrue);
+        expect(conservative.isAggressive, isFalse);
+
+        const aggressive = ReplaceSuspiciousHyphensOptions.aggressive;
+        expect(aggressive.isEnabled, isTrue);
+        expect(aggressive.isAggressive, isTrue);
+      });
+
+      test('fromBool factory', () {
+        final enabled = ReplaceSuspiciousHyphensOptions.fromBool(true);
+        expect(enabled.isEnabled, isTrue);
+        expect(enabled.isAggressive, isFalse);
+
+        final disabled = ReplaceSuspiciousHyphensOptions.fromBool(false);
+        expect(disabled.isEnabled, isFalse);
+        expect(disabled.isAggressive, isFalse);
       });
     });
 

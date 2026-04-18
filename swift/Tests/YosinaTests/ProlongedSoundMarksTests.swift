@@ -437,4 +437,117 @@ final class ProlongedSoundMarksTests: XCTestCase {
         let expected = "ア\u{30fc}\u{30fc}"
         XCTAssertEqual(transliterator.transliterate(input), expected)
     }
+
+    // MARK: - replaceProlongedMarksBetweenNonKanas tests
+
+    func testReplaceProlongedMarksBetweenNonKanasOtherChars() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "漢\u{30fc}字"
+        let expected = "漢\u{ff0d}字"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testReplaceProlongedMarksBetweenHalfwidthAlnums() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "1\u{30fc}2"
+        let expected = "1\u{002d}2"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testReplaceProlongedMarksBetweenFullwidthAlnums() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "１\u{30fc}２"
+        let expected = "１\u{ff0d}２"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testReplaceProlongedMarksAfterKanaNotReplaced() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "カ\u{30fc}漢"
+        let expected = "カ\u{30fc}漢"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testReplaceProlongedMarksBeforeKanaNotReplaced() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "漢\u{30fc}カ"
+        let expected = "漢\u{30fc}カ"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testConsecutiveProlongedMarksBetweenNonKanas() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "漢\u{30fc}\u{30fc}\u{30fc}字"
+        let expected = "漢\u{ff0d}\u{ff0d}\u{ff0d}字"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testConsecutiveProlongedMarksBeforeKanaNotReplaced() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "漢\u{30fc}\u{30fc}\u{30fc}カ"
+        let expected = "漢\u{30fc}\u{30fc}\u{30fc}カ"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testTrailingProlongedMarksAfterFullwidthNonKana() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "漢\u{30fc}\u{30fc}\u{30fc}"
+        let expected = "漢\u{ff0d}\u{ff0d}\u{ff0d}"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testTrailingProlongedMarksAfterHalfwidthNonKana() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "1\u{30fc}\u{30fc}\u{30fc}"
+        let expected = "1\u{002d}\u{002d}\u{002d}"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testNonKanaOnlyProlongedMarkAfterAlnumBeforeKana() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "A\u{30fc}カ"
+        let expected = "A\u{30fc}カ"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
+
+    func testBothOptionsProlongedMarkAfterAlnumBeforeKana() {
+        let options = ProlongedSoundMarksTransliterator.Options(
+            replaceProlongedMarksFollowingAlnums: true,
+            replaceProlongedMarksBetweenNonKanas: true
+        )
+        let transliterator = ProlongedSoundMarksTransliterator(options: options)
+        let input = "A\u{30fc}カ"
+        let expected = "A\u{002d}カ"
+        XCTAssertEqual(transliterator.transliterate(input), expected)
+    }
 }

@@ -218,6 +218,47 @@ class ReplaceCircledOrSquaredCharactersOptions {
   }
 }
 
+/// Options for replacing suspicious hyphens with prolonged sound marks.
+///
+/// Controls the behavior of suspicious hyphen replacement. In conservative mode,
+/// only prolonged marks following alphanumeric characters are replaced. In aggressive
+/// mode, prolonged marks between non-kana characters are also replaced.
+class ReplaceSuspiciousHyphensOptions {
+  const ReplaceSuspiciousHyphensOptions._({
+    required this.enabled,
+    required this.replaceProlongedMarksBetweenNonKanas,
+  });
+
+  /// Disabled option - suspicious hyphens will not be replaced.
+  static const disabled = ReplaceSuspiciousHyphensOptions._(
+      enabled: false, replaceProlongedMarksBetweenNonKanas: false);
+
+  /// Conservative mode - replaces hyphens following kana and alphanumeric characters.
+  static const conservative = ReplaceSuspiciousHyphensOptions._(
+      enabled: true, replaceProlongedMarksBetweenNonKanas: false);
+
+  /// Aggressive mode - also replaces prolonged marks between non-kana characters.
+  static const aggressive = ReplaceSuspiciousHyphensOptions._(
+      enabled: true, replaceProlongedMarksBetweenNonKanas: true);
+
+  /// Whether suspicious hyphens replacement is enabled.
+  final bool enabled;
+
+  /// Whether to also replace prolonged marks between non-kana characters.
+  final bool replaceProlongedMarksBetweenNonKanas;
+
+  /// Whether replacement is enabled.
+  bool get isEnabled => enabled;
+
+  /// Whether aggressive mode is enabled (replaces prolonged marks between non-kana characters).
+  bool get isAggressive => replaceProlongedMarksBetweenNonKanas;
+
+  /// Creates options from a boolean enabled state.
+  static ReplaceSuspiciousHyphensOptions fromBool(bool enabled) {
+    return enabled ? conservative : disabled;
+  }
+}
+
 // MARK: - TransliteratorConfig
 
 // MARK: - TransliterationRecipe
@@ -238,7 +279,8 @@ class TransliterationRecipe {
     this.kanjiOldNew = false,
     this.hiraKata,
     this.replaceJapaneseIterationMarks = false,
-    this.replaceSuspiciousHyphensToProlongedSoundMarks = false,
+    this.replaceSuspiciousHyphensToProlongedSoundMarks =
+        ReplaceSuspiciousHyphensOptions.disabled,
     this.replaceCombinedCharacters = false,
     this.replaceCircledOrSquaredCharacters =
         const ReplaceCircledOrSquaredCharactersOptions.disabled(),
@@ -277,8 +319,9 @@ class TransliterationRecipe {
   /// Whether to replace Japanese iteration marks.
   final bool replaceJapaneseIterationMarks;
 
-  /// Whether to replace suspicious hyphens with prolonged sound marks.
-  final bool replaceSuspiciousHyphensToProlongedSoundMarks;
+  /// Options for replacing suspicious hyphens with prolonged sound marks.
+  final ReplaceSuspiciousHyphensOptions
+      replaceSuspiciousHyphensToProlongedSoundMarks;
 
   /// Whether to replace combined characters.
   final bool replaceCombinedCharacters;
@@ -436,11 +479,13 @@ class TransliterationRecipe {
   }
 
   static void _applyReplaceSuspiciousHyphensToProlongedSoundMarks(
-      _TransliteratorConfigListBuilder ctx, bool replace) {
-    if (replace) {
+      _TransliteratorConfigListBuilder ctx,
+      ReplaceSuspiciousHyphensOptions options) {
+    if (options.isEnabled) {
       ctx.insertMiddle(
-        const TransliteratorConfig('prolongedSoundMarks', {
+        TransliteratorConfig('prolongedSoundMarks', {
           'replaceProlongedMarksFollowingAlnums': true,
+          'replaceProlongedMarksBetweenNonKanas': options.isAggressive,
         }),
         forceReplace: false,
       );

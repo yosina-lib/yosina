@@ -177,6 +177,54 @@ public class TransliterationRecipe {
         }
     }
 
+    /** Options for replacing suspicious hyphens with prolonged sound marks. */
+    public static class ReplaceSuspiciousHyphensOptions {
+        /** Disabled option - suspicious hyphens will not be replaced. */
+        public static final ReplaceSuspiciousHyphensOptions DISABLED =
+                new ReplaceSuspiciousHyphensOptions(false, false);
+
+        /**
+         * Enabled option - replaces suspicious hyphens with prolonged sound marks (conservative
+         * mode).
+         */
+        public static final ReplaceSuspiciousHyphensOptions ENABLED =
+                new ReplaceSuspiciousHyphensOptions(true, false);
+
+        /** Conservative mode - same as ENABLED. */
+        public static final ReplaceSuspiciousHyphensOptions CONSERVATIVE = ENABLED;
+
+        /** Aggressive mode - also replaces prolonged marks between non-kana characters. */
+        public static final ReplaceSuspiciousHyphensOptions AGGRESSIVE =
+                new ReplaceSuspiciousHyphensOptions(true, true);
+
+        private final boolean enabled;
+        private final boolean aggressive;
+
+        private ReplaceSuspiciousHyphensOptions(boolean enabled, boolean aggressive) {
+            this.enabled = enabled;
+            this.aggressive = aggressive;
+        }
+
+        /**
+         * Checks if suspicious hyphens replacement is enabled.
+         *
+         * @return true if replacement is enabled, false otherwise
+         */
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        /**
+         * Checks if aggressive mode is enabled (replaces prolonged marks between non-kana
+         * characters).
+         *
+         * @return true if aggressive mode is enabled, false otherwise
+         */
+        public boolean isAggressive() {
+            return aggressive;
+        }
+    }
+
     /** Options for hyphens replacement. */
     public static class ReplaceHyphensOptions {
         /** Disabled option - hyphens will not be replaced. */
@@ -246,7 +294,8 @@ public class TransliterationRecipe {
     private boolean kanjiOldNew = false;
     private String hiraKata = null;
     private boolean replaceJapaneseIterationMarks = false;
-    private boolean replaceSuspiciousHyphensToProlongedSoundMarks = false;
+    private ReplaceSuspiciousHyphensOptions replaceSuspiciousHyphensToProlongedSoundMarks =
+            ReplaceSuspiciousHyphensOptions.DISABLED;
     private boolean replaceCombinedCharacters = false;
     private ReplaceCircledOrSquaredCharactersOptions replaceCircledOrSquaredCharacters =
             ReplaceCircledOrSquaredCharactersOptions.DISABLED;
@@ -344,12 +393,41 @@ public class TransliterationRecipe {
      *     .withReplaceSuspiciousHyphensToProlongedSoundMarks(true);
      * }</pre>
      *
-     * @param replace true to enable replacement, false to disable
+     * @param replace true to enable replacement (conservative mode), false to disable
      * @return this recipe instance for method chaining
      */
     public TransliterationRecipe withReplaceSuspiciousHyphensToProlongedSoundMarks(
             boolean replace) {
-        this.replaceSuspiciousHyphensToProlongedSoundMarks = replace;
+        this.replaceSuspiciousHyphensToProlongedSoundMarks =
+                replace
+                        ? ReplaceSuspiciousHyphensOptions.ENABLED
+                        : ReplaceSuspiciousHyphensOptions.DISABLED;
+        return this;
+    }
+
+    /**
+     * Sets the suspicious hyphens replacement options.
+     *
+     * <p>Example usage:
+     *
+     * <pre>{@code
+     * // Conservative mode (default): replaces hyphens following kana and alphanumeric characters
+     * TransliterationRecipe recipe = new TransliterationRecipe()
+     *     .withReplaceSuspiciousHyphensToProlongedSoundMarks(
+     *         ReplaceSuspiciousHyphensOptions.CONSERVATIVE);
+     *
+     * // Aggressive mode: also replaces prolonged marks between non-kana characters
+     * TransliterationRecipe recipe = new TransliterationRecipe()
+     *     .withReplaceSuspiciousHyphensToProlongedSoundMarks(
+     *         ReplaceSuspiciousHyphensOptions.AGGRESSIVE);
+     * }</pre>
+     *
+     * @param options the replacement options
+     * @return this recipe instance for method chaining
+     */
+    public TransliterationRecipe withReplaceSuspiciousHyphensToProlongedSoundMarks(
+            ReplaceSuspiciousHyphensOptions options) {
+        this.replaceSuspiciousHyphensToProlongedSoundMarks = options;
         return this;
     }
 
@@ -700,11 +778,11 @@ public class TransliterationRecipe {
     }
 
     /**
-     * Checks if replacement of suspicious hyphens to prolonged sound marks is enabled.
+     * Gets the current suspicious hyphens replacement options.
      *
-     * @return true if replacement is enabled, false otherwise
+     * @return the replacement options
      */
-    public boolean isReplaceSuspiciousHyphensToProlongedSoundMarks() {
+    public ReplaceSuspiciousHyphensOptions getReplaceSuspiciousHyphensToProlongedSoundMarks() {
         return replaceSuspiciousHyphensToProlongedSoundMarks;
     }
 
@@ -971,15 +1049,16 @@ public class TransliterationRecipe {
 
     private TransliteratorConfigListBuilder applyReplaceSuspiciousHyphensToProlongedSoundMarks(
             TransliteratorConfigListBuilder ctx) {
-        if (replaceSuspiciousHyphensToProlongedSoundMarks) {
+        if (replaceSuspiciousHyphensToProlongedSoundMarks.isEnabled()) {
+            ProlongedSoundMarksTransliterator.Options options =
+                    new ProlongedSoundMarksTransliterator.Options()
+                            .withReplaceProlongedMarksFollowingAlnums(true)
+                            .withReplaceProlongedMarksBetweenNonKanas(
+                                    replaceSuspiciousHyphensToProlongedSoundMarks.isAggressive());
             ctx =
                     ctx.insertMiddle(
                             new Yosina.TransliteratorConfig(
-                                    "prolonged-sound-marks",
-                                    Optional.of(
-                                            new ProlongedSoundMarksTransliterator.Options()
-                                                    .withReplaceProlongedMarksFollowingAlnums(
-                                                            true))),
+                                    "prolonged-sound-marks", Optional.of(options)),
                             false);
         }
         return ctx;

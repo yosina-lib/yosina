@@ -1,7 +1,7 @@
 import { json } from "node:stream/consumers";
 import type { ReadableStream } from "node:stream/web";
 import * as zod from "zod";
-import type { CircledOrSquaredRecord, HyphensRecord, IVSSVSBaseRecord, RomanNumeralsRecord } from "./dataset";
+import type { CircledOrSquaredRecord, HyphensRecord, IVSSVSBaseRecord } from "./dataset";
 
 const simpleTransliterationFileSchema = zod.record(zod.string(), zod.nullable(zod.string()));
 

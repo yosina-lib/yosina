@@ -47,8 +47,11 @@ class TransliterationRecipe:
         Output: "いすず"
     """
 
-    replace_suspicious_hyphens_to_prolonged_sound_marks: bool = False
+    replace_suspicious_hyphens_to_prolonged_sound_marks: bool | Literal["conservative", "aggressive"] = False
     """Replace "suspicious" hyphens with prolonged sound marks, and vice versa.
+
+    - True or "conservative": replaces prolonged marks following alphanumerics only.
+    - "aggressive": also replaces prolonged marks between non-kana characters.
 
     Example:
         Input:  "データーベース"
@@ -350,7 +353,12 @@ class _TransliteratorConfigListBuilder:
             ctx = ctx.insert_middle(
                 (
                     "prolonged-sound-marks",
-                    {"replace_prolonged_marks_following_alnums": True},
+                    {
+                        "replace_prolonged_marks_following_alnums": True,
+                        "replace_prolonged_marks_between_non_kanas": (
+                            recipe.replace_suspicious_hyphens_to_prolonged_sound_marks == "aggressive"
+                        ),
+                    },
                 )
             )
         return ctx

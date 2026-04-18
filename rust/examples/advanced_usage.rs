@@ -2,6 +2,7 @@
 //! This example demonstrates complex text processing scenarios.
 
 use anyhow::Result;
+use yosina::recipes::ReplaceSuspiciousHyphensOptions;
 use yosina::transliterators::{
     Charset, IvsSvsBaseMode, IvsSvsBaseTransliteratorOptions, Jisx0201AndAlikeTransliteratorOptions,
 };
@@ -32,7 +33,8 @@ fn main() -> Result<()> {
     let web_scraping_recipe = TransliterationRecipe {
         kanji_old_new: true,
         replace_spaces: true,
-        replace_suspicious_hyphens_to_prolonged_sound_marks: true,
+        replace_suspicious_hyphens_to_prolonged_sound_marks:
+            ReplaceSuspiciousHyphensOptions::Conservative,
         replace_ideographic_annotations: true,
         replace_radicals: true,
         combine_decomposed_hiraganas_and_katakanas: true,
@@ -109,7 +111,8 @@ fn main() -> Result<()> {
         to_halfwidth: yosina::recipes::ToHalfwidthOptions::Yes {
             hankaku_kana: false,
         },
-        replace_suspicious_hyphens_to_prolonged_sound_marks: true,
+        replace_suspicious_hyphens_to_prolonged_sound_marks:
+            ReplaceSuspiciousHyphensOptions::Conservative,
         ..Default::default()
     };
 

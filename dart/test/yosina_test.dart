@@ -124,6 +124,118 @@ void main() {
       final result = Chars.charsToString(output);
       expect(result, 'CD-ROM'); // Should remain as hyphen
     });
+
+    test('PSM between non-kana OTHER chars', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('漢\u30fc字');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, '漢\uff0d字');
+    });
+
+    test('PSM between halfwidth alnums with non-kana option', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('1\u30fc2');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, '1\u002d2');
+    });
+
+    test('PSM between fullwidth alnums with non-kana option', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('\uff11\u30fc\uff12');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, '\uff11\uff0d\uff12');
+    });
+
+    test('PSM after kana not replaced with non-kana option', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('カ\u30fc漢');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, 'カ\u30fc漢');
+    });
+
+    test('PSM before kana not replaced with non-kana option', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('漢\u30fcカ');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, '漢\u30fcカ');
+    });
+
+    test('consecutive PSMs between non-kana', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('漢\u30fc\u30fc\u30fc字');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, '漢\uff0d\uff0d\uff0d字');
+    });
+
+    test('consecutive PSMs before kana not replaced', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('漢\u30fc\u30fc\u30fcカ');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, '漢\u30fc\u30fc\u30fcカ');
+    });
+
+    test('trailing PSMs after fullwidth non-kana', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('漢\u30fc\u30fc\u30fc');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, '漢\uff0d\uff0d\uff0d');
+    });
+
+    test('trailing PSMs after halfwidth non-kana', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('1\u30fc\u30fc\u30fc');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, '1\u002d\u002d\u002d');
+    });
+
+    test('non-kana only: PSM after alnum before kana not replaced', () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('A\u30fcカ');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, 'A\u30fcカ');
+    });
+
+    test('both options: PSM after alnum before kana replaced by alnum option',
+        () {
+      final transliterator = ProlongedSoundMarksTransliterator(
+        replaceProlongedMarksFollowingAlnums: true,
+        replaceProlongedMarksBetweenNonKanas: true,
+      );
+      final input = Chars.fromString('A\u30fcカ');
+      final output = transliterator(input);
+      final result = Chars.charsToString(output);
+      expect(result, 'A\u002dカ');
+    });
   });
 
   group('ChainedTransliterator', () {

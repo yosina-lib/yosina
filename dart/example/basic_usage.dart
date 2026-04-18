@@ -11,7 +11,8 @@ void main() {
   final recipe = TransliterationRecipe(
     kanjiOldNew: true,
     replaceSpaces: true,
-    replaceSuspiciousHyphensToProlongedSoundMarks: true,
+    replaceSuspiciousHyphensToProlongedSoundMarks:
+        ReplaceSuspiciousHyphensOptions.conservative,
     replaceCircledOrSquaredCharacters:
         ReplaceCircledOrSquaredCharactersOptions.enabled(),
     replaceCombinedCharacters: true,

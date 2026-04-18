@@ -45,6 +45,11 @@ class CharType(IntFlag):
         """Check if character type is halfwidth."""
         return bool(self & CharType.HALFWIDTH)
 
+    def is_kana(self) -> bool:
+        """Check if character type is hiragana, katakana, or either."""
+        t = self & 0xE0
+        return t == CharType.HIRAGANA or t == CharType.KATAKANA or t == CharType.EITHER
+
     @classmethod
     def from_codepoint(cls, codepoint: int) -> CharType:
         """Get the character type for a given Unicode codepoint."""
@@ -120,6 +125,7 @@ class Transliterator:
     allow_prolonged_hatsuon: bool
     allow_prolonged_sokuon: bool
     replace_prolonged_marks_following_alnums: bool
+    replace_prolonged_marks_between_non_kanas: bool
     prolongables: CharType
 
     def __init__(
@@ -129,6 +135,7 @@ class Transliterator:
         allow_prolonged_hatsuon: bool = False,
         allow_prolonged_sokuon: bool = False,
         replace_prolonged_marks_following_alnums: bool = False,
+        replace_prolonged_marks_between_non_kanas: bool = False,
     ) -> None:
         """Initialize the transliterator with options.
 
@@ -137,11 +144,14 @@ class Transliterator:
         :param allow_prolonged_sokuon: Allow prolonging sokuon characters (っ/ッ). Defaults to False.
         :param replace_prolonged_marks_following_alnums: Whether to replace prolonged voice marks following an
                alphanumeric. Defaults to False.
+        :param replace_prolonged_marks_between_non_kanas: Whether to replace prolonged voice marks between
+               non-kana characters. Defaults to False.
         """
         self.skip_already_transliterated_chars = skip_already_transliterated_chars
         self.allow_prolonged_hatsuon = allow_prolonged_hatsuon
         self.allow_prolonged_sokuon = allow_prolonged_sokuon
         self.replace_prolonged_marks_following_alnums = replace_prolonged_marks_following_alnums
+        self.replace_prolonged_marks_between_non_kanas = replace_prolonged_marks_between_non_kanas
 
         # Build prolongable character types
         self.prolongables = CharType.VOWEL_ENDED | CharType.PROLONGED_SOUND_MARK
@@ -170,17 +180,31 @@ class Transliterator:
                 last_non_prolonged_char = (char, CharType.from_codepoint(codepoint))
 
                 # Check if we should replace with hyphens for alphanumerics
-                if (prev_non_prolonged_char is None or prev_non_prolonged_char[1].is_alnum()) and (
+                replace_by_alnum = self.replace_prolonged_marks_following_alnums and (
+                    prev_non_prolonged_char is None or prev_non_prolonged_char[1].is_alnum()
+                )
+                replace_by_non_kana = (
+                    self.replace_prolonged_marks_between_non_kanas
+                    and (prev_non_prolonged_char is None or not prev_non_prolonged_char[1].is_kana())
+                    and not last_non_prolonged_char[1].is_kana()
+                )
+
+                if (replace_by_alnum or replace_by_non_kana) and (
                     not self.skip_already_transliterated_chars or not processed_chars_in_lookahead
                 ):
-                    if (
-                        last_non_prolonged_char[1].is_halfwidth()
-                        if prev_non_prolonged_char is None
-                        else prev_non_prolonged_char[1].is_halfwidth()
-                    ):
-                        replacement = "\u002d"
+                    if replace_by_non_kana:
+                        prev_half = prev_non_prolonged_char is None or prev_non_prolonged_char[1].is_halfwidth()
+                        next_half = last_non_prolonged_char[1].is_halfwidth()
+                        replacement = "\u002d" if prev_half or next_half else "\uff0d"
                     else:
-                        replacement = "\uff0d"
+                        if (
+                            last_non_prolonged_char[1].is_halfwidth()
+                            if prev_non_prolonged_char is None
+                            else prev_non_prolonged_char[1].is_halfwidth()
+                        ):
+                            replacement = "\u002d"
+                        else:
+                            replacement = "\uff0d"
 
                     for buffered_char in lookahead_buf:
                         yield Char(c=replacement, offset=offset, source=buffered_char)
@@ -210,7 +234,9 @@ class Transliterator:
                         continue
                     else:
                         # Check if we should buffer for alphanumeric replacement
-                        if self.replace_prolonged_marks_following_alnums and last_non_prolonged_char[1].is_alnum():
+                        if (self.replace_prolonged_marks_following_alnums and last_non_prolonged_char[1].is_alnum()) or (
+                            self.replace_prolonged_marks_between_non_kanas and not last_non_prolonged_char[1].is_kana()
+                        ):
                             lookahead_buf.append(char)
                             continue
             else:

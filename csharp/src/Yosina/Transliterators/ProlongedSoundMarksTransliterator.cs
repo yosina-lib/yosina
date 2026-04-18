@@ -121,6 +121,12 @@ public class ProlongedSoundMarksTransliterator : ITransliterator
         return masked == CharType.Alphabet || masked == CharType.Digit;
     }
 
+    private static bool IsKana(CharType charType)
+    {
+        var masked = charType & (CharType)0xe0;
+        return masked == CharType.Hiragana || masked == CharType.Katakana || masked == CharType.Either;
+    }
+
     private static bool IsHalfwidth(CharType charType)
     {
         return (charType & CharType.Halfwidth) != CharType.Other;
@@ -157,6 +163,9 @@ public class ProlongedSoundMarksTransliterator : ITransliterator
 
         [JsonPropertyName("replace_prolonged_marks_following_alnums")]
         public bool ReplaceProlongedMarksFollowingAlnums { get; set; }
+
+        [JsonPropertyName("replace_prolonged_marks_between_non_kanas")]
+        public bool ReplaceProlongedMarksBetweenNonKanas { get; set; }
     }
 
     private class ProlongedSoundMarksCharEnumerator : IEnumerable<Character>, IEnumerator<Character>
@@ -243,7 +252,8 @@ public class ProlongedSoundMarksTransliterator : ITransliterator
                         return true;
                     }
 
-                    if (this.options.ReplaceProlongedMarksFollowingAlnums && IsAlnum(lastNonProlongedChar.Type))
+                    if ((this.options.ReplaceProlongedMarksFollowingAlnums && IsAlnum(lastNonProlongedChar.Type)) ||
+                        (this.options.ReplaceProlongedMarksBetweenNonKanas && !IsKana(lastNonProlongedChar.Type)))
                     {
                         var prevNonProlongedChar = this.lastNonProlongedChar;
 
@@ -265,25 +275,51 @@ public class ProlongedSoundMarksTransliterator : ITransliterator
                             }
                         }
 
-                        if (!this.eoi)
+                        CharType followingType;
+                        if (this.eoi)
+                        {
+                            followingType = CharType.Other;
+                        }
+                        else
                         {
                             this.lookaheadBuf.Add(c);
-                            this.lastNonProlongedChar = new CharTypePair(c, GetCharType(c.CodePoint.First));
+                            followingType = GetCharType(c.CodePoint.First);
+                            this.lastNonProlongedChar = new CharTypePair(c, followingType);
                         }
 
-                        // Determine which hyphen character to use
-                        bool halfwidth = prevNonProlongedChar is CharTypePair prevNonProlongedCharNonNull
-                            ? IsHalfwidth(prevNonProlongedCharNonNull.Type)
-                            : IsHalfwidth(lastNonProlongedChar.Type);
+                        bool replaceByAlnum = this.options.ReplaceProlongedMarksFollowingAlnums
+                            && (prevNonProlongedChar is not CharTypePair || (prevNonProlongedChar is CharTypePair prevAlnumCheck && IsAlnum(prevAlnumCheck.Type)));
+                        bool replaceByNonKana = this.options.ReplaceProlongedMarksBetweenNonKanas
+                            && (prevNonProlongedChar is not CharTypePair || (prevNonProlongedChar is CharTypePair prevKanaCheck && !IsKana(prevKanaCheck.Type)))
+                            && !IsKana(followingType);
 
-                        int targetChar = halfwidth ? 0x002d : 0xff0d;
-
-                        // Replace all lookahead characters except the last one with the target hyphen
-                        for (int j = 0; j < this.lookaheadBuf.Count - 1; j++)
+                        if (replaceByAlnum || replaceByNonKana)
                         {
-                            var newChar = new Character((targetChar, -1), this.offset, this.lookaheadBuf[j]);
-                            this.lookaheadBuf[j] = newChar;
-                            this.offset += newChar.CharCount;
+                            bool halfwidth;
+                            if (replaceByAlnum)
+                            {
+                                halfwidth = prevNonProlongedChar is CharTypePair prevNonProlongedCharNonNull
+                                    ? IsHalfwidth(prevNonProlongedCharNonNull.Type)
+                                    : IsHalfwidth(followingType);
+                            }
+                            else
+                            {
+                                // replaceByNonKana
+                                bool prevHalf = prevNonProlongedChar is not CharTypePair || (prevNonProlongedChar is CharTypePair prevHalfCheck && IsHalfwidth(prevHalfCheck.Type));
+                                bool followingHalf = this.eoi || IsHalfwidth(followingType);
+                                halfwidth = prevHalf || followingHalf;
+                            }
+
+                            int targetChar = halfwidth ? 0x002d : 0xff0d;
+
+                            // Replace all lookahead characters except the last one with the target hyphen
+                            int limit = this.eoi ? this.lookaheadBuf.Count : this.lookaheadBuf.Count - 1;
+                            for (int j = 0; j < limit; j++)
+                            {
+                                var newChar = new Character((targetChar, -1), this.offset, this.lookaheadBuf[j]);
+                                this.lookaheadBuf[j] = newChar;
+                                this.offset += newChar.CharCount;
+                            }
                         }
 
                         this.lookaheadBufIndex = 0;

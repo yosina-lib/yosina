@@ -59,11 +59,34 @@ class TransliterationRecipeTest extends TestCase
     {
         $recipe = new TransliterationRecipe(replaceSuspiciousHyphensToProlongedSoundMarks: true);
         $configs = $recipe->buildTransliteratorConfigs();
-        
+
         $this->assertCount(1, $configs);
         $this->assertEquals('prolonged-sound-marks', $configs[0][0]);
         $this->assertNotEmpty($configs[0][1]);
         $this->assertTrue($configs[0][1]['replace_prolonged_marks_following_alnums']);
+        $this->assertFalse($configs[0][1]['replace_prolonged_marks_between_non_kanas']);
+    }
+
+    public function testProlongedSoundMarksConservative(): void
+    {
+        $recipe = new TransliterationRecipe(replaceSuspiciousHyphensToProlongedSoundMarks: 'conservative');
+        $configs = $recipe->buildTransliteratorConfigs();
+
+        $this->assertCount(1, $configs);
+        $this->assertEquals('prolonged-sound-marks', $configs[0][0]);
+        $this->assertTrue($configs[0][1]['replace_prolonged_marks_following_alnums']);
+        $this->assertFalse($configs[0][1]['replace_prolonged_marks_between_non_kanas']);
+    }
+
+    public function testProlongedSoundMarksAggressive(): void
+    {
+        $recipe = new TransliterationRecipe(replaceSuspiciousHyphensToProlongedSoundMarks: 'aggressive');
+        $configs = $recipe->buildTransliteratorConfigs();
+
+        $this->assertCount(1, $configs);
+        $this->assertEquals('prolonged-sound-marks', $configs[0][0]);
+        $this->assertTrue($configs[0][1]['replace_prolonged_marks_following_alnums']);
+        $this->assertTrue($configs[0][1]['replace_prolonged_marks_between_non_kanas']);
     }
 
     public function testCircledOrSquared(): void

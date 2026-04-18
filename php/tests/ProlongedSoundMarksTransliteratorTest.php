@@ -246,6 +246,141 @@ class ProlongedSoundMarksTransliteratorTest extends TestCase
         $this->assertEquals($expected, $result, "Registry integration failed");
     }
     
+    public function testReplaceProlongedMarksBetweenNonKanasOther(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // PSM between non-kana OTHER chars
+        $input = "漢\u{30FC}字";
+        $expected = "漢\u{FF0D}字";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "PSM between non-kana OTHER chars failed");
+    }
+
+    public function testReplaceProlongedMarksBetweenHalfwidthAlnums(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // PSM between halfwidth alnums
+        $input = "1\u{30FC}2";
+        $expected = "1\u{002D}2";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "PSM between halfwidth alnums failed");
+    }
+
+    public function testReplaceProlongedMarksBetweenFullwidthAlnums(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // PSM between fullwidth alnums
+        $input = "\u{FF11}\u{30FC}\u{FF12}";
+        $expected = "\u{FF11}\u{FF0D}\u{FF12}";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "PSM between fullwidth alnums failed");
+    }
+
+    public function testReplaceProlongedMarksAfterKanaNotReplaced(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // PSM after kana not replaced
+        $input = "カ\u{30FC}漢";
+        $expected = "カ\u{30FC}漢";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "PSM after kana should not be replaced");
+    }
+
+    public function testReplaceProlongedMarksBeforeKanaNotReplaced(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // PSM before kana not replaced
+        $input = "漢\u{30FC}カ";
+        $expected = "漢\u{30FC}カ";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "PSM before kana should not be replaced");
+    }
+
+    public function testConsecutiveProlongedMarksBetweenNonKanas(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // Consecutive PSMs between non-kana
+        $input = "漢\u{30FC}\u{30FC}\u{30FC}字";
+        $expected = "漢\u{FF0D}\u{FF0D}\u{FF0D}字";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "Consecutive PSMs between non-kana failed");
+    }
+
+    public function testConsecutiveProlongedMarksBeforeKana(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // Consecutive PSMs before kana not replaced
+        $input = "漢\u{30FC}\u{30FC}\u{30FC}カ";
+        $expected = "漢\u{30FC}\u{30FC}\u{30FC}カ";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "Consecutive PSMs before kana should not be replaced");
+    }
+
+    public function testTrailingProlongedMarksAfterFullwidthNonKana(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // Trailing PSMs after fullwidth non-kana
+        $input = "漢\u{30FC}\u{30FC}\u{30FC}";
+        $expected = "漢\u{FF0D}\u{FF0D}\u{FF0D}";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "Trailing PSMs after fullwidth non-kana failed");
+    }
+
+    public function testTrailingProlongedMarksAfterHalfwidthNonKana(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // Trailing PSMs after halfwidth non-kana
+        $input = "1\u{30FC}\u{30FC}\u{30FC}";
+        $expected = "1\u{002D}\u{002D}\u{002D}";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "Trailing PSMs after halfwidth non-kana failed");
+    }
+
+    public function testNonKanaOnlyPsmAfterAlnumBeforeKana(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator(['replaceProlongedMarksBetweenNonKanas' => true]);
+
+        // Non-kana only, PSM after alnum before kana not replaced
+        $input = "A\u{30FC}カ";
+        $expected = "A\u{30FC}カ";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "Non-kana only: PSM after alnum before kana should not be replaced");
+    }
+
+    public function testBothOptionsPsmAfterAlnumBeforeKana(): void
+    {
+        $transliterator = new ProlongedSoundMarksTransliterator([
+            'replaceProlongedMarksFollowingAlnums' => true,
+            'replaceProlongedMarksBetweenNonKanas' => true,
+        ]);
+
+        // Both options: PSM after alnum before kana replaced by alnum option
+        $input = "A\u{30FC}カ";
+        $expected = "A\u{002D}カ";
+        $result = $this->processString($transliterator, $input);
+
+        $this->assertEquals($expected, $result, "Both options: PSM after alnum before kana should be replaced");
+    }
+
     private function processString(TransliteratorInterface $transliterator, string $input): string
     {
         $chars = Chars::buildCharArray($input);

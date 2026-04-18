@@ -71,6 +71,12 @@ module Yosina
           [0x30fc, 0xff70].include?(char_code)
         end
 
+        def kana?(char_code)
+          hiragana?(char_code) || katakana?(char_code) ||
+            hatsuon?(char_code) || sokuon?(char_code) ||
+            prolonged_sound_mark?(char_code)
+        end
+
         def prolongable?(char_code)
           prolonged_sound_mark?(char_code) || hiragana?(char_code) || katakana?(char_code)
         end
@@ -83,7 +89,8 @@ module Yosina
       # Transliterator for prolonged sound marks
       class Transliterator < Yosina::BaseTransliterator
         attr_reader :skip_already_transliterated_chars, :allow_prolonged_hatsuon,
-                    :allow_prolonged_sokuon, :replace_prolonged_marks_following_alnums
+                    :allow_prolonged_sokuon, :replace_prolonged_marks_following_alnums,
+                    :replace_prolonged_marks_between_non_kanas
 
         # Initialize the transliterator with options
         #
@@ -96,12 +103,15 @@ module Yosina
         #     Default: false.
         # @option options [Boolean] :replace_prolonged_marks_following_alnums Replace prolonged marks after alphanum
         #    with hyphens. Default: false.
+        # @option options [Boolean] :replace_prolonged_marks_between_non_kanas Replace prolonged marks between
+        #    non-kana characters with hyphens. Default: false.
         def initialize(options = {})
           super()
           @skip_already_transliterated_chars = options.fetch(:skip_already_transliterated_chars, false)
           @allow_prolonged_hatsuon = options.fetch(:allow_prolonged_hatsuon, false)
           @allow_prolonged_sokuon = options.fetch(:allow_prolonged_sokuon, false)
           @replace_prolonged_marks_following_alnums = options.fetch(:replace_prolonged_marks_following_alnums, false)
+          @replace_prolonged_marks_between_non_kanas = options.fetch(:replace_prolonged_marks_between_non_kanas, false)
         end
 
         # Convert hyphen-like characters to appropriate prolonged sound marks
@@ -125,13 +135,28 @@ module Yosina
                 prev_non_prolonged_char = last_non_prolonged_char
                 last_non_prolonged_char = char
 
-                if (prev_non_prolonged_char.nil? || alphanumeric?(prev_non_prolonged_char.c.ord)) && (
+                prev_type = prev_non_prolonged_char&.c&.ord
+                following_type = last_non_prolonged_char.c.empty? ? nil : last_non_prolonged_char.c.ord
+
+                replace_by_alnum = @replace_prolonged_marks_following_alnums &&
+                                   (prev_non_prolonged_char.nil? || alphanumeric?(prev_type))
+                replace_by_non_kana = @replace_prolonged_marks_between_non_kanas &&
+                                      (prev_non_prolonged_char.nil? || !kana?(prev_type)) &&
+                                      (following_type.nil? || !kana?(following_type))
+
+                if (replace_by_alnum || replace_by_non_kana) && (
                   !@skip_already_transliterated_chars || !processed_char_in_lookahead
                 )
-                  halfwidth = halfwidth?(
-                    prev_non_prolonged_char.nil? ? last_non_prolonged_char.c.ord : prev_non_prolonged_char.c.ord
-                  )
-                  replacement = halfwidth ? "\u002d" : "\uff0d"
+                  if replace_by_non_kana
+                    prev_half = prev_non_prolonged_char.nil? || halfwidth?(prev_type)
+                    next_half = !following_type.nil? && halfwidth?(following_type)
+                    replacement = !prev_half && !next_half ? "\uff0d" : "\u002d"
+                  else
+                    halfwidth = halfwidth?(
+                      prev_non_prolonged_char.nil? ? following_type : prev_type
+                    )
+                    replacement = halfwidth ? "\u002d" : "\uff0d"
+                  end
                   lookahead_buf.each do |buffered_char|
                     y << Char.new(c: replacement, offset: offset, source: buffered_char)
                     offset += replacement.length
@@ -158,7 +183,8 @@ module Yosina
                     y << Char.new(c: replacement, offset: offset, source: char)
                     offset += replacement.length
                     next
-                  elsif @replace_prolonged_marks_following_alnums && alphanumeric?(last_non_prolonged_char.c.ord)
+                  elsif (@replace_prolonged_marks_following_alnums && alphanumeric?(last_non_prolonged_char.c.ord)) ||
+                        (@replace_prolonged_marks_between_non_kanas && !kana?(last_non_prolonged_char.c.ord))
                     lookahead_buf << char
                     next
                   end

@@ -20,11 +20,15 @@ class ProlongedSoundMarksTransliterator implements Transliterator {
   ///
   /// [replaceProlongedMarksFollowingAlnums] when true, replaces prolonged
   /// marks after alphanumeric characters with regular hyphens.
+  ///
+  /// [replaceProlongedMarksBetweenNonKanas] when true, replaces prolonged
+  /// marks between non-kana characters with hyphens.
   ProlongedSoundMarksTransliterator({
     this.skipAlreadyTransliteratedChars = false,
     this.allowProlongedHatsuon = false,
     this.allowProlongedSokuon = false,
     this.replaceProlongedMarksFollowingAlnums = false,
+    this.replaceProlongedMarksBetweenNonKanas = false,
   }) {
     // Build prolongable character types
     prolongables = _vowelEnded | _prolongedSoundMark;
@@ -96,6 +100,9 @@ class ProlongedSoundMarksTransliterator implements Transliterator {
   /// Whether to replace prolonged marks after alphanumeric characters.
   final bool replaceProlongedMarksFollowingAlnums;
 
+  /// Whether to replace prolonged marks between non-kana characters.
+  final bool replaceProlongedMarksBetweenNonKanas;
+
   /// Bitmask of character types that can be prolonged.
   late final int prolongables;
 
@@ -159,6 +166,14 @@ class ProlongedSoundMarksTransliterator implements Transliterator {
     return masked == _alphabet || masked == _digit;
   }
 
+  /// Checks if character type is kana (hiragana, katakana, or either).
+  ///
+  /// Returns true if the character is hiragana, katakana, or either.
+  bool _isKana(int charType) {
+    final masked = charType & 0xE0;
+    return masked == _hiragana || masked == _katakana || masked == _either;
+  }
+
   /// Checks if character type is halfwidth.
   ///
   /// Returns true if the character has the halfwidth flag set.
@@ -197,15 +212,30 @@ class ProlongedSoundMarksTransliterator implements Transliterator {
         final codepoint = firstChar.isNotEmpty ? firstChar.codeUnitAt(0) : -1;
         lastNonProlongedChar = [char, _getCharType(codepoint)];
 
-        // Check if we should replace with hyphens for alphanumerics
-        if ((prevNonProlongedChar == null ||
-                _isAlnum(prevNonProlongedChar[1] as int)) &&
+        // Check if we should replace with hyphens
+        final prevType = prevNonProlongedChar?[1] as int?;
+        final followingType = lastNonProlongedChar[1] as int;
+        final replaceByAlnum = replaceProlongedMarksFollowingAlnums &&
+            (prevType == null || _isAlnum(prevType));
+        final replaceByNonKana = replaceProlongedMarksBetweenNonKanas &&
+            (prevType == null || !_isKana(prevType)) &&
+            !_isKana(followingType);
+
+        if ((replaceByAlnum || replaceByNonKana) &&
             (!skipAlreadyTransliteratedChars || !processedCharsInLookahead)) {
-          final replacement = (prevNonProlongedChar == null
-                  ? _isHalfwidth(lastNonProlongedChar[1] as int)
-                  : _isHalfwidth(prevNonProlongedChar[1] as int))
-              ? '\u{002d}'
-              : '\u{ff0d}';
+          String replacement;
+          if (replaceByNonKana) {
+            final prevHalf =
+                prevNonProlongedChar == null || _isHalfwidth(prevType!);
+            final nextHalf = _isHalfwidth(followingType);
+            replacement = (!prevHalf && !nextHalf) ? '\u{ff0d}' : '\u{002d}';
+          } else {
+            replacement = (prevNonProlongedChar == null
+                    ? _isHalfwidth(followingType)
+                    : _isHalfwidth(prevType!))
+                ? '\u{002d}'
+                : '\u{ff0d}';
+          }
 
           for (final bufferedChar in lookaheadBuf) {
             yield Char(replacement, offset, bufferedChar);
@@ -239,9 +269,11 @@ class ProlongedSoundMarksTransliterator implements Transliterator {
             offset += replacement.length;
             continue;
           } else {
-            // Check if we should buffer for alphanumeric replacement
-            if (replaceProlongedMarksFollowingAlnums &&
-                _isAlnum(lastNonProlongedChar[1] as int)) {
+            // Check if we should buffer for alphanumeric or non-kana replacement
+            if ((replaceProlongedMarksFollowingAlnums &&
+                    _isAlnum(lastNonProlongedChar[1] as int)) ||
+                (replaceProlongedMarksBetweenNonKanas &&
+                    !_isKana(lastNonProlongedChar[1] as int))) {
               lookaheadBuf.add(char);
               continue;
             }
@@ -257,6 +289,40 @@ class ProlongedSoundMarksTransliterator implements Transliterator {
       // Default: pass through the character
       yield char.withOffset(offset);
       offset += char.c.length;
+    }
+
+    // Flush remaining lookahead buffer (trailing prolonged marks)
+    if (lookaheadBuf.isNotEmpty) {
+      final prevType = lastNonProlongedChar?[1] as int?;
+      final replaceByAlnum = replaceProlongedMarksFollowingAlnums &&
+          (prevType == null || _isAlnum(prevType));
+      final replaceByNonKana = replaceProlongedMarksBetweenNonKanas &&
+          (prevType == null || !_isKana(prevType));
+
+      if ((replaceByAlnum || replaceByNonKana) &&
+          (!skipAlreadyTransliteratedChars || !processedCharsInLookahead)) {
+        String replacement;
+        if (replaceByNonKana) {
+          final prevHalf =
+              lastNonProlongedChar == null || _isHalfwidth(prevType!);
+          replacement = prevHalf ? '\u{002d}' : '\u{ff0d}';
+        } else {
+          replacement =
+              (lastNonProlongedChar == null ? true : _isHalfwidth(prevType!))
+                  ? '\u{002d}'
+                  : '\u{ff0d}';
+        }
+
+        for (final bufferedChar in lookaheadBuf) {
+          yield Char(replacement, offset, bufferedChar);
+          offset += replacement.length;
+        }
+      } else {
+        for (final bufferedChar in lookaheadBuf) {
+          yield bufferedChar.withOffset(offset);
+          offset += bufferedChar.c.length;
+        }
+      }
     }
   }
 }

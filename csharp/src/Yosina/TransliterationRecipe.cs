@@ -98,6 +98,34 @@ public record class TransliterationRecipe
         }
     }
 
+    /// <summary>Options for replacing suspicious hyphens with prolonged sound marks.</summary>
+    [StructLayout(LayoutKind.Auto)]
+    public readonly struct ReplaceSuspiciousHyphensOptions
+    {
+        public static readonly ReplaceSuspiciousHyphensOptions Disabled = new(false, false);
+        public static readonly ReplaceSuspiciousHyphensOptions Enabled = new(true, false);
+        public static readonly ReplaceSuspiciousHyphensOptions Conservative = Enabled;
+        public static readonly ReplaceSuspiciousHyphensOptions Aggressive = new(true, true);
+
+        private readonly bool enabled;
+        private readonly bool aggressive;
+
+        public bool IsEnabled => this.enabled;
+
+        public bool IsAggressive => this.aggressive;
+
+        public static implicit operator ReplaceSuspiciousHyphensOptions(bool enabled)
+        {
+            return enabled ? Enabled : Disabled;
+        }
+
+        private ReplaceSuspiciousHyphensOptions(bool enabled, bool aggressive)
+        {
+            this.enabled = enabled;
+            this.aggressive = aggressive;
+        }
+    }
+
     /// <summary>Options for hyphens replacement.</summary>
     public readonly struct ReplaceHyphensOptions
     {
@@ -217,16 +245,18 @@ public record class TransliterationRecipe
     public bool ReplaceJapaneseIterationMarks { get; init; }
 
     /// <summary>
-    /// Gets a value indicating whether replace "suspicious" hyphens with prolonged sound marks, and vice versa.
+    /// Gets options for replacing "suspicious" hyphens with prolonged sound marks, and vice versa.
     /// </summary>
     /// <example>
     /// <code>
     /// // Input:  "スーパ-" (with hyphen-minus)
     /// // Output: "スーパー" (becomes prolonged sound mark)
     /// var recipe = new TransliterationRecipe { ReplaceSuspiciousHyphensToProlongedSoundMarks = true };
+    /// // Or use options directly:
+    /// var recipe = new TransliterationRecipe { ReplaceSuspiciousHyphensToProlongedSoundMarks = ReplaceSuspiciousHyphensOptions.Aggressive };
     /// </code>
     /// </example>
-    public bool ReplaceSuspiciousHyphensToProlongedSoundMarks { get; init; }
+    public ReplaceSuspiciousHyphensOptions ReplaceSuspiciousHyphensToProlongedSoundMarks { get; init; } = ReplaceSuspiciousHyphensOptions.Disabled;
 
     /// <summary>
     /// Gets a value indicating whether replace combined characters with their corresponding characters.
@@ -504,10 +534,10 @@ public record class TransliterationRecipe
 
     private TransliteratorConfigListBuilder ApplyReplaceSuspiciousHyphensToProlongedSoundMarks(TransliteratorConfigListBuilder ctx)
     {
-        if (this.ReplaceSuspiciousHyphensToProlongedSoundMarks)
+        if (this.ReplaceSuspiciousHyphensToProlongedSoundMarks.IsEnabled)
         {
             ctx = ctx.InsertMiddle(
-                new TransliteratorConfig("prolonged-sound-marks", new ProlongedSoundMarksTransliterator.Options { ReplaceProlongedMarksFollowingAlnums = true }),
+                new TransliteratorConfig("prolonged-sound-marks", new ProlongedSoundMarksTransliterator.Options { ReplaceProlongedMarksFollowingAlnums = true, ReplaceProlongedMarksBetweenNonKanas = this.ReplaceSuspiciousHyphensToProlongedSoundMarks.IsAggressive }),
                 false);
         }
 

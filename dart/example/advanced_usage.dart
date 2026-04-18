@@ -14,7 +14,8 @@ void main() {
     final webScrapingRecipe = TransliterationRecipe(
       kanjiOldNew: true,
       replaceSpaces: true,
-      replaceSuspiciousHyphensToProlongedSoundMarks: true,
+      replaceSuspiciousHyphensToProlongedSoundMarks:
+          ReplaceSuspiciousHyphensOptions.conservative,
       replaceIdeographicAnnotations: true,
       replaceRadicals: true,
       combineDecomposedHiraganasAndKatakanas: true,
@@ -78,7 +79,8 @@ void main() {
       kanjiOldNew: true,
       replaceSpaces: true,
       toHalfwidth: ToHalfwidthOptions.enabled(),
-      replaceSuspiciousHyphensToProlongedSoundMarks: true,
+      replaceSuspiciousHyphensToProlongedSoundMarks:
+          ReplaceSuspiciousHyphensOptions.conservative,
     );
 
     final searchNormalizer = Transliterator.withRecipe(searchRecipe);
