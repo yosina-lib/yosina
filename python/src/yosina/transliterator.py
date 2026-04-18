@@ -14,7 +14,8 @@ __all__ = ["make_transliterator"]
 
 
 def make_transliterator(
-    configs_or_recipe: Sequence[TransliteratorConfig | TransliteratorIdentifier | Transliterator] | TransliterationRecipe,
+    configs_or_recipe: Sequence[TransliteratorConfig | TransliteratorIdentifier | Transliterator]
+    | TransliterationRecipe,
 ) -> Callable[[str], str]:
     """Frontend convenience function to create a string-to-string transliterator.
 
