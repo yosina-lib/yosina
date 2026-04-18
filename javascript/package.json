@@ -1,6 +1,6 @@
 {
   "name": "@yosina-lib/yosina",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Japanese text transliteration library for JavaScript/TypeScript",
   "keywords": [
     "japanese",

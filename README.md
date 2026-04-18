@@ -116,7 +116,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-yosina = "2.0.0"
+yosina = "3.0.0"
 ```
 
 ### Java
@@ -125,7 +125,7 @@ Add to your `build.gradle`:
 
 ```gradle
 dependencies {
-    implementation 'io.yosina:yosina:2.0.0'
+    implementation 'io.yosina:yosina:3.0.0'
 }
 ```
 
@@ -251,7 +251,7 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "2.0.0")
+    .package(url: "https://github.com/yosina-lib/yosina-swift", from: "3.0.0")
 ]
 ```
 
